@@ -1,5 +1,5 @@
 ---
-title: "LDP_Project_T3"
+title: "LDP Project T3"
 author: "Chloe Hunt, Amina Harrath"
 format: revealjs
 editor: visual
@@ -16,17 +16,19 @@ When you click the **Render** button a document will be generated that includes:
 -   Content authored with markdown
 -   Output from executable code
 
-## Code
+## Data Exploration
 
 When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
 
 ```{r}
-## Set working directory
-setwd("~/team3")
+#| label: ‘load the data’
+#| echo: false
 
 # Load libraries
 library(haven)
 library(dplyr)
+library(ggplot2)
+library(tidyr)
 
 ## Load data
 ## Parental questionnaires 
@@ -61,7 +63,7 @@ ACTMQ_t2 <- read_sav("00.Raw_Data/T2/Child and Teenager/c2_ACTMQ_(Adapted Child 
 ACTMQ_t3 <- read_sav("00.Raw_Data/T3/Child and Teenager/c3_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
 
 
-## Merge the dataset
+## Merge the dataset wide
 # Merge parent datasets
 # Standardize IDs to 3-digit character format with leading zeros
 PTRQ_t1 <- PTRQ_t1 |>
@@ -87,8 +89,7 @@ POI_t3 <- POI_t3 |>
 parent_t3 <- PTRQ_t3 |>
   full_join(POI_t3, by = "ID", suffix = c("_ptrq", "_poi"))
 
-
-# Combine parent datasets
+## Combine parent datasets wide
 parent_t1 <- parent_t1 |> rename_with(~ paste0(.x, "_t1"), -ID)
 parent_t2 <- parent_t2 |> rename_with(~ paste0(.x, "_t2"), -ID)
 parent_t3 <- parent_t3 |> rename_with(~ paste0(.x, "_t3"), -ID)
@@ -97,16 +98,89 @@ parent_all <- parent_t1 |>
   full_join(parent_t3, by = "ID")
 
 
-
-
-# Merge child datasets
+## Merge child datasets wide
 # Time 1
 child_t1 <- CPBQ_t1 |>
-  full_join(CPTCI_t1, by = "ID", suffix = c("_cpbq", "_cptci"),
-            ACTMQ_t1, by = "ID", suffix = c("_cbpq", "_actmq"))
+  full_join(CPTCI_t1, by = "ID", suffix = c("_cpbq", "_cptci")) |>
+  full_join(ACTMQ_t1, by = "ID", suffix = c("", "_actmq"))
+
+# Time 2
+child_t2 <- CPBQ_t2 |>
+  full_join(CPTCI_t2, by = "ID", suffix = c("_cpbq", "_cptci")) |>
+  full_join(ACTMQ_t2, by = "ID", suffix = c("", "_actmq"))
+
+# Time 3
+child_t3 <- CPBQ_t3 |>
+  full_join(CPTCI_t3, by = "ID", suffix = c("_cpbq", "_cptci")) |>
+  full_join(ACTMQ_t3, by = "ID", suffix = c("", "_actmq"))
+
+## Combine child datasets wide
+child_t1 <- child_t1 |> rename_with(~ paste0(.x, "_t1"), -ID)
+child_t2 <- child_t2 |> rename_with(~ paste0(.x, "_t2"), -ID)
+child_t3 <- parent_t3 |> rename_with(~ paste0(.x, "_t3"), -ID)
+child_all <- child_t1 |>
+  full_join(child_t2, by = "ID") |>
+  full_join(parent_t3, by = "ID")
+
+## Combine parent and child datasets long
+## Add group variable
+parent_all <- parent_all |>
+  mutate(group = "parent")
+child_all <- child_all |>
+  mutate(group = "child")
+
+# Rename ID so they are not duplicate
+parent_all <- parent_all |>
+  mutate(ID = paste0("P_", ID), group = "parent")
+child_all <- child_all |>
+  mutate(ID = paste0("C_", ID), group = "child")
+
+## Combine both datasets, wide
+combined_all <- bind_rows(parent_all, child_all)
+
+```
+
+Visual exploration
+```{r}
+#| label: ‘prep parent data viz’
+#| echo: false
+glimpse(parent_all)
+summary(parent_all)
+
+# Step 1: Filter PQRST columns (example pattern: 'ptrq' in name)
+ptrq_data_t1 <- PTRQ_t1 |>
+  pivot_longer(cols = -ID,
+               names_to = "question",
+               values_to = "response")
 
 
+  select(ID, contains("pqrst"))
+ptrq_long <- ptrq_data |>
+  pivot_longer(
+    cols = -ID,
+    names_to = "question",
+    values_to = "response")
 
+ptrq_long <- ptrq_long |>
+  filter(!is.na(response)) |>
+  mutate(
+    response = factor(
+      response,
+      levels = c("Not at all", "A little", "Some", "A lot")),
+    question = as.numeric(as.factor(question)))
+
+# Calculate proportion per question response
+prop_data <- ptrq_long |>
+  count(question, response) |>
+  group_by(question) |>
+  mutate(prop = n / sum(n))
 
 
 ```
+
+
+Design model
+
+
+
+
