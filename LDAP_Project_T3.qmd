@@ -1,0 +1,100 @@
+---
+title: "LDP_Project_T3"
+author: "Chloe Hunt, Amina Harrath"
+format: revealjs
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+## Bullets
+
+When you click the **Render** button a document will be generated that includes:
+
+-   Content authored with markdown
+-   Output from executable code
+
+## Code
+
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+## Set working directory
+setwd("~/team3")
+
+# Load libraries
+library(haven)
+library(dplyr)
+
+## Load data
+## Parental questionnaires 
+# Parental Trauma Responses Questionnaire 
+PTRQ_t1 <- read_sav("00.Raw_Data/T1/Parent/p1_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PTRQ_t2 <- read_sav("00.Raw_Data/T2/Parent/p2_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PTRQ_t3 <- read_sav("00.Raw_Data/T3/Parent/p3_PTRQ_(Parent Trauma Response Questionnaire).sav")
+
+# Parental overprotection scale
+POI_t1 <- read_sav("00.Raw_Data/T1/Parent/p1_POI_(Parental Overprotection Scale.sav")
+POI_t2 <- read_sav("00.Raw_Data/T2/Parent/p2_POI_(Parental Overprotection Scale).sav")
+POI_t3 <- read_sav("00.Raw_Data/T3/Parent/p3_POI_(Parental Overprotection Scale).sav")
+
+# Child questionnaires
+# Child Post-Traumatic Cognition Inventory
+CPTCI_t1 <- read_sav("00.Raw_Data/T1/Child and Teenager/c1_CPTCI_(Child Posttraumatic Cognitions Inventory).sav")
+CPTCI_t2 <- read_sav("00.Raw_Data/T2/Child and Teenager/c2_CPTCI_(Child Postraumatic Cognitions Inventory).sav")
+CPTCI_t3 <- read_sav("00.Raw_Data/T3/Child and Teenager/c3_CPTCI_(Child Posttraumatic Cognitions Inventory).sav")
+
+# Multidimensional scale of perceived social support
+MPSS_t1 <- read_sav("00.Raw_Data/T1/Child and Teenager/c1_MSPSS (Multidimensional Scale of Perceived Social Support).sav")
+MPSS_t2 <- read_sav("00.Raw_Data/T2/Child and Teenager/c2_MSPSS (Multidimensional Scale of Perceived Social Support).sav")
+
+# Child posttrauma behaviour questionnaire
+CPBQ_t1 <- read_sav("00.Raw_Data/T1/Child and Teenager/c1_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
+CPBQ_t2 <- read_sav("00.Raw_Data/T2/Child and Teenager/c2_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
+CPBQ_t3 <- read_sav("00.Raw_Data/T3/Child and Teenager/c3_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
+
+# Child memory questionnaire
+ACTMQ_t1 <- read_sav("00.Raw_Data/T1/Child and Teenager/c1_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
+ACTMQ_t2 <- read_sav("00.Raw_Data/T2/Child and Teenager/c2_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
+ACTMQ_t3 <- read_sav("00.Raw_Data/T3/Child and Teenager/c3_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
+
+
+## Merge the dataset
+# Merge parent datasets
+# Standardize IDs to 3-digit character format with leading zeros
+PTRQ_t1 <- PTRQ_t1 |>
+  mutate(ID = sprintf("%03d", as.integer(ID)))
+POI_t1 <- POI_t1 |>
+  mutate(ID = as.character(ID))  # Just to be safe
+parent_t1 <- PTRQ_t1 |>
+  full_join(POI_t1, by = "ID", suffix = c("_ptrq", "_poi"))
+
+# Time 2
+PTRQ_t2 <- PTRQ_t2 |>
+  mutate(ID = sprintf("%03d", as.integer(ID)))
+POI_t2 <- POI_t2 |>
+  mutate(ID = as.character(ID))  # Just to be safe
+parent_t2 <- PTRQ_t2 |>
+  full_join(POI_t2, by = "ID", suffix = c("_ptrq", "_poi"))
+
+# Time 3
+PTRQ_t3 <- PTRQ_t3 |>
+  mutate(ID = sprintf("%03d", as.integer(ID)))
+POI_t3 <- POI_t3 |>
+  mutate(ID = as.character(ID))  # Just to be safe
+parent_t3 <- PTRQ_t3 |>
+  full_join(POI_t3, by = "ID", suffix = c("_ptrq", "_poi"))
+
+
+# Combine parent datasets
+parent_t1 <- parent_t1 |> rename_with(~ paste0(.x, "_t1"), -ID)
+parent_t2 <- parent_t2 |> rename_with(~ paste0(.x, "_t2"), -ID)
+parent_t3 <- parent_t3 |> rename_with(~ paste0(.x, "_t3"), -ID)
+parent_all <- parent_t1 |>
+  full_join(parent_t2, by = "ID") |>
+  full_join(parent_t3, by = "ID")
+
+
+```
