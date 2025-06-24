@@ -180,7 +180,11 @@ prop_data <- ptrq_long |>
 
 
 Design model
+```{r}
+#| label: ‘create model’
 
 
+
+```
 
 
