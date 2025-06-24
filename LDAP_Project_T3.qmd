@@ -97,4 +97,16 @@ parent_all <- parent_t1 |>
   full_join(parent_t3, by = "ID")
 
 
+
+
+# Merge child datasets
+# Time 1
+child_t1 <- CPBQ_t1 |>
+  full_join(CPTCI_t1, by = "ID", suffix = c("_cpbq", "_cptci"),
+            ACTMQ_t1, by = "ID", suffix = c("_cbpq", "_actmq"))
+
+
+
+
+
 ```
