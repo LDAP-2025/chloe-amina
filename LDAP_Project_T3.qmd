@@ -29,13 +29,14 @@ library(haven)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(lavaan)
 
 ## Load data
 ## Parental questionnaires 
 # Parental Trauma Responses Questionnaire 
-PTRQ_t1 <- read_sav("00.Raw_Data/T1/Parent/p1_PTRQ_(Parent Trauma Response Questionnaire).sav")
-PTRQ_t2 <- read_sav("00.Raw_Data/T2/Parent/p2_PTRQ_(Parent Trauma Response Questionnaire).sav")
-PTRQ_t3 <- read_sav("00.Raw_Data/T3/Parent/p3_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PQRST_t1 <- read_sav("00.Raw_Data/T1/Parent/p1_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PQRST_t2 <- read_sav("00.Raw_Data/T2/Parent/p2_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PQRST_t3 <- read_sav("00.Raw_Data/T3/Parent/p3_PTRQ_(Parent Trauma Response Questionnaire).sav")
 
 # Parental overprotection scale
 POI_t1 <- read_sav("00.Raw_Data/T1/Parent/p1_POI_(Parental Overprotection Scale.sav")
@@ -66,28 +67,28 @@ ACTMQ_t3 <- read_sav("00.Raw_Data/T3/Child and Teenager/c3_ACTMQ_(Adapted Child 
 ## Merge the dataset wide
 # Merge parent datasets
 # Standardize IDs to 3-digit character format with leading zeros
-PTRQ_t1 <- PTRQ_t1 |>
+PQRST_t1 <- PQRST_t1 |>
   mutate(ID = sprintf("%03d", as.integer(ID)))
 POI_t1 <- POI_t1 |>
   mutate(ID = as.character(ID))  # Just to be safe
-parent_t1 <- PTRQ_t1 |>
-  full_join(POI_t1, by = "ID", suffix = c("_ptrq", "_poi"))
+parent_t1 <- PQRST_t1 |>
+  full_join(POI_t1, by = "ID", suffix = c("_pqrst", "_poi"))
 
 # Time 2
-PTRQ_t2 <- PTRQ_t2 |>
+PQRST_t2 <- PQRST_t2 |>
   mutate(ID = sprintf("%03d", as.integer(ID)))
 POI_t2 <- POI_t2 |>
   mutate(ID = as.character(ID))  # Just to be safe
-parent_t2 <- PTRQ_t2 |>
-  full_join(POI_t2, by = "ID", suffix = c("_ptrq", "_poi"))
+parent_t2 <- PQRST_t2 |>
+  full_join(POI_t2, by = "ID", suffix = c("_pqrst", "_poi"))
 
 # Time 3
-PTRQ_t3 <- PTRQ_t3 |>
+PQRST_t3 <- PQRST_t3 |>
   mutate(ID = sprintf("%03d", as.integer(ID)))
 POI_t3 <- POI_t3 |>
   mutate(ID = as.character(ID))  # Just to be safe
-parent_t3 <- PTRQ_t3 |>
-  full_join(POI_t3, by = "ID", suffix = c("_ptrq", "_poi"))
+parent_t3 <- PQRST_t3 |>
+  full_join(POI_t3, by = "ID", suffix = c("_pqrst", "_poi"))
 
 ## Combine parent datasets wide
 parent_t1 <- parent_t1 |> rename_with(~ paste0(.x, "_t1"), -ID)
@@ -117,10 +118,10 @@ child_t3 <- CPBQ_t3 |>
 ## Combine child datasets wide
 child_t1 <- child_t1 |> rename_with(~ paste0(.x, "_t1"), -ID)
 child_t2 <- child_t2 |> rename_with(~ paste0(.x, "_t2"), -ID)
-child_t3 <- parent_t3 |> rename_with(~ paste0(.x, "_t3"), -ID)
+child_t3 <- child_t3 |> rename_with(~ paste0(.x, "_t3"), -ID)
 child_all <- child_t1 |>
   full_join(child_t2, by = "ID") |>
-  full_join(parent_t3, by = "ID")
+  full_join(child_t3, by = "ID")
 
 ## Combine parent and child datasets long
 ## Add group variable
@@ -140,14 +141,15 @@ combined_all <- bind_rows(parent_all, child_all)
 
 ```
 
-Visual exploration
+Visual exploration - Ignore for now
+
 ```{r}
 #| label: ‘prep parent data viz’
 #| echo: false
 glimpse(parent_all)
 summary(parent_all)
 
-# Step 1: Filter PQRST columns (example pattern: 'ptrq' in name)
+# Step 1: Filter PQRST columns (example pattern: 'pqrst' in name)
 ptrq_data_t1 <- PTRQ_t1 |>
   pivot_longer(cols = -ID,
                names_to = "question",
@@ -178,13 +180,179 @@ prop_data <- ptrq_long |>
 
 ```
 
-
 Design model
+
 ```{r}
 #| label: ‘create model’
+
+mod_spec <- '
+# child behaviour
+cpbq_t1 =~ c1_cpbq_a_q1_t1 + c1_cpbq_a_q2_t1 + c1_cpbq_a_q3_t1 + c1_cpbq_a_q4_t1 +
+      c1_cpbq_a_q5_t1 + c1_cpbq_b_q1_t1 + c1_cpbq_b_q2_t1 + c1_cpbq_b_q3_t1 + c1_cpbq_b_q4_t1
+      + c1_cpbq_b_q5_t1 + c1_cpbq_b_q6_t1 + c1_cpbq_b_q7_t1 + c1_cpbq_b_q8_t1 +   
+      c1_cpbq_b_q9_t1 + c1_cpbq_b_q10_t1 + c1_cpbq_b_q11_t1
+
+cpbq_t2 =~ c2_cpbq_a_q1_t2 + c2_cpbq_a_q2_t2 + c2_cpbq_a_q3_t2 + c2_cpbq_a_q4_t2 +
+      c2_cpbq_a_q5_t2 + c2_cpbq_b_q1_t2 + c2_cpbq_b_q2_t2 + c2_cpbq_b_q3_t2 + c2_cpbq_b_q4_t2
+      + c2_cpbq_b_q5_t2 + c2_cpbq_b_q6_t2 + c2_cpbq_b_q7_t2 + c2_cpbq_b_q8_t2 + 
+      c2_cpbq_b_q9_t2 + c2_cpbq_b_q10_t2 + c2_cpbq_b_q11_t2
+
+cpbq_t3 =~ c3_cpbq_a_q1_t3 + c3_cpbq_a_q2_t3 + c3_cpbq_a_q3_t3 + c3_cpbq_a_q4_t3 +
+      c3_cpbq_a_q5_t3 + c3_cpbq_b_q1_t3 + c3_cpbq_b_q2_t3 + c3_cpbq_b_q3_t3 + c3_cpbq_b_q4_t3
+      + c3_cpbq_b_q5_t3 + c3_cpbq_b_q6_t3 + c3_cpbq_b_q7_t3 + c3_cpbq_b_q8_t3 + 
+      c3_cpbq_b_q9_t3 + c3_cpbq_b_q10_t3 + c3_cpbq_b_q11_t3
+
+child_behaviour =~ cpbq_t1 + cpbq_t2 + cpbq_t3 
+
+# child beliefs
+cptci_t1 =~  c1_cptci_q4_t1 + c1_cptci_q6_t1 + c1_cptci_q8_t1 + c1_cptci_q13_t1 +
+      c1_cptci_q14_t1 + c1_cptci_q16_t1 + c1_cptci_q17_t1 + c1_cptci_q19_t1 + c1_cptci_q20_t1
+      + c1_cptci_q21_t1 + c1_cptci_q22_t1 + c1_cptci_q23_t1 + c1_cptci_q24_t1 + 
+      c1_cptci_q1_t1 + c1_cptci_q2_t1 + c1_cptci_q3_t1 + c1_cptci_q5_t1 + c1_cptci_q7_t1 + 
+      c1_cptci_q9_t1 + c1_cptci_q10_t1 + c1_cptci_q11_t1 + c1_cptci_q12_t1 + c1_cptci_q15_t1 
+      + c1_cptci_q18_t1 + c1_cptci_q25_t1
+
+cptci_t2 =~ c2_cptci_q4_t2 + c2_cptci_q6_t2 + c2_cptci_q8_t2 + c2_cptci_q13_t2 +
+      c2_cptci_q14_t2 + c2_cptci_q16_t2 + c2_cptci_q17_t2 + c2_cptci_q19_t2 + c2_cptci_q20_t2
+      + c2_cptci_q21_t2 + c2_cptci_q22_t2 + c2_cptci_q23_t2 + c2_cptci_q24_t2 + 
+      c2_cptci_q1_t2 + c2_cptci_q2_t2 + c2_cptci_q3_t2 + c2_cptci_q5_t2 + c2_cptci_q7_t2 + 
+      c2_cptci_q9_t2 + c2_cptci_q10_t2 + c2_cptci_q11_t2 + c2_cptci_q12_t2 + c2_cptci_q15_t2 
+      + c2_cptci_q18_t2 + c2_cptci_q25_t2
+
+cptci_t3 =~ c3_cptci_q4_t3 + c3_cptci_q6_t3 + c3_cptci_q8_t3 + c3_cptci_q13_t3 +
+      c3_cptci_q14_t3 + c3_cptci_q16_t3 + c3_cptci_q17_t3 + c3_cptci_q19_t3 + c3_cptci_q20_t3
+      + c3_cptci_q21_t3 + c3_cptci_q22_t3 + c3_cptci_q23_t3 + c3_cptci_q24_t3 + 
+      c3_cptci_q1_t3 + c3_cptci_q2_t3 + c3_cptci_q3_t3 + c3_cptci_q5_t3 + c3_cptci_q7_t3 + 
+      c3_cptci_q9_t3 + c3_cptci_q10_t3 + c3_cptci_q11_t3 + c3_cptci_q12_t3 + c3_cptci_q15_t3 
+      + c3_cptci_q18_t3 + c3_cptci_q25_t3
+
+child_belief =~ cptci_t1 + cptci_t2 + cptci_t3 
+
+
+# parent behaviours
+pqrst_t1 =~ p1_pqrst_bq1_t1 + p1_pqrst_bq2_t1 + p1_pqrst_bq3_t1 +
+      p1_pqrst_bq4_t1 + p1_pqrst_bq5_t1 + p1_pqrst_bq6_t1 + -1*p1_pqrst_bq7_t1 + 
+      p1_pqrst_bq8_t1 + p1_pqrst_bq9_t1 + p1_pqrst_bq10_t1 + -1*p1_pqrst_bq11_t1 + 
+      p1_pqrst_bq12_t1 + -1*p1_pqrst_bq13_t1 + p1_pqrst_bq14_t1 + p1_pqrst_bq15_t1 + 
+      -1*p1_pqrst_bq16_t1 + -1*p1_pqrst_bq17_t1 + p1_pqrst_bq18_t1 + -1*p1_pqrst_bq19_t1 + 
+      -1*p1_pqrst_bq20_t1 + p1_pqrst_bq21_t1 + p1_pqrst_bq22_t1 + -1*p1_pqrst_bq23_t1 + 
+      p1_pqrst_bq24_t1 + -1*p1_pqrst_bq25_t1 + -1*p1_pqrst_bq26_t1 + p1_pqrst_bq27_t1 + 
+      p1_pqrst_bq28_t1 + p1_pqrst_bq29_t1 + p1_pqrst_bq30_t1 + p1_pqrst_bq31_t1 + 
+      -1*p1_pqrst_bq32_t1 + p1_pqrst_bq33_t1 + p1_pqrst_bq34_t1 
+
+pqrst_t2 =~ p2_pqrst_bq1_t2 + p2_pqrst_bq2_t2 + p2_pqrst_bq3_t2 +
+      p2_pqrst_bq4_t2  + p2_pqrst_bq5_t2 + p2_pqrst_bq6_t2 + -1*p2_pqrst_bq7_t2 + 
+      p2_pqrst_bq8_t2 + p2_pqrst_bq9_t2 + p2_pqrst_bq10_t2 + -1*p2_pqrst_bq11_t2 + 
+      p2_pqrst_bq12_t2 + -1*p2_pqrst_bq13_t2 + p2_pqrst_bq14_t2 + p2_pqrst_bq15_t2 + 
+      -1*p2_pqrst_bq16_t2 + -1*p2_pqrst_bq17_t2 + p2_pqrst_bq18_t2 + -1*p2_pqrst_bq19_t2 + 
+      -1*p2_pqrst_bq20_t2 + p2_pqrst_bq21_t2 + p2_pqrst_bq22_t2 + -1*p2_pqrst_bq23_t2 + 
+      p2_pqrst_bq24_t2 + -1*p2_pqrst_bq25_t2 + -1*p2_pqrst_bq26_t2 + p2_pqrst_bq27_t2 + 
+      p2_pqrst_bq28_t2 + p2_pqrst_bq29_t2 + p2_pqrst_bq30_t2 + p2_pqrst_bq31_t2 + 
+      -1*p2_pqrst_bq32_t2 + p2_pqrst_bq33_t2 + p2_pqrst_bq34_t2 
+
+pqrst_t3 =~ p3_pqrst_bq1_t3 + p3_pqrst_bq2_t3 + p3_pqrst_bq3_t3 +
+      p3_pqrst_bq4_t3  + p3_pqrst_bq5_t3 + p3_pqrst_bq6_t3 + -1*p3_pqrst_bq7_t3 +         
+      p3_pqrst_bq8_t3 + p3_pqrst_bq9_t3 + p3_pqrst_bq10_t3 + -1*p3_pqrst_bq11_t3 + 
+      p3_pqrst_bq12_t3 + -1*p3_pqrst_bq13_t3 + p3_pqrst_bq14_t3 + p3_pqrst_bq15_t3 + 
+      -1*p3_pqrst_bq16_t3 + -1*p3_pqrst_bq17_t3 + p3_pqrst_bq18_t3 + -1*p3_pqrst_bq19_t3 + 
+      -1*p3_pqrst_bq20_t3 + p3_pqrst_bq21_t3 + p3_pqrst_bq22_t3 + -1*p3_pqrst_bq23_t3 +
+      p3_pqrst_bq24_t3 + -1*p3_pqrst_bq25_t3 + -1*p3_pqrst_bq26_t3 + p3_pqrst_bq27_t3 +
+      p3_pqrst_bq28_t3 + p3_pqrst_bq29_t3 + p3_pqrst_bq30_t3 + p3_pqrst_bq31_t3 +
+      -1*p3_pqrst_bq32_t3 + p3_pqrst_bq33_t3 + p3_pqrst_bq34_t3 
+
+poi_t1 =~ p1_poi_q1_t1 + p1_poi_q2_t1 + p1_poi_q3_t1 + p1_poi_q4_t1 +
+      p1_poi_q5_t1 + p1_poi_q6_t1 + p1_poi_q7_t1 + p1_poi_q8_t1 + p1_poi_q9_t1 +
+      p1_poi_q10_t1 + p1_poi_q11_t1 + p1_poi_q12_t1 + p1_poi_q13_t1 + p1_poi_q14_t1 +
+      p1_poi_q15_t1 + p1_poi_q16_t1 + p1_poi_q17_t1 + p1_poi_q18_t1 + p1_poi_q19_t1
+      
+poi_t2 =~ p2_poi_q1_t2 + p2_poi_q2_t2 + p2_poi_q3_t2 + p2_poi_q4_t2 + 
+      p2_poi_q5_t2 + p2_poi_q6_t2 + p2_poi_q7_t2 + p2_poi_q8_t2 + p2_poi_q9_t2 + 
+      p2_poi_q10_t2 + p2_poi_q11_t2 + p2_poi_q12_t2 + p2_poi_q13_t2 + p2_poi_q14_t2 + 
+      p2_poi_q15_t2 + p2_poi_q16_t2 + p2_poi_q17_t2 + p2_poi_q18_t2 + p2_poi_q19_t2
+
+poi_t3 =~ p3_poi_q1_t3 + p3_poi_q2_t3 + p3_poi_q3_t3 + p3_poi_q4_t3 + 
+      p3_poi_q5_t3 + p3_poi_q6_t3 + p3_poi_q7_t3 + p3_poi_q8_t3 + p3_poi_q9_t3 + 
+      p3_poi_q10_t3 + p3_poi_q11_t3 + p3_poi_q12_t3 + p3_poi_q13_t3 + p3_poi_q14_t3 + 
+      p3_poi_q15_t3 + p3_poi_q16_t3 + p3_poi_q17_t3 + p3_poi_q18_t3 + p3_poi_q19_t3
+
+parent_behaviour =~ pqrst_t1 + pqrst_t2 + pqrst_t3 + poi_t1 + poi_t2 + poi_t3
+' 
+all_vars <- lavaanify(mod_spec)$rhs
+missing_vars <- setdiff(unique(all_vars), names(combined_all))
+missing_vars
+# run the model
+mod <- lavaan::sem(mod_spec, data=combined_all)
+
+# summary and fit measures
+lavaan::summary(mod, fit.measures=TRUE)
+
+str(combined_all)
+
+# parent beliefs
+## Parent beliefs
+parent_beliefs_t1 =~ p1_pqrst_aq1_t1 + p1_pqrst_aq2_t1 + p1_pqrst_aq3_t1 + p1_pqrst_aq4_t1  +
+      p1_pqrst_aq5_t1 + p1_pqrst_aq6_t1 + p1_pqrst_aq7_t1 + p1_pqrst_aq8_t1 + p1_pqrst_aq9_t1
+      + p1_pqrst_aq10_t1 + p1_pqrst_aq11_t1 + p1_pqrst_aq12_t1 + p1_pqrst_aq13_t1 + 
+      p1_pqrst_aq14_t1 + p1_pqrst_aq15_t1 + p1_pqrst_aq16_t1 + p1_pqrst_aq17_t1 + 
+      p1_pqrst_aq18_t1 + p1_pqrst_aq19_t1 + p1_pqrst_aq20_t1 + p1_pqrst_aq21_t1 + 
+      p1_pqrst_aq22_t1 + p1_pqrst_aq23_t1 + p1_pqrst_aq24_t1 + p1_pqrst_aq25_t1 + 
+      p1_pqrst_aq26_t1 + p1_pqrst_aq27_t1 + p1_pqrst_aq28_t1 + p1_pqrst_aq29_t1 + 
+      p1_pqrst_aq30_t1 + p1_pqrst_aq31_t1 + p1_pqrst_aq32_t1 + p1_pqrst_aq33_t1 + 
+      p1_pqrst_aq34_t1 + p1_pqrst_aq35_t1 + p1_pqrst_aq36_t1 + p1_pqrst_aq37_t1 + 
+      p1_pqrst_aq38_t1 + p1_pqrst_aq39_t1 + p1_pqrst_aq40_t1 + p1_pqrst_aq41_t1 + 
+      p1_pqrst_aq42_t1 + p1_pqrst_aq43_t1 + p1_pqrst_aq44_t1
+
+parent_beliefs_t2 =~ p2_pqrst_aq1_t2 + p2_pqrst_aq2_t2 + p2_pqrst_aq3_t2 + p2_pqrst_aq4_t2  +
+      p2_pqrst_aq5_t2 + p2_pqrst_aq6_t2 + p2_pqrst_aq7_t2 + p2_pqrst_aq8_t2 + p2_pqrst_aq9_t2
+      + p2_pqrst_aq10_t2 + p2_pqrst_aq11_t2 + p2_pqrst_aq12_t2 + p2_pqrst_aq13_t2 + 
+      p2_pqrst_aq14_t2 + p2_pqrst_aq15_t2 + p2_pqrst_aq16_t2 + p2_pqrst_aq17_t2 + 
+      p2_pqrst_aq18_t2 + p2_pqrst_aq19_t2 + p2_pqrst_aq20_t2 + p2_pqrst_aq21_t2 + 
+      p2_pqrst_aq22_t2 + p2_pqrst_aq23_t2 + p2_pqrst_aq24_t2 + p2_pqrst_aq25_t2 + 
+      p2_pqrst_aq26_t2 + p2_pqrst_aq27_t2 + p2_pqrst_aq28_t2 + p2_pqrst_aq29_t2 + 
+      p2_pqrst_aq30_t2 + p2_pqrst_aq31_t2 + p2_pqrst_aq32_t2 + p2_pqrst_aq33_t2 + 
+      p2_pqrst_aq34_t2 + p2_pqrst_aq35_t2 + p2_pqrst_aq36_t2 + p2_pqrst_aq37_t2 + 
+      p2_pqrst_aq38_t2 + p2_pqrst_aq39_t2 + p2_pqrst_aq40_t2 + p2_pqrst_aq41_t2 + 
+      p2_pqrst_aq42_t2 + p2_pqrst_aq43_t2 + p2_pqrst_aq44_t2
+      
+parent_beliefs_t3 =~ p3_pqrst_aq1_t3 + p3_pqrst_aq2_t3 + p3_pqrst_aq3_t3 + p3_pqrst_aq4_t3  +
+      p3_pqrst_aq5_t3 + p3_pqrst_aq6_t3 + p3_pqrst_aq7_t3 + p3_pqrst_aq8_t3 + p3_pqrst_aq9_t3
+      + p3_pqrst_aq10_t3 + p3_pqrst_aq11_t3 + p3_pqrst_aq12_t3 + p3_pqrst_aq13_t3 + 
+      p3_pqrst_aq14_t3 + p3_pqrst_aq15_t3 + p3_pqrst_aq16_t3 + p3_pqrst_aq17_t3 + 
+      p3_pqrst_aq18_t3 + p3_pqrst_aq19_t3 + p3_pqrst_aq20_t3 + p3_pqrst_aq21_t3 + 
+      p3_pqrst_aq22_t3 + p3_pqrst_aq23_t3 + p3_pqrst_aq24_t3 + p3_pqrst_aq25_t3 + 
+      p3_pqrst_aq26_t3 + p3_pqrst_aq27_t3 + p3_pqrst_aq28_t3 + p3_pqrst_aq29_t3 + 
+      p3_pqrst_aq30_t3 + p3_pqrst_aq31_t3 + p3_pqrst_aq32_t3 + p3_pqrst_aq33_t3 + 
+      p3_pqrst_aq34_t3 + p3_pqrst_aq35_t3 + p3_pqrst_aq36_t3 + p3_pqrst_aq37_t3 + 
+      p3_pqrst_aq38_t3 + p3_pqrst_aq39_t3 + p3_pqrst_aq40_t3 + p3_pqrst_aq41_t3 + 
+      p3_pqrst_aq42_t3 + p3_pqrst_aq43_t3 + p3_pqrst_aq44_t3
+
+parent_belief =~ parent_beliefs_t1 + parent_beliefs_t2 + parent_beliefs_t3
+# hot memory
+hot_memory_t1 =~ c1_actmq_q1_t1 + c1_actmq_q2_t1 + c1_actmq_q3_t1+ c1_actmq_q4_t1 + 
+      c1_actmq_q5_t1 + -1*c1_actmq_q6_t1 + c1_actmq_q7_t1 + c1_actmq_q8_t1 + c1_actmq_q9_t1 +
+      c1_actmq_q10_t1 + c1_actmq_q11_t1 + c1_actmq_q12_t1 + c1_actmq_q13_t1 + c1_actmq_q14_t1
+      + c1_actmq_q15_t1 + c1_actmq_q16_t1 + c1_actmq_q17_t1 + c1_actmq_q18_t1
+
+hot_memory_t2 =~ c2_actmq_q1_t2 + c2_actmq_q2_t2 + c2_actmq_q3_t2+ c2_actmq_q4_t2 + 
+      c2_actmq_q5_t2 + -1*c2_actmq_q6_t2 + c2_actmq_q7_t2 + c2_actmq_q8_t2 + c2_actmq_q9_t2 +
+      c2_actmq_q10_t2 + c2_actmq_q11_t2 + c2_actmq_q12_t2 + c2_actmq_q13_t2 + c2_actmq_q14_t2
+      + c2_actmq_q15_t2 + c2_actmq_q16_t2 + c2_actmq_q17_t2 + c2_actmq_q18_t2
+
+hot_memory_t3 =~ c3_actmq_q1_t3 + c3_actmq_q2_t3 + c3_actmq_q3_t3+ c3_actmq_q4_t3 + 
+      c3_actmq_q5_t3 + -1*c3_actmq_q6_t3 + c3_actmq_q7_t3 + c3_actmq_q8_t3 + c3_actmq_q9_t3 +
+      c3_actmq_q10_t3 + c3_actmq_q11_t3 + c3_actmq_q12_t3 + c3_actmq_q13_t3 + c3_actmq_q14_t3
+      + c3_actmq_q15_t3 + c3_actmq_q16_t3 + c3_actmq_q17_t3 + c3_actmq_q18_t3
+
+child_hot_memory =~ hot_memory_t1 + hot_memory_t2 + hot_memory_t3
+
+## pathways
+child_hot_memory =~ child_belief + child_behaviour
+child_belief =~ parent_belief + parent_behaviour
+child_behaviour =~ child_belief + parent_behaviour
+parent_behaviour =~ parent_belief
+
+
 
 
 
 ```
-
-
