@@ -5,6 +5,8 @@ format: revealjs
 editor: visual
 ---
 
+
+
 ## Quarto
 
 Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
@@ -19,6 +21,8 @@ When you click the **Render** button a document will be generated that includes:
 ## Data Exploration
 
 When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+
 
 ```{r}
 #| label: ‘Set up’
@@ -141,7 +145,11 @@ combined_all <- bind_rows(parent_all, child_all)
 
 ```
 
+
+
 ## Visual exploration
+
+
 
 ```{r}
 #| label: ‘Parent behaviour data visualisation’
@@ -244,7 +252,11 @@ ggplot(df_t1_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
 ```
 
+
+
 ## Design model
+
+
 
 ```{r}
 #| label: ‘create model’
@@ -425,3 +437,4 @@ lavaan::summary(fit, fit.measures = TRUE, standardized = TRUE)
 
 
 ```
+
