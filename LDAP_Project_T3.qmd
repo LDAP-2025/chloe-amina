@@ -1,6 +1,6 @@
 ---
 title: "LDP Project T3"
-author: "Amina Harrath and Chloe Hunt"
+author: "Chloe Hunt and Amina Harrath"
 format: revealjs
 editor: visual
 ---
