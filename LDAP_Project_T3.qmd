@@ -1,24 +1,39 @@
 ---
 title: "LDP Project T3"
-author: "Chloe Hunt, Amina Harrath"
+author: "Chloe Hunt and Amina Harrath"
 format: revealjs
 editor: visual
 ---
 
-## Quarto
+## Trauma and memory
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+We're examining factors that predict hot memory encoding of traumatic events in children. The project is grounded in the premise that traumatic experiences activate a psychological alarm response, leading to heightened amygdala activity and suppressed hippocampal function.
 
-## Bullets
+This neurological profile contributes to non-optimal encoding, in which emotional, cognitive, sensory and physiological aspects of the event (hot memories) are stored without their temporal and spatial context (cold memory). Such disturbances may underpin subjective experiences like flashbacks.
 
-When you click the **Render** button a document will be generated that includes:
+Interventions such as Narrative Exposure Therapy (NET) place traumatic events in chronological order as way to re-process the memories through a slow and detailed reliving connecting the hot and cold memory together with additional awareness and recognition of the wider context and meaning of these events for the individual.
 
--   Content authored with markdown
--   Output from executable code
+## Data set
 
-## Data Exploration
+We are using the UK Data Service PROTECT data set that captures measures exploring the role of trauma specific behaviours and parenting style in facilitating child psychological adjustment.
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+The data set includes self-reported questionnaires of children and parents who have experienced a traumatic event, including:
+
+-   Child Post-trauma Behaviour Questionnaire
+
+-   Child Post-trauma Cognition Inventory Questionnaire
+
+-   Parent Trauma Response Questionnaire
+
+## Data set
+
+The collection contains data from three time points:
+
+-   T1: Within six weeks of the traumatic event
+
+-   T2: Three months after the traumatic event
+
+-   T3: Six months after the traumatic event
 
 ```{r}
 #| label: ‘Set up’
@@ -30,6 +45,7 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(lavaan)
+library(gridExtra)
 
 ## Load data
 ## Parental questionnaires 
@@ -65,6 +81,7 @@ ACTMQ_t3 <- read_sav("00.Raw_Data/T3/Child and Teenager/c3_ACTMQ_(Adapted Child 
 
 
 ## Merge the dataset wide
+
 # Merge parent datasets
 # Standardize IDs to 3-digit character format with leading zeros
 PQRST_t1 <- PQRST_t1 |>
@@ -97,6 +114,8 @@ parent_t3 <- parent_t3 |> rename_with(~ paste0(.x, "_t3"), -ID)
 parent_all <- parent_t1 |>
   full_join(parent_t2, by = "ID") |>
   full_join(parent_t3, by = "ID")
+parent_all <- parent_all %>%
+  mutate(dyad_ID = gsub("P_", "", ID))
 
 
 ## Merge child datasets wide
@@ -123,29 +142,45 @@ child_all <- child_t1 |>
   full_join(child_t2, by = "ID") |>
   full_join(child_t3, by = "ID")
 
-## Combine parent and child datasets long
-## Add group variable
-parent_all <- parent_all |>
-  mutate(group = "parent")
-child_all <- child_all |>
-  mutate(group = "child")
+child_all <- child_all %>%
+  mutate(dyad_ID = gsub("C_", "", ID))
 
-# Rename ID so they are not duplicate
-parent_all <- parent_all |>
-  mutate(ID = paste0("P_", ID), group = "parent")
-child_all <- child_all |>
-  mutate(ID = paste0("C_", ID), group = "child")
 
-## Combine both datasets, wide
-combined_all <- bind_rows(parent_all, child_all)
+## 
+# Remove prefixes and create a common dyad ID
+dyad_all <- full_join(child_all, parent_all, by = "dyad_ID", suffix = c("_child", "_parent"))
+dyad_all <- dyad_all %>%
+  relocate(dyad_ID, ID_child, ID_parent, .before = everything())
 
+dyad_all_clean <- dyad_all %>%
+  select(dyad_ID,
+         matches("actmq_q(3|5|7|12|15|17)"),
+                 matches("cpbq_a_q(1|2|3|5)"),
+                  matches("cpbq_b_q(1|2|9|10|11)"),
+         matches("cptci_q(6|14|19|23|24|1|5|10|18|25)"),
+      matches("pqrst_bq(3|4|5|10|11|15|20|22|23|24|26|34)"),
+      matches("pqrst_aq(2|4|6|9|14|17|22|26|27|29|31|33|34|35|36|37|41|42)"))
+      
 ```
 
-## Visual exploration
+## Hypotheses
+
+1.  **H1:** Higher levels of maladaptive child beliefs will be associated with greater hot memory encoding of the traumatic event
+
+2.  **H2:** Higher levels of child maladaptive behaviours will be associated with greater hot memory encoding
+
+3.  **H3:** Child beliefs will indirectly influence hot memory encoding through their impact on child behaviours
+
+4.  **H4:** Parental trauma-related beliefs will be associated with more maladaptive child beliefs
+
+5.  **H5:** Parental trauma-related beliefs will influence child beliefs indirectly through their effect on parental behaviours
+
+## Parenting behaviour in response to trauma over time
 
 ```{r}
-#| label: ‘Parent behaviour data visualisation’
+#| label: ‘Parent behaviour data visualisation set up’
 #| echo: false
+#| output: false
 glimpse(parent_all)
 summary(parent_all)
 
@@ -189,7 +224,6 @@ PQRST_t1_ar_freq <- Reduce(`+`, PQRST_t1_ar_freq)
 print(PQRST_t1_ar_freq)
 
 
-
 # Converts a named frequency table to proportions
 to_proportions <- function(freq_table) {
   prop_table <- freq_table / sum(freq_table)
@@ -218,15 +252,196 @@ df_t1_ar_prop  <- prop_to_df(PQRST_t1_ar_prop,  "ar")
 # Combine
 df_t1_prop <- bind_rows(df_t1_op_prop, df_t1_dsd_prop, df_t1_aod_prop, df_t1_ar_prop)
 
+## PARENT BEHAVIOUR - T2
+PQRST_t2_freq <- lapply(PQRST_t2[ , !(names(PQRST_t2) %in% c("ID", "Date")) ], table)
+PQRST_t2_freq
+
+# overprotectiveness
+PQRST_t2_op_freq <- PQRST_t2_freq[c("p2_pqrst_bq34", "p2_pqrst_bq27", "p2_pqrst_bq2", "p2_pqrst_bq10", "p2_pqrst_bq18", "p2_pqrst_bq5")]
+PQRST_t2_op_freq <- Reduce(`+`, PQRST_t2_op_freq)
+print(PQRST_t2_op_freq)
+
+# discussions with child regarding danger/safety
+PQRST_t2_dsd_freq <- PQRST_t2_freq[c("p2_pqrst_bq12", "p2_pqrst_bq30", "p2_pqrst_bq22", "p2_pqrst_bq28", "p2_pqrst_bq33")]
+PQRST_t2_dsd_freq <- Reduce(`+`, PQRST_t2_dsd_freq)
+print(PQRST_t2_dsd_freq)
+
+# avoidance of discussion
+PQRST_t2_aod_freq <- PQRST_t2_freq[c("p2_pqrst_bq24", "p2_pqrst_bq1", "p2_pqrst_bq21", "p2_pqrst_bq4", "p2_pqrst_bq3", "p2_pqrst_bq29", "p2_pqrst_bq14", "p2_pqrst_bq15", "p2_pqrst_bq23", "p2_pqrst_bq17", "p2_pqrst_bq11", "p2_pqrst_bq7", "p2_pqrst_bq32", "p2_pqrst_bq13")]
+
+reverse_items <- c("p2_pqrst_bq23", "p2_pqrst_bq17", "p2_pqrst_bq11",
+                   "p2_pqrst_bq7", "p2_pqrst_bq32", "p2_pqrst_bq13")
+PQRST_t2_aod_freq[reverse_items] <- lapply(PQRST_t2_aod_freq[reverse_items], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+expected_levels <- as.character(0:3)
+PQRST_t2_aod_freq <- lapply(PQRST_t2_aod_freq, function(tbl) {
+  tbl_full <- setNames(rep(0, length(expected_levels)), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)
+})
+
+PQRST_t2_aod_freq <- Reduce(`+`, PQRST_t2_aod_freq)
+print(PQRST_t2_aod_freq)
+
+# avoiding reminders
+PQRST_t2_ar_freq <- PQRST_t2_freq[c("p2_pqrst_bq9", "p2_pqrst_bq6", "p2_pqrst_bq8", "p2_pqrst_bq31", "p2_pqrst_bq25", "p2_pqrst_bq20", "p2_pqrst_bq16", "p2_pqrst_bq19", "p2_pqrst_bq26")]
+
+reverse_items2 <- c("p2_pqrst_bq25", "p2_pqrst_bq20", "p2_pqrst_bq16",
+                   "p2_pqrst_bq19", "p2_pqrst_bq26")
+PQRST_t2_ar_freq[reverse_items] <- lapply(PQRST_t2_ar_freq[reverse_items2], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+
+PQRST_t2_ar_freq <- lapply(PQRST_t2_ar_freq, function(tbl) {
+  tbl_full <- setNames(rep(0, length(expected_levels)), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)
+})
+
+PQRST_t2_ar_freq <- Reduce(`+`, PQRST_t2_ar_freq)
+print(PQRST_t2_ar_freq)
+
+## converting to proportions
+PQRST_t2_op_prop  <- to_proportions(PQRST_t2_op_freq)
+PQRST_t2_dsd_prop <- to_proportions(PQRST_t2_dsd_freq)
+PQRST_t2_aod_prop <- to_proportions(PQRST_t2_aod_freq)
+PQRST_t2_ar_prop  <- to_proportions(PQRST_t2_ar_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+    Proportion = as.numeric(padded))} 
+
+df_t2_op_prop  <- prop_to_df(PQRST_t2_op_prop,  "op")
+df_t2_dsd_prop <- prop_to_df(PQRST_t2_dsd_prop, "dsd")
+df_t2_aod_prop <- prop_to_df(PQRST_t2_aod_prop, "aod")
+df_t2_ar_prop  <- prop_to_df(PQRST_t2_ar_prop,  "ar")
+
+df_t2_prop <- bind_rows(df_t2_op_prop, df_t2_dsd_prop, df_t2_aod_prop, df_t2_ar_prop)
+
+
+### PARENT BEHAVIOUR - T3
+PQRST_t3_freq <- lapply(PQRST_t3[ , !(names(PQRST_t3) %in% c("ID", "Date")) ], table)
+PQRST_t3_freq
+
+# overprotectiveness
+PQRST_t3_op_freq <- PQRST_t3_freq[c("p3_pqrst_bq34", "p3_pqrst_bq27", "p3_pqrst_bq2", "p3_pqrst_bq10", "p3_pqrst_bq18", "p3_pqrst_bq5")]
+
+PQRST_t3_op_freq <- lapply(PQRST_t3_op_freq, function(tbl) {
+  names(tbl) <- as.character(names(tbl))  # ensure names are characters
+  if ("4" %in% names(tbl)) {
+    # Add the count at '4' to '3', or create '3' if missing
+    tbl["3"] <- sum(tbl["3"], tbl["4"], na.rm = TRUE)
+    tbl <- tbl[names(tbl) != "4"]  # remove the '4' entry
+  }
+  return(tbl)})
+
+# Pad each frequency table with missing levels set to zero
+PQRST_t3_op_freq <- lapply(PQRST_t3_op_freq, function(tbl) {
+  full_tbl <- setNames(rep(0, length(expected_levels)), expected_levels)
+  full_tbl[names(tbl)] <- tbl
+  return(full_tbl)})
+
+PQRST_t3_op_freq <- Reduce(`+`, PQRST_t3_op_freq)
+print(PQRST_t3_op_freq)
+
+# discussions with child regarding danger/safety
+PQRST_t3_dsd_freq <- PQRST_t3_freq[c("p3_pqrst_bq12", "p3_pqrst_bq30", "p3_pqrst_bq22", "p3_pqrst_bq28", "p3_pqrst_bq33")]
+PQRST_t3_dsd_freq <- Reduce(`+`, PQRST_t3_dsd_freq)
+print(PQRST_t3_dsd_freq)
+
+# avoidance of discussion
+PQRST_t3_aod_freq <- PQRST_t3_freq[c("p3_pqrst_bq24", "p3_pqrst_bq1", "p3_pqrst_bq21", "p3_pqrst_bq4", "p3_pqrst_bq3", "p3_pqrst_bq29", "p3_pqrst_bq14", "p3_pqrst_bq15", "p3_pqrst_bq23", "p3_pqrst_bq17", "p3_pqrst_bq11", "p3_pqrst_bq7", "p3_pqrst_bq32", "p3_pqrst_bq13")]
+
+reverse_items <- c("p3_pqrst_bq23", "p3_pqrst_bq17", "p3_pqrst_bq11",
+                   "p3_pqrst_bq7", "p3_pqrst_bq32", "p3_pqrst_bq13")
+PQRST_t3_aod_freq[reverse_items] <- lapply(PQRST_t3_aod_freq[reverse_items], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+expected_levels <- as.character(0:3)
+PQRST_t3_aod_freq <- lapply(PQRST_t3_aod_freq, function(tbl) {
+  tbl_full <- setNames(rep(0, length(expected_levels)), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)
+})
+
+PQRST_t3_aod_freq <- Reduce(`+`, PQRST_t3_aod_freq)
+print(PQRST_t3_aod_freq)
+
+# avoiding reminders
+PQRST_t3_ar_freq <- PQRST_t3_freq[c("p3_pqrst_bq9", "p3_pqrst_bq6", "p3_pqrst_bq8", "p3_pqrst_bq31", "p3_pqrst_bq25", "p3_pqrst_bq20", "p3_pqrst_bq16", "p3_pqrst_bq19", "p3_pqrst_bq26")]
+
+reverse_items2 <- c("p3_pqrst_bq25", "p3_pqrst_bq20", "p3_pqrst_bq16",
+                   "p3_pqrst_bq19", "p3_pqrst_bq26")
+PQRST_t3_ar_freq[reverse_items] <- lapply(PQRST_t3_ar_freq[reverse_items2], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+PQRST_t3_ar_freq <- lapply(PQRST_t3_ar_freq, function(tbl) {
+  tbl_full <- setNames(rep(0, length(expected_levels)), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)
+})
+
+PQRST_t3_ar_freq <- Reduce(`+`, PQRST_t3_ar_freq)
+print(PQRST_t3_ar_freq)
+
+## converting to proportions
+PQRST_t3_op_prop  <- to_proportions(PQRST_t3_op_freq)
+PQRST_t3_dsd_prop <- to_proportions(PQRST_t3_dsd_freq)
+PQRST_t3_aod_prop <- to_proportions(PQRST_t3_aod_freq)
+PQRST_t3_ar_prop  <- to_proportions(PQRST_t3_ar_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+    Proportion = as.numeric(padded))} 
+
+df_t3_op_prop  <- prop_to_df(PQRST_t3_op_prop,  "op")
+df_t3_dsd_prop <- prop_to_df(PQRST_t3_dsd_prop, "dsd")
+df_t3_aod_prop <- prop_to_df(PQRST_t3_aod_prop, "aod")
+df_t3_ar_prop  <- prop_to_df(PQRST_t3_ar_prop,  "ar")
+
+df_t3_prop <- bind_rows(df_t3_op_prop, df_t3_dsd_prop, df_t3_aod_prop, df_t3_ar_prop)
+
+
+
+```
+
+```{r}
+#| label: ‘Parent behaviour data visualisation’
+#| echo: false
+#| output: true
+
+## Parent behaviour - t1
 # Plot proportional stacked bar chart
-ggplot(df_t1_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+p1_parent_behaviour <- ggplot(df_t1_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
   geom_bar(stat = "identity") +
   labs(
     x = "Parenting Behaviour",
-    y = "Proportion at T1",
+    y = "Proportion",
     fill = "Response Level",
-    title = "Stacked Bar Chart presenting the proportion of parenting behaviours related to trauma at T1"
-  ) +
+    title = "T1: within 6 weeks") +
   scale_x_discrete(
     labels = c(
       op = "Overprotectiveness",
@@ -237,155 +452,733 @@ ggplot(df_t1_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
   ) +
   scale_fill_manual(
     values = c("0" = "#d73027", "1" = "#fc8d59", "2" = "#fee090", "3" = "#91bfdb"),
-    labels = c("0" = "Not at all", "1" = "A little", "2" = "Some", "3" = "A lot")
+    labels = c("0" = "Not at all", "1" = "A little", "2" = "Some", "3" = "A lot")) +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+p2_parent_behaviour <- ggplot(df_t2_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Parenting Behaviour",
+    y = "Proportion at T2",
+    fill = "Response Level",
+    title = "T2: after 3 months"
+  ) + ylab(NULL) +
+  scale_x_discrete(
+    labels = c(
+      op = "Overprotectiveness",
+      dsd = "Danger/Safety Conversations",
+      aod = "Avoiding Trauma Discussion",
+      ar = "Avoiding Reminders"
+    )
   ) +
+  scale_fill_manual(
+    values = c(
+      "Not at all" = "#d73027",
+      "A little"   = "#fc8d59",
+      "Some"       = "#fee090",
+      "A lot"      = "#91bfdb"
+    )
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+p3_parent_behaviour <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Parenting Behaviour",
+    y = "Proportion at T3",
+    fill = "Response Level",
+    title = "T3: after 6 months") +
+  ylab(NULL) +
+  scale_x_discrete(
+    labels = c(
+      op = "Overprotectiveness",
+      dsd = "Danger/Safety Conversations",
+      aod = "Avoiding Trauma Discussion",
+      ar = "Avoiding Reminders")) +
+  scale_fill_manual(
+    values = c(
+      "Not at all" = "#d73027",
+      "A little"   = "#fc8d59",
+      "Some"       = "#fee090",
+      "A lot"      = "#91bfdb")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+grid.arrange(p1_parent_behaviour, p2_parent_behaviour, p3_parent_behaviour, ncol = 3)
+
+
+```
+
+## Parenting beliefs in response to trauma over time
+
+```{r}
+#| label: ‘Parent beliefs data visualisation set up’
+#| echo: false
+#| output: false
+
+### Parenting beliefs T1
+# Permanent change/symptoms as threatening
+PQRST_t1_pc_freq <- PQRST_t1_freq[c("p1_pqrst_aq27", "p1_pqrst_aq25", "p1_pqrst_aq8", "p1_pqrst_aq5", "p1_pqrst_aq12", "p1_pqrst_aq17", "p1_pqrst_aq9", "p1_pqrst_aq18")]
+
+PQRST_t1_pc_freq <- lapply(PQRST_t1_pc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_pc_freq <- Reduce(`+`, PQRST_t1_pc_freq)
+print(PQRST_t1_pc_freq)
+
+# family change and dynamic
+PQRST_t1_fc_freq <- PQRST_t1_freq[c("p1_pqrst_aq1", "p1_pqrst_aq29", "p1_pqrst_aq10", "p1_pqrst_aq38", "p1_pqrst_aq28")]
+
+PQRST_t1_fc_freq <- lapply(PQRST_t1_fc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_fc_freq <- Reduce(`+`, PQRST_t1_fc_freq)
+print(PQRST_t1_fc_freq)
+
+# vulnerability and threat
+PQRST_t1_vt_freq <- PQRST_t1_freq[c("p1_pqrst_aq23", "p1_pqrst_aq13", "p1_pqrst_aq19", "p1_pqrst_aq21", "p1_pqrst_aq39")]
+
+PQRST_t1_vt_freq <- lapply(PQRST_t1_vt_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_vt_freq <- Reduce(`+`, PQRST_t1_vt_freq)
+print(PQRST_t1_vt_freq)
+
+# other people's reactions
+PQRST_t1_opr_freq <- PQRST_t1_freq[c("p1_pqrst_aq44", "p1_pqrst_aq16", "p1_pqrst_aq34", "p1_pqrst_aq33", "p1_pqrst_aq4")]
+
+PQRST_t1_opr_freq <- lapply(PQRST_t1_opr_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_opr_freq <- Reduce(`+`, PQRST_t1_opr_freq)
+print(PQRST_t1_opr_freq)
+
+# Inflated responsibility for ensuring safety
+PQRST_t1_ir_freq <- PQRST_t1_freq[c("p1_pqrst_aq31", "p1_pqrst_aq2", "p1_pqrst_aq35", "p1_pqrst_aq30", "p1_pqrst_aq24")]
+
+PQRST_t1_ir_freq <- lapply(PQRST_t1_ir_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_ir_freq <- Reduce(`+`, PQRST_t1_ir_freq)
+print(PQRST_t1_ir_freq)
+
+# rumination
+PQRST_t1_r_freq <- PQRST_t1_freq[c("p1_pqrst_aq26", "p1_pqrst_aq14", "p1_pqrst_aq43", "p1_pqrst_aq42", "p1_pqrst_aq20", "p1_pqrst_aq3")]
+
+PQRST_t1_r_freq <- lapply(PQRST_t1_r_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_r_freq <- Reduce(`+`, PQRST_t1_r_freq)
+print(PQRST_t1_r_freq)
+
+# self-blame
+PQRST_t1_sb_freq <- PQRST_t1_freq[c("p1_pqrst_aq7", "p1_pqrst_aq32", "p1_pqrst_aq22", "p1_pqrst_aq11", "p1_pqrst_aq6")]
+
+PQRST_t1_sb_freq <- lapply(PQRST_t1_sb_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_sb_freq <- Reduce(`+`, PQRST_t1_sb_freq)
+print(PQRST_t1_sb_freq)
+
+# parental tolerance and emotion
+PQRST_t1_pte_freq <- PQRST_t1_freq[c("p1_pqrst_aq40", "p1_pqrst_aq15", "p1_pqrst_aq41", "p1_pqrst_aq36", "p1_pqrst_aq37")]
+
+PQRST_t1_pte_freq <- lapply(PQRST_t1_pte_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_pte_freq <- Reduce(`+`, PQRST_t1_pte_freq)
+print(PQRST_t1_pte_freq)
+
+## converting to proportions
+PQRST_t1_pc_prop  <- to_proportions(PQRST_t1_pc_freq)
+PQRST_t1_fc_prop  <- to_proportions(PQRST_t1_fc_freq)
+PQRST_t1_vt_prop  <- to_proportions(PQRST_t1_vt_freq)
+PQRST_t1_opr_prop  <- to_proportions(PQRST_t1_opr_freq)
+PQRST_t1_ir_prop  <- to_proportions(PQRST_t1_ir_freq)
+PQRST_t1_r_prop  <- to_proportions(PQRST_t1_r_freq)
+PQRST_t1_sb_prop  <- to_proportions(PQRST_t1_sb_freq)
+PQRST_t1_pte_prop  <- to_proportions(PQRST_t1_pte_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+    Proportion = as.numeric(padded))} 
+
+df_t1_pc_prop  <- prop_to_df(PQRST_t1_pc_prop,  "pc")
+df_t1_fc_prop  <- prop_to_df(PQRST_t1_fc_prop,  "fc")
+df_t1_vt_prop  <- prop_to_df(PQRST_t1_vt_prop,  "vt")
+df_t1_opr_prop <- prop_to_df(PQRST_t1_opr_prop, "opr")
+df_t1_ir_prop  <- prop_to_df(PQRST_t1_ir_prop,  "ir")
+df_t1_r_prop   <- prop_to_df(PQRST_t1_r_prop,   "r")
+df_t1_sb_prop  <- prop_to_df(PQRST_t1_sb_prop,  "sb")
+df_t1_pte_prop <- prop_to_df(PQRST_t1_pte_prop, "pte")
+
+
+df_t1_prop1 <- bind_rows(
+  df_t1_pc_prop,
+  df_t1_fc_prop,
+  df_t1_vt_prop,
+  df_t1_opr_prop,
+  df_t1_ir_prop,
+  df_t1_r_prop,
+  df_t1_sb_prop,
+  df_t1_pte_prop)
+
+### Parenting beliefs T2
+# Permanent change/symptoms as threatening
+PQRST_t2_pc_freq <- PQRST_t2_freq[c("p2_pqrst_aq27", "p2_pqrst_aq25", "p2_pqrst_aq8", "p2_pqrst_aq5", "p2_pqrst_aq12", "p2_pqrst_aq17", "p2_pqrst_aq9", "p2_pqrst_aq18")]
+ PQRST_t2_pc_freq <- lapply(PQRST_t2_pc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_pc_freq <- Reduce(`+`, PQRST_t2_pc_freq)
+print(PQRST_t2_pc_freq)
+ 
+# family change and dynamic
+PQRST_t2_fc_freq <- PQRST_t2_freq[c("p2_pqrst_aq1", "p2_pqrst_aq29", "p2_pqrst_aq10", "p2_pqrst_aq38", "p2_pqrst_aq28")]
+ 
+PQRST_t2_fc_freq <- lapply(PQRST_t2_fc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_fc_freq <- Reduce(`+`, PQRST_t2_fc_freq)
+print(PQRST_t2_fc_freq)
+ 
+# vulnerability and threat
+PQRST_t2_vt_freq <- PQRST_t2_freq[c("p2_pqrst_aq23", "p2_pqrst_aq13", "p2_pqrst_aq19", "p2_pqrst_aq21", "p2_pqrst_aq39")]
+ 
+PQRST_t2_vt_freq <- lapply(PQRST_t2_vt_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_vt_freq <- Reduce(`+`, PQRST_t2_vt_freq)
+print(PQRST_t2_vt_freq)
+ 
+# other people's reactions
+PQRST_t2_opr_freq <- PQRST_t2_freq[c("p2_pqrst_aq44", "p2_pqrst_aq16", "p2_pqrst_aq34", "p2_pqrst_aq33", "p2_pqrst_aq4")]
+ 
+PQRST_t2_opr_freq <- lapply(PQRST_t2_opr_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_opr_freq <- Reduce(`+`, PQRST_t2_opr_freq)
+print(PQRST_t2_opr_freq)
+ 
+# Inflated responsibility for ensuring safety
+PQRST_t2_ir_freq <- PQRST_t2_freq[c("p2_pqrst_aq31", "p2_pqrst_aq2", "p2_pqrst_aq35", "p2_pqrst_aq30", "p2_pqrst_aq24")]
+ 
+PQRST_t2_ir_freq <- lapply(PQRST_t2_ir_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_ir_freq <- Reduce(`+`, PQRST_t2_ir_freq)
+print(PQRST_t2_ir_freq)
+ 
+# rumination
+PQRST_t2_r_freq <- PQRST_t2_freq[c("p2_pqrst_aq26", "p2_pqrst_aq14", "p2_pqrst_aq43", "p2_pqrst_aq42", "p2_pqrst_aq20", "p2_pqrst_aq3")]
+ 
+PQRST_t2_r_freq <- lapply(PQRST_t2_r_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_r_freq <- Reduce(`+`, PQRST_t2_r_freq)
+print(PQRST_t2_r_freq)
+ 
+# self-blame
+PQRST_t2_sb_freq <- PQRST_t2_freq[c("p2_pqrst_aq7", "p2_pqrst_aq32", "p2_pqrst_aq22", "p2_pqrst_aq11", "p2_pqrst_aq6")]
+ 
+PQRST_t2_sb_freq <- lapply(PQRST_t2_sb_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_sb_freq <- Reduce(`+`, PQRST_t2_sb_freq)
+print(PQRST_t2_sb_freq)
+ 
+# parental tolerance and emotion
+PQRST_t2_pte_freq <- PQRST_t2_freq[c("p2_pqrst_aq40", "p2_pqrst_aq15", "p2_pqrst_aq41", "p2_pqrst_aq36", "p2_pqrst_aq37")]
+ 
+PQRST_t2_pte_freq <- lapply(PQRST_t2_pte_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_pte_freq <- Reduce(`+`, PQRST_t2_pte_freq)
+print(PQRST_t2_pte_freq)
+ 
+## converting to proportions
+PQRST_t2_pc_prop  <- to_proportions(PQRST_t2_pc_freq)
+PQRST_t2_fc_prop  <- to_proportions(PQRST_t2_fc_freq)
+PQRST_t2_vt_prop  <- to_proportions(PQRST_t2_vt_freq)
+PQRST_t2_opr_prop  <- to_proportions(PQRST_t2_opr_freq)
+PQRST_t2_ir_prop  <- to_proportions(PQRST_t2_ir_freq)
+PQRST_t2_r_prop  <- to_proportions(PQRST_t2_r_freq)
+PQRST_t2_sb_prop  <- to_proportions(PQRST_t2_sb_freq)
+PQRST_t2_pte_prop  <- to_proportions(PQRST_t2_pte_freq)
+ 
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+ 
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+ 
+  data.frame(
+	Group = group_name,
+	FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+	Proportion = as.numeric(padded))}
+ 
+df_t2_pc_prop  <- prop_to_df(PQRST_t2_pc_prop,  "pc")
+df_t2_fc_prop  <- prop_to_df(PQRST_t2_fc_prop,  "fc")
+df_t2_vt_prop  <- prop_to_df(PQRST_t2_vt_prop,  "vt")
+df_t2_opr_prop <- prop_to_df(PQRST_t2_opr_prop, "opr")
+df_t2_ir_prop  <- prop_to_df(PQRST_t2_ir_prop,  "ir")
+df_t2_r_prop   <- prop_to_df(PQRST_t2_r_prop,   "r")
+df_t2_sb_prop  <- prop_to_df(PQRST_t2_sb_prop,  "sb")
+df_t2_pte_prop <- prop_to_df(PQRST_t2_pte_prop, "pte")
+ 
+ 
+df_t2_prop2 <- bind_rows(
+  df_t2_pc_prop,
+  df_t2_fc_prop,
+  df_t2_vt_prop,
+  df_t2_opr_prop,
+  df_t2_ir_prop,
+  df_t2_r_prop,
+  df_t2_sb_prop,
+  df_t2_pte_prop)
+
+
+### Parent beliefs at T3
+# Permanent change/symptoms as threatening
+PQRST_t3_pc_freq <- PQRST_t3_freq[c("p3_pqrst_aq27", "p3_pqrst_aq25", "p3_pqrst_aq8", "p3_pqrst_aq5", "p3_pqrst_aq12", "p3_pqrst_aq17", "p3_pqrst_aq9", "p3_pqrst_aq18")]
+
+PQRST_t3_pc_freq <- lapply(PQRST_t3_pc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_pc_freq <- Reduce(`+`, PQRST_t3_pc_freq)
+print(PQRST_t3_pc_freq)
+
+# family change and dynamic
+PQRST_t3_fc_freq <- PQRST_t3_freq[c("p3_pqrst_aq1", "p3_pqrst_aq29", "p3_pqrst_aq10", "p3_pqrst_aq38", "p3_pqrst_aq28")]
+
+PQRST_t3_fc_freq <- lapply(PQRST_t3_fc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_fc_freq <- Reduce(`+`, PQRST_t3_fc_freq)
+print(PQRST_t3_fc_freq)
+
+# vulnerability and threat
+PQRST_t3_vt_freq <- PQRST_t3_freq[c("p3_pqrst_aq23", "p3_pqrst_aq13", "p3_pqrst_aq19", "p3_pqrst_aq21", "p3_pqrst_aq39")]
+
+PQRST_t3_vt_freq <- lapply(PQRST_t3_vt_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_vt_freq <- Reduce(`+`, PQRST_t3_vt_freq)
+print(PQRST_t3_vt_freq)
+
+# other people's reactions
+PQRST_t3_opr_freq <- PQRST_t3_freq[c("p3_pqrst_aq44", "p3_pqrst_aq16", "p3_pqrst_aq34", "p3_pqrst_aq33", "p3_pqrst_aq4")]
+
+PQRST_t3_opr_freq <- lapply(PQRST_t3_opr_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_opr_freq <- Reduce(`+`, PQRST_t3_opr_freq)
+print(PQRST_t3_opr_freq)
+
+# Inflated responsibility for ensuring safety
+PQRST_t3_ir_freq <- PQRST_t3_freq[c("p3_pqrst_aq31", "p3_pqrst_aq2", "p3_pqrst_aq35", "p3_pqrst_aq30", "p3_pqrst_aq24")]
+
+PQRST_t3_ir_freq <- lapply(PQRST_t3_ir_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_ir_freq <- Reduce(`+`, PQRST_t3_ir_freq)
+print(PQRST_t3_ir_freq)
+
+# rumination
+PQRST_t3_r_freq <- PQRST_t3_freq[c("p3_pqrst_aq26", "p3_pqrst_aq14", "p3_pqrst_aq43", "p3_pqrst_aq42", "p3_pqrst_aq20", "p3_pqrst_aq3")]
+
+PQRST_t3_r_freq <- lapply(PQRST_t3_r_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_r_freq <- Reduce(`+`, PQRST_t3_r_freq)
+print(PQRST_t3_r_freq)
+
+# self-blame
+PQRST_t3_sb_freq <- PQRST_t3_freq[c("p3_pqrst_aq7", "p3_pqrst_aq32", "p3_pqrst_aq22", "p3_pqrst_aq11", "p3_pqrst_aq6")]
+
+PQRST_t3_sb_freq <- lapply(PQRST_t3_sb_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_sb_freq <- Reduce(`+`, PQRST_t3_sb_freq)
+print(PQRST_t3_sb_freq)
+
+# parental tolerance and emotion
+PQRST_t3_pte_freq <- PQRST_t3_freq[c("p3_pqrst_aq40", "p3_pqrst_aq15", "p3_pqrst_aq41", "p3_pqrst_aq36", "p3_pqrst_aq37")]
+
+PQRST_t3_pte_freq <- lapply(PQRST_t3_pte_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_pte_freq <- Reduce(`+`, PQRST_t3_pte_freq)
+print(PQRST_t3_pte_freq)
+
+## converting to proportions
+PQRST_t3_pc_prop  <- to_proportions(PQRST_t3_pc_freq)
+PQRST_t3_fc_prop  <- to_proportions(PQRST_t3_fc_freq)
+PQRST_t3_vt_prop  <- to_proportions(PQRST_t3_vt_freq)
+PQRST_t3_opr_prop  <- to_proportions(PQRST_t3_opr_freq)
+PQRST_t3_ir_prop  <- to_proportions(PQRST_t3_ir_freq)
+PQRST_t3_r_prop  <- to_proportions(PQRST_t3_r_freq)
+PQRST_t3_sb_prop  <- to_proportions(PQRST_t3_sb_freq)
+PQRST_t3_pte_prop  <- to_proportions(PQRST_t3_pte_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+    Proportion = as.numeric(padded))} 
+
+df_t3_pc_prop  <- prop_to_df(PQRST_t3_pc_prop,  "pc")
+df_t3_fc_prop  <- prop_to_df(PQRST_t3_fc_prop,  "fc")
+df_t3_vt_prop  <- prop_to_df(PQRST_t3_vt_prop,  "vt")
+df_t3_opr_prop <- prop_to_df(PQRST_t3_opr_prop, "opr")
+df_t3_ir_prop  <- prop_to_df(PQRST_t3_ir_prop,  "ir")
+df_t3_r_prop   <- prop_to_df(PQRST_t3_r_prop,   "r")
+df_t3_sb_prop  <- prop_to_df(PQRST_t3_sb_prop,  "sb")
+df_t3_pte_prop <- prop_to_df(PQRST_t3_pte_prop, "pte")
+
+
+df_t3_prop3 <- bind_rows(
+  df_t3_pc_prop,
+  df_t3_fc_prop,
+  df_t3_vt_prop,
+  df_t3_opr_prop,
+  df_t3_ir_prop,
+  df_t3_r_prop,
+  df_t3_sb_prop,
+  df_t3_pte_prop)
+
+
+```
+
+```{r}
+#| label: ‘Parent belief data visualisation’
+#| echo: false
+#| output: true
+p1_parent_beliefs <- ggplot(df_t1_prop1, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Parenting Beliefs",
+    y = "Proportion at T1",
+    fill = "Response Level",
+    title = "T1: within 6 weeks") +
+  scale_x_discrete(
+    labels = c(
+      pc  = "Permanent change",
+      fc  = "Family change and damage",
+      vt  = "Vulnerability and threat",
+      opr = "Other people's reactions",
+      ir  = "Inflated responsibility for ensuring safety",
+      r   = "Rumination",
+      sb  = "Self-blame",
+      pte = "Parental tolerance of emotion")) +
+  scale_fill_manual(
+    values = c(
+      "Not at all" = "#d73027",
+      "A little"   = "#fc8d59",
+      "Some"       = "#fee090",
+      "A lot"      = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none",axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+p2_parent_beliefs <- ggplot(df_t2_prop2, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+	x = "Parenting Beliefs",
+	y = "Proportion at T2",
+	fill = "Response Level",
+	title = "T2: after 3 months") +
+  ylab(NULL) +
+  scale_x_discrete(
+	labels = c(
+  	pc  = "Permanent change",
+  	fc  = "Family change and damage",
+  	vt  = "Vulnerability and threat",
+  	opr = "Other people's reactions",
+  	ir  = "Inflated responsibility for ensuring safety",
+  	r   = "Rumination",
+  	sb  = "Self-blame",
+  	pte = "Parental tolerance of emotion")) +
+  scale_fill_manual(
+	values = c(
+  	"Not at all" = "#d73027",
+  	"A little"   = "#fc8d59",
+      "Some"   	= "#fee090",
+  	"A lot"  	= "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none",	axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+p3_parent_beliefs <- ggplot(df_t3_prop3, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs( x = "Parenting Beliefs",
+    y = "Proportion at T3",
+    fill = "Response Level",
+    title = "T3: after 6 months") +
+  ylab(NULL) +
+  scale_x_discrete(
+    labels = c(
+      pc  = "Permanent change",
+      fc  = "Family change and damage",
+      vt  = "Vulnerability and threat",
+      opr = "Other people's reactions",
+      ir  = "Inflated responsibility for ensuring safety",
+      r   = "Rumination",
+      sb  = "Self-blame",
+      pte = "Parental tolerance of emotion")) +
+  scale_fill_manual(
+    values = c(
+      "Not at all" = "#d73027",
+      "A little"   = "#fc8d59",
+      "Some"       = "#fee090",
+      "A lot"      = "#91bfdb")) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+grid.arrange(p1_parent_beliefs, p2_parent_beliefs, p3_parent_beliefs, ncol = 3)
+
 ```
 
 ## Design model
 
 ```{r}
 #| label: ‘create model’
+#| echo: false
 
+## create composite scores
+dyad_all_clean <- dyad_all_clean %>%
+  mutate(
+    hot_memory_t1 = rowMeans(select(., contains("actmq_q") & contains("c1_")), na.rm = TRUE),
+    cpbq_behaviours_t1 = rowMeans(select(., contains("cpbq") & contains("c1_")), na.rm = TRUE),
+    cptci_beliefs_t1 = rowMeans(select(., contains("cptci") & contains("c1_")), na.rm = TRUE),
+    pqrst_beliefs_t1 = rowMeans(select(., contains("pqrst_aq") & contains("p1_")), na.rm = TRUE),
+    pqrst_behaviours_t1 = rowMeans(select(., contains("pqrst_bq") & contains("p1_")), na.rm = TRUE),
+    
+    hot_memory_t2 = rowMeans(select(., contains("actmq_q") & contains("c2_")), na.rm = TRUE),
+    cpbq_behaviours_t2 = rowMeans(select(., contains("cpbq") & contains("c2_")), na.rm = TRUE),
+    cptci_beliefs_t2 = rowMeans(select(., contains("cptci") & contains("c2_")), na.rm = TRUE),
+    pqrst_beliefs_t2 = rowMeans(select(., contains("pqrst_aq") & contains("p2_")), na.rm = TRUE),
+    pqrst_behaviours_t2 = rowMeans(select(., contains("pqrst_bq") & contains("p2_")), na.rm = TRUE),
+    
+    hot_memory_t3 = rowMeans(select(., contains("actmq_q") & contains("c3_")), na.rm = TRUE),
+    cpbq_behaviours_t3 = rowMeans(select(., contains("cpbq") & contains("c3_")), na.rm = TRUE),
+    cptci_beliefs_t3 = rowMeans(select(., contains("cptci") & contains("c3_")), na.rm = TRUE),
+    pqrst_beliefs_t3 = rowMeans(select(., contains("pqrst_aq") & contains("p3_")), na.rm = TRUE),
+    pqrst_behaviours_t3 = rowMeans(select(., contains("pqrst_bq") & contains("p3_")), na.rm = TRUE))
+
+
+## specify the model
+mod_spec <- '
+## Create autoregressive paths
+# child hot memory
+hot_memory_t2 ~ hot_memory_t1
+hot_memory_t3 ~ hot_memory_t2 
+# child behaviour
+cpbq_behaviours_t2 ~ cpbq_behaviours_t1
+cpbq_behaviours_t3 ~ cpbq_behaviours_t2
+# child beliefs
+cptci_beliefs_t2 ~ cptci_beliefs_t1
+cptci_beliefs_t3 ~ cptci_beliefs_t2 
+# parent behaviour
+pqrst_behaviours_t2 ~ pqrst_behaviours_t1 
+pqrst_behaviours_t3 ~ pqrst_behaviours_t2
+# parent beliefs
+pqrst_beliefs_t2 ~ pqrst_beliefs_t1
+pqrst_beliefs_t3 ~ pqrst_beliefs_t2
+
+## Create cross-lagged direct paths
+# hot memory loaded on by child beliefs and child behaviour
+hot_memory_t2 ~ cpbq_behaviours_t1 + cptci_beliefs_t1
+hot_memory_t3 ~ cpbq_behaviours_t2 + cptci_beliefs_t2
+# child behaviour loaded on by child beliefs and parent behaviour 
+cpbq_behaviours_t2 ~ cptci_beliefs_t1 + pqrst_behaviours_t1
+cpbq_behaviours_t3 ~ cptci_beliefs_t2 + pqrst_behaviours_t2
+# child beliefs loaded on by parent behaviour and parent beliefs
+cptci_beliefs_t2 ~ pqrst_behaviours_t1 + pqrst_beliefs_t1
+cptci_beliefs_t3 ~ pqrst_behaviours_t2 + pqrst_beliefs_t2
+'
+
+```
+
+Run the model
+
+```{r}
+#| label: ‘run model’
+# run the model
+mod <- lavaan::sem(mod_spec, data = dyad_all_clean, missing = "ML")
+# summarise the model
+lavaan::summary(mod, fit.measures = TRUE, standardized = TRUE)
+
+```
+
+## Archive
+
+```{r}
+#Old code
 mod_spec <- '
 ## hot memory
-hot_memory_t1 =~ c1_actmq_q1_t1 + c1_actmq_q2_t1 + c1_actmq_q3_t1+ c1_actmq_q4_t1 + 
-      c1_actmq_q5_t1 + -1*c1_actmq_q6_t1 + c1_actmq_q7_t1 + c1_actmq_q8_t1 + c1_actmq_q9_t1 +
-      c1_actmq_q10_t1 + c1_actmq_q11_t1 + c1_actmq_q12_t1 + c1_actmq_q13_t1 + c1_actmq_q14_t1
-      + c1_actmq_q15_t1 + c1_actmq_q16_t1 + c1_actmq_q17_t1 + c1_actmq_q18_t1
+hot_memory_t1 =~ c1_actmq_q3_t1 + c1_actmq_q5_t1 + c1_actmq_q7_t1 + c1_actmq_q12_t1 + c1_actmq_q15_t1 + c1_actmq_q17_t1
 
-hot_memory_t2 =~ c2_actmq_q1_t2 + c2_actmq_q2_t2 + c2_actmq_q3_t2+ c2_actmq_q4_t2 + 
-      c2_actmq_q5_t2 + -1*c2_actmq_q6_t2 + c2_actmq_q7_t2 + c2_actmq_q8_t2 + c2_actmq_q9_t2 +
-      c2_actmq_q10_t2 + c2_actmq_q11_t2 + c2_actmq_q12_t2 + c2_actmq_q13_t2 + c2_actmq_q14_t2
-      + c2_actmq_q15_t2 + c2_actmq_q16_t2 + c2_actmq_q17_t2 + c2_actmq_q18_t2
+hot_memory_t2 =~ c2_actmq_q3_t2 + c2_actmq_q5_t2 + c2_actmq_q7_t2 + c2_actmq_q12_t2 + c2_actmq_q15_t2 + c2_actmq_q17_t2
 
-hot_memory_t3 =~ c3_actmq_q1_t3 + c3_actmq_q2_t3 + c3_actmq_q3_t3+ c3_actmq_q4_t3 + 
-      c3_actmq_q5_t3 + -1*c3_actmq_q6_t3 + c3_actmq_q7_t3 + c3_actmq_q8_t3 + c3_actmq_q9_t3 +
-      c3_actmq_q10_t3 + c3_actmq_q11_t3 + c3_actmq_q12_t3 + c3_actmq_q13_t3 + c3_actmq_q14_t3
-      + c3_actmq_q15_t3 + c3_actmq_q16_t3 + c3_actmq_q17_t3 + c3_actmq_q18_t3
+hot_memory_t3 =~c3_actmq_q3_t3 + c3_actmq_q5_t3 + c3_actmq_q7_t3 + c3_actmq_q12_t3 + c3_actmq_q15_t3 + c3_actmq_q17_t3
 
-## child behaviour paths
-cpbq_t1 =~ c1_cpbq_a_q1_t1 + c1_cpbq_a_q2_t1 + c1_cpbq_a_q3_t1 + c1_cpbq_a_q4_t1 +
-      c1_cpbq_a_q5_t1 + c1_cpbq_b_q1_t1 + c1_cpbq_b_q2_t1 + c1_cpbq_b_q3_t1 + c1_cpbq_b_q4_t1
-      + c1_cpbq_b_q5_t1 + c1_cpbq_b_q6_t1 + c1_cpbq_b_q7_t1 + c1_cpbq_b_q8_t1 +   
-      c1_cpbq_b_q9_t1 + c1_cpbq_b_q10_t1 + c1_cpbq_b_q11_t1
 
-cpbq_t2 =~ c2_cpbq_a_q1_t2 + c2_cpbq_a_q2_t2 + c2_cpbq_a_q3_t2 + c2_cpbq_a_q4_t2 +
-      c2_cpbq_a_q5_t2 + c2_cpbq_b_q1_t2 + c2_cpbq_b_q2_t2 + c2_cpbq_b_q3_t2 + c2_cpbq_b_q4_t2
-      + c2_cpbq_b_q5_t2 + c2_cpbq_b_q6_t2 + c2_cpbq_b_q7_t2 + c2_cpbq_b_q8_t2 + 
-      c2_cpbq_b_q9_t2 + c2_cpbq_b_q10_t2 + c2_cpbq_b_q11_t2
+## child behaviour
+cpbq_t1 =~c1_cpbq_a_q1_t1 + c1_cpbq_a_q2_t1 + c1_cpbq_a_q3_t1 + c1_cpbq_a_q5_t1 + c1_cpbq_b_q1_t1 + c1_cpbq_b_q2_t1 + c1_cpbq_b_q9_t1 + c1_cpbq_b_q10_t1 + c1_cpbq_b_q11_t1
 
-cpbq_t3 =~ c3_cpbq_a_q1_t3 + c3_cpbq_a_q2_t3 + c3_cpbq_a_q3_t3 + c3_cpbq_a_q4_t3 +
-      c3_cpbq_a_q5_t3 + c3_cpbq_b_q1_t3 + c3_cpbq_b_q2_t3 + c3_cpbq_b_q3_t3 + c3_cpbq_b_q4_t3
-      + c3_cpbq_b_q5_t3 + c3_cpbq_b_q6_t3 + c3_cpbq_b_q7_t3 + c3_cpbq_b_q8_t3 + 
-      c3_cpbq_b_q9_t3 + c3_cpbq_b_q10_t3 + c3_cpbq_b_q11_t3
+cpbq_t2 =~ c2_cpbq_a_q1_t2 + c2_cpbq_a_q2_t2 + c2_cpbq_a_q3_t2 + c2_cpbq_a_q5_t2 + c2_cpbq_b_q1_t2 + c2_cpbq_b_q2_t2 + c2_cpbq_b_q9_t2 + c2_cpbq_b_q10_t2 + c2_cpbq_b_q11_t2
+
+cpbq_t3 =~ c3_cpbq_a_q1_t3 + c3_cpbq_a_q2_t3 + c3_cpbq_a_q3_t3 + c3_cpbq_a_q5_t3 + c3_cpbq_b_q1_t3 + c3_cpbq_b_q2_t3 + c3_cpbq_b_q9_t3 + c3_cpbq_b_q10_t3 + c3_cpbq_b_q11_t3
+
+
 
 ## child beliefs
-cptci_t1 =~  c1_cptci_q4_t1 + c1_cptci_q6_t1 + c1_cptci_q8_t1 + c1_cptci_q13_t1 +
-      c1_cptci_q14_t1 + c1_cptci_q16_t1 + c1_cptci_q17_t1 + c1_cptci_q19_t1 + c1_cptci_q20_t1
-      + c1_cptci_q21_t1 + c1_cptci_q22_t1 + c1_cptci_q23_t1 + c1_cptci_q24_t1 + 
-      c1_cptci_q1_t1 + c1_cptci_q2_t1 + c1_cptci_q3_t1 + c1_cptci_q5_t1 + c1_cptci_q7_t1 + 
-      c1_cptci_q9_t1 + c1_cptci_q10_t1 + c1_cptci_q11_t1 + c1_cptci_q12_t1 + c1_cptci_q15_t1 
-      + c1_cptci_q18_t1 + c1_cptci_q25_t1
+cptci_t1 =~  c1_cptci_q6_t1 + c1_cptci_q14_t1 + c1_cptci_q19_t1 + c1_cptci_q23_t1 + c1_cptci_q24_t1 + c1_cptci_q1_t1 + c1_cptci_q5_t1 + c1_cptci_q10_t1 + c1_cptci_q18_t1 + c1_cptci_q25_t1
 
-cptci_t2 =~ c2_cptci_q4_t2 + c2_cptci_q6_t2 + c2_cptci_q8_t2 + c2_cptci_q13_t2 +
-      c2_cptci_q14_t2 + c2_cptci_q16_t2 + c2_cptci_q17_t2 + c2_cptci_q19_t2 + c2_cptci_q20_t2
-      + c2_cptci_q21_t2 + c2_cptci_q22_t2 + c2_cptci_q23_t2 + c2_cptci_q24_t2 + 
-      c2_cptci_q1_t2 + c2_cptci_q2_t2 + c2_cptci_q3_t2 + c2_cptci_q5_t2 + c2_cptci_q7_t2 + 
-      c2_cptci_q9_t2 + c2_cptci_q10_t2 + c2_cptci_q11_t2 + c2_cptci_q12_t2 + c2_cptci_q15_t2 
-      + c2_cptci_q18_t2 + c2_cptci_q25_t2
+cptci_t2 =~ c2_cptci_q6_t2 + c2_cptci_q14_t2 + c2_cptci_q19_t2 + c2_cptci_q23_t2 + c2_cptci_q24_t2 + c2_cptci_q1_t2 + c2_cptci_q5_t2 + c2_cptci_q10_t2 + c2_cptci_q18_t2 + c2_cptci_q25_t2
 
-cptci_t3 =~ c3_cptci_q4_t3 + c3_cptci_q6_t3 + c3_cptci_q8_t3 + c3_cptci_q13_t3 +
-      c3_cptci_q14_t3 + c3_cptci_q16_t3 + c3_cptci_q17_t3 + c3_cptci_q19_t3 + c3_cptci_q20_t3
-      + c3_cptci_q21_t3 + c3_cptci_q22_t3 + c3_cptci_q23_t3 + c3_cptci_q24_t3 + 
-      c3_cptci_q1_t3 + c3_cptci_q2_t3 + c3_cptci_q3_t3 + c3_cptci_q5_t3 + c3_cptci_q7_t3 + 
-      c3_cptci_q9_t3 + c3_cptci_q10_t3 + c3_cptci_q11_t3 + c3_cptci_q12_t3 + c3_cptci_q15_t3 
-      + c3_cptci_q18_t3 + c3_cptci_q25_t3
+cptci_t3 =~ c3_cptci_q6_t3 + c3_cptci_q14_t3 + c3_cptci_q19_t3 + c3_cptci_q23_t3 + c3_cptci_q24_t3 + c3_cptci_q1_t3 + c3_cptci_q5_t3 + c3_cptci_q10_t3 + c3_cptci_q18_t3 + c3_cptci_q25_t3
 
-## parent behaviours
-pqrst_t1 =~ p1_pqrst_bq1_t1 + p1_pqrst_bq2_t1 + p1_pqrst_bq3_t1 +
-      p1_pqrst_bq4_t1 + p1_pqrst_bq5_t1 + p1_pqrst_bq6_t1 + -1*p1_pqrst_bq7_t1 + 
-      p1_pqrst_bq8_t1 + p1_pqrst_bq9_t1 + p1_pqrst_bq10_t1 + -1*p1_pqrst_bq11_t1 + 
-      p1_pqrst_bq12_t1 + -1*p1_pqrst_bq13_t1 + p1_pqrst_bq14_t1 + p1_pqrst_bq15_t1 + 
-      -1*p1_pqrst_bq16_t1 + -1*p1_pqrst_bq17_t1 + p1_pqrst_bq18_t1 + -1*p1_pqrst_bq19_t1 + 
-      -1*p1_pqrst_bq20_t1 + p1_pqrst_bq21_t1 + p1_pqrst_bq22_t1 + -1*p1_pqrst_bq23_t1 + 
-      p1_pqrst_bq24_t1 + -1*p1_pqrst_bq25_t1 + -1*p1_pqrst_bq26_t1 + p1_pqrst_bq27_t1 + 
-      p1_pqrst_bq28_t1 + p1_pqrst_bq29_t1 + p1_pqrst_bq30_t1 + p1_pqrst_bq31_t1 + 
-      -1*p1_pqrst_bq32_t1 + p1_pqrst_bq33_t1 + p1_pqrst_bq34_t1 
 
-pqrst_t2 =~ p2_pqrst_bq1_t2 + p2_pqrst_bq2_t2 + p2_pqrst_bq3_t2 +
-      p2_pqrst_bq4_t2  + p2_pqrst_bq5_t2 + p2_pqrst_bq6_t2 + -1*p2_pqrst_bq7_t2 + 
-      p2_pqrst_bq8_t2 + p2_pqrst_bq9_t2 + p2_pqrst_bq10_t2 + -1*p2_pqrst_bq11_t2 + 
-      p2_pqrst_bq12_t2 + -1*p2_pqrst_bq13_t2 + p2_pqrst_bq14_t2 + p2_pqrst_bq15_t2 + 
-      -1*p2_pqrst_bq16_t2 + -1*p2_pqrst_bq17_t2 + p2_pqrst_bq18_t2 + -1*p2_pqrst_bq19_t2 + 
-      -1*p2_pqrst_bq20_t2 + p2_pqrst_bq21_t2 + p2_pqrst_bq22_t2 + -1*p2_pqrst_bq23_t2 + 
-      p2_pqrst_bq24_t2 + -1*p2_pqrst_bq25_t2 + -1*p2_pqrst_bq26_t2 + p2_pqrst_bq27_t2 + 
-      p2_pqrst_bq28_t2 + p2_pqrst_bq29_t2 + p2_pqrst_bq30_t2 + p2_pqrst_bq31_t2 + 
-      -1*p2_pqrst_bq32_t2 + p2_pqrst_bq33_t2 + p2_pqrst_bq34_t2 
+## Parent behaviours
+pqrst_t1 =~ p1_pqrst_bq3_t1 + p1_pqrst_bq4_t1 + p1_pqrst_bq5_t1 + p1_pqrst_bq10_t1 + p1_pqrst_bq11_t1 + p1_pqrst_bq15_t1 + p1_pqrst_bq20_t1 + p1_pqrst_bq22_t1 + p1_pqrst_bq23_t1 + p1_pqrst_bq24_t1 + p1_pqrst_bq26_t1 + p1_pqrst_bq34_t1
 
-pqrst_t3 =~ p3_pqrst_bq1_t3 + p3_pqrst_bq2_t3 + p3_pqrst_bq3_t3 +
-      p3_pqrst_bq4_t3  + p3_pqrst_bq5_t3 + p3_pqrst_bq6_t3 + -1*p3_pqrst_bq7_t3 +         
-      p3_pqrst_bq8_t3 + p3_pqrst_bq9_t3 + p3_pqrst_bq10_t3 + -1*p3_pqrst_bq11_t3 + 
-      p3_pqrst_bq12_t3 + -1*p3_pqrst_bq13_t3 + p3_pqrst_bq14_t3 + p3_pqrst_bq15_t3 + 
-      -1*p3_pqrst_bq16_t3 + -1*p3_pqrst_bq17_t3 + p3_pqrst_bq18_t3 + -1*p3_pqrst_bq19_t3 + 
-      -1*p3_pqrst_bq20_t3 + p3_pqrst_bq21_t3 + p3_pqrst_bq22_t3 + -1*p3_pqrst_bq23_t3 +
-      p3_pqrst_bq24_t3 + -1*p3_pqrst_bq25_t3 + -1*p3_pqrst_bq26_t3 + p3_pqrst_bq27_t3 +
-      p3_pqrst_bq28_t3 + p3_pqrst_bq29_t3 + p3_pqrst_bq30_t3 + p3_pqrst_bq31_t3 +
-      -1*p3_pqrst_bq32_t3 + p3_pqrst_bq33_t3 + p3_pqrst_bq34_t3 
+pqrst_t2 =~ p2_pqrst_bq3_t2 + p2_pqrst_bq4_t2 + p2_pqrst_bq5_t2 + p2_pqrst_bq10_t2 + p2_pqrst_bq11_t2 + p2_pqrst_bq15_t2 + p2_pqrst_bq20_t2 + p2_pqrst_bq22_t2 + p2_pqrst_bq23_t2 + p2_pqrst_bq24_t2 + p2_pqrst_bq26_t2 + p2_pqrst_bq34_t2
 
-poi_t1 =~ p1_poi_q1_t1 + p1_poi_q2_t1 + p1_poi_q3_t1 + p1_poi_q4_t1 +
-      p1_poi_q5_t1 + p1_poi_q6_t1 + p1_poi_q7_t1 + p1_poi_q8_t1 + p1_poi_q9_t1 +
-      p1_poi_q10_t1 + p1_poi_q11_t1 + p1_poi_q12_t1 + p1_poi_q13_t1 + p1_poi_q14_t1 +
-      p1_poi_q15_t1 + p1_poi_q16_t1 + p1_poi_q17_t1 + p1_poi_q18_t1 + p1_poi_q19_t1
-      
-poi_t2 =~ p2_poi_q1_t2 + p2_poi_q2_t2 + p2_poi_q3_t2 + p2_poi_q4_t2 + 
-      p2_poi_q5_t2 + p2_poi_q6_t2 + p2_poi_q7_t2 + p2_poi_q8_t2 + p2_poi_q9_t2 + 
-      p2_poi_q10_t2 + p2_poi_q11_t2 + p2_poi_q12_t2 + p2_poi_q13_t2 + p2_poi_q14_t2 + 
-      p2_poi_q15_t2 + p2_poi_q16_t2 + p2_poi_q17_t2 + p2_poi_q18_t2 + p2_poi_q19_t2
+pqrst_t3 =~  p3_pqrst_bq3_t3 + p3_pqrst_bq4_t3 + p3_pqrst_bq5_t3 + p3_pqrst_bq10_t3 + p3_pqrst_bq11_t3 + p3_pqrst_bq15_t3 + p3_pqrst_bq20_t3 + p3_pqrst_bq22_t3 + p3_pqrst_bq23_t3 + p3_pqrst_bq24_t3 + p3_pqrst_bq26_t3 + p3_pqrst_bq34_t3
 
-poi_t3 =~ p3_poi_q1_t3 + p3_poi_q2_t3 + p3_poi_q3_t3 + p3_poi_q4_t3 + 
-      p3_poi_q5_t3 + p3_poi_q6_t3 + p3_poi_q7_t3 + p3_poi_q8_t3 + p3_poi_q9_t3 + 
-      p3_poi_q10_t3 + p3_poi_q11_t3 + p3_poi_q12_t3 + p3_poi_q13_t3 + p3_poi_q14_t3 + 
-      p3_poi_q15_t3 + p3_poi_q16_t3 + p3_poi_q17_t3 + p3_poi_q18_t3 + p3_poi_q19_t3
 
 ## Parent beliefs
-pqrst_t1 =~ p1_pqrst_aq1_t1 + p1_pqrst_aq2_t1 + p1_pqrst_aq3_t1 + p1_pqrst_aq4_t1  +
-      p1_pqrst_aq5_t1 + p1_pqrst_aq6_t1 + p1_pqrst_aq7_t1 + p1_pqrst_aq8_t1 + p1_pqrst_aq9_t1
-      + p1_pqrst_aq10_t1 + p1_pqrst_aq11_t1 + p1_pqrst_aq12_t1 + p1_pqrst_aq13_t1 + 
-      p1_pqrst_aq14_t1 + p1_pqrst_aq15_t1 + p1_pqrst_aq16_t1 + p1_pqrst_aq17_t1 + 
-      p1_pqrst_aq18_t1 + p1_pqrst_aq19_t1 + p1_pqrst_aq20_t1 + p1_pqrst_aq21_t1 + 
-      p1_pqrst_aq22_t1 + p1_pqrst_aq23_t1 + p1_pqrst_aq24_t1 + p1_pqrst_aq25_t1 + 
-      p1_pqrst_aq26_t1 + p1_pqrst_aq27_t1 + p1_pqrst_aq28_t1 + p1_pqrst_aq29_t1 + 
-      p1_pqrst_aq30_t1 + p1_pqrst_aq31_t1 + p1_pqrst_aq32_t1 + p1_pqrst_aq33_t1 + 
-      p1_pqrst_aq34_t1 + p1_pqrst_aq35_t1 + p1_pqrst_aq36_t1 + p1_pqrst_aq37_t1 + 
-      p1_pqrst_aq38_t1 + p1_pqrst_aq39_t1 + p1_pqrst_aq40_t1 + p1_pqrst_aq41_t1 + 
-      p1_pqrst_aq42_t1 + p1_pqrst_aq43_t1 + p1_pqrst_aq44_t1
+pqrst_beliefs_t1 =~ p1_pqrst_aq2_t1 + p1_pqrst_aq4_t1   + p1_pqrst_aq6_t1 + p1_pqrst_aq9_t1
+      + p1_pqrst_aq14_t1 + p1_pqrst_aq17_t1 + 
+      p1_pqrst_aq22_t1 + 
+      p1_pqrst_aq26_t1 + p1_pqrst_aq27_t1 + p1_pqrst_aq29_t1 + p1_pqrst_aq31_t1 + p1_pqrst_aq33_t1 + 
+      p1_pqrst_aq34_t1 + p1_pqrst_aq35_t1 + p1_pqrst_aq36_t1 + p1_pqrst_aq37_t1 + p1_pqrst_aq41_t1 + 
+      p1_pqrst_aq42_t1
 
-pqrst_t2 =~ p2_pqrst_aq1_t2 + p2_pqrst_aq2_t2 + p2_pqrst_aq3_t2 + p2_pqrst_aq4_t2  +
-      p2_pqrst_aq5_t2 + p2_pqrst_aq6_t2 + p2_pqrst_aq7_t2 + p2_pqrst_aq8_t2 + p2_pqrst_aq9_t2
-      + p2_pqrst_aq10_t2 + p2_pqrst_aq11_t2 + p2_pqrst_aq12_t2 + p2_pqrst_aq13_t2 + 
-      p2_pqrst_aq14_t2 + p2_pqrst_aq15_t2 + p2_pqrst_aq16_t2 + p2_pqrst_aq17_t2 + 
-      p2_pqrst_aq18_t2 + p2_pqrst_aq19_t2 + p2_pqrst_aq20_t2 + p2_pqrst_aq21_t2 + 
-      p2_pqrst_aq22_t2 + p2_pqrst_aq23_t2 + p2_pqrst_aq24_t2 + p2_pqrst_aq25_t2 + 
-      p2_pqrst_aq26_t2 + p2_pqrst_aq27_t2 + p2_pqrst_aq28_t2 + p2_pqrst_aq29_t2 + 
-      p2_pqrst_aq30_t2 + p2_pqrst_aq31_t2 + p2_pqrst_aq32_t2 + p2_pqrst_aq33_t2 + 
-      p2_pqrst_aq34_t2 + p2_pqrst_aq35_t2 + p2_pqrst_aq36_t2 + p2_pqrst_aq37_t2 + 
-      p2_pqrst_aq38_t2 + p2_pqrst_aq39_t2 + p2_pqrst_aq40_t2 + p2_pqrst_aq41_t2 + 
-      p2_pqrst_aq42_t2 + p2_pqrst_aq43_t2 + p2_pqrst_aq44_t2
+pqrst_beliefs_t2 =~ p2_pqrst_aq2_t2 + p2_pqrst_aq4_t2 + p2_pqrst_aq6_t2 + p2_pqrst_aq9_t2 + p2_pqrst_aq14_t2 + p2_pqrst_aq17_t2 + p2_pqrst_aq22_t2 + p2_pqrst_aq26_t2 + p2_pqrst_aq27_t2 + p2_pqrst_aq29_t2 + p2_pqrst_aq31_t2 + p2_pqrst_aq33_t2 + p2_pqrst_aq34_t2 + p2_pqrst_aq35_t2 + p2_pqrst_aq36_t2 + p2_pqrst_aq37_t2 + p2_pqrst_aq41_t2 + p2_pqrst_aq42_t2
+
+
       
-pqrst_t3 =~ p3_pqrst_aq1_t3 + p3_pqrst_aq2_t3 + p3_pqrst_aq3_t3 + p3_pqrst_aq4_t3  +
-      p3_pqrst_aq5_t3 + p3_pqrst_aq6_t3 + p3_pqrst_aq7_t3 + p3_pqrst_aq8_t3 + p3_pqrst_aq9_t3
-      + p3_pqrst_aq10_t3 + p3_pqrst_aq11_t3 + p3_pqrst_aq12_t3 + p3_pqrst_aq13_t3 + 
-      p3_pqrst_aq14_t3 + p3_pqrst_aq15_t3 + p3_pqrst_aq16_t3 + p3_pqrst_aq17_t3 + 
-      p3_pqrst_aq18_t3 + p3_pqrst_aq19_t3 + p3_pqrst_aq20_t3 + p3_pqrst_aq21_t3 + 
-      p3_pqrst_aq22_t3 + p3_pqrst_aq23_t3 + p3_pqrst_aq24_t3 + p3_pqrst_aq25_t3 + 
-      p3_pqrst_aq26_t3 + p3_pqrst_aq27_t3 + p3_pqrst_aq28_t3 + p3_pqrst_aq29_t3 + 
-      p3_pqrst_aq30_t3 + p3_pqrst_aq31_t3 + p3_pqrst_aq32_t3 + p3_pqrst_aq33_t3 + 
-      p3_pqrst_aq34_t3 + p3_pqrst_aq35_t3 + p3_pqrst_aq36_t3 + p3_pqrst_aq37_t3 + 
-      p3_pqrst_aq38_t3 + p3_pqrst_aq39_t3 + p3_pqrst_aq40_t3 + p3_pqrst_aq41_t3 + 
-      p3_pqrst_aq42_t3 + p3_pqrst_aq43_t3 + p3_pqrst_aq44_t3
+pqrst_beliefs_t3 =~ p3_pqrst_aq2_t3 + p3_pqrst_aq4_t3 + p3_pqrst_aq6_t3 + p3_pqrst_aq9_t3 + p3_pqrst_aq14_t3 + p3_pqrst_aq17_t3 + p3_pqrst_aq22_t3 + p3_pqrst_aq26_t3 + p3_pqrst_aq27_t3 + p3_pqrst_aq29_t3 + p3_pqrst_aq31_t3 + p3_pqrst_aq33_t3 + p3_pqrst_aq34_t3 + p3_pqrst_aq35_t3 + p3_pqrst_aq36_t3 + p3_pqrst_aq37_t3 + p3_pqrst_aq41_t3 + p3_pqrst_aq42_t3
+
 
 ## Create autoregressive paths
 # child hot memory
@@ -400,28 +1193,42 @@ cptci_t3 ~ cptci_t2
 # parent behaviour
 pqrst_t2 ~ pqrst_t1 
 pqrst_t3 ~ pqrst_t2
-poi_t2 ~ poi_t1
-poi_t3 ~ poi_t2 
 # parent beliefs
-pqrst_t2 ~ pqrst_t1
-pqrst_t3 ~ pqrst_t2
+pqrst_beliefs_t2 ~ pqrst_beliefs_t1
+pqrst_beliefs_t3 ~ pqrst_beliefs_t2
 
 ## Create cross-lagged direct paths
 # hot memory loaded on by child beliefs and child behaviour
 hot_memory_t2 ~ cpbq_t1 + cptci_t1
 hot_memory_t3 ~ cpbq_t2 + cptci_t2
 # child behaviour loaded on by child beliefs and parent behaviour 
-cpbq_t2 ~ cptci_t1 + poi_t1 + pqrst_t1
-cpbq_t3 ~ cptci_t2 + poi_t2 + pqrst_t2
+cpbq_t2 ~ cptci_t1 + pqrst_t1
+cpbq_t3 ~ cptci_t2 + pqrst_t2
 # child beliefs loaded on by parent behaviour and parent beliefs
-cptci_t2 ~ poi_t1 + pqrst_t1 + pqrst_t1
-cptci_t3 ~ poi_t2 + pqrst_t2 + pqrst_t2
+cptci_t2 ~ pqrst_t1 + pqrst_t1
+cptci_t3 ~ pqrst_t2 + pqrst_t2
 '
+# Merge them into a single dyadic dataset
+# dyad_all <- full_join(child_all, parent_all, by = "dyad_ID", suffix = c("_child", "_parent"))
 
-# run the model
-mod <- lavaan::sem(mod_spec, data = combined_all, missing = "ML")
-# summarise the model
-lavaan::summary(fit, fit.measures = TRUE, standardized = TRUE)
+# Merge them into a single dyadic dataset
+# dyad_all <- full_join(child_all, parent_all, by = "dyad_ID", suffix = c("_child", "_parent"))
 
+
+## Combine parent and child datasets long
+## Add group variable
+# parent_all <- parent_all |>
+#  mutate(group = "parent")
+# child_all <- child_all |>
+#  mutate(group = "child")
+
+# Rename ID so they are not duplicate
+# parent_all <- parent_all |>
+#  mutate(ID = paste0("P_", ID), group = "parent")
+# child_all <- child_all |>
+#  mutate(ID = paste0("C_", ID), group = "child")
+
+## Combine both datasets, wide
+# combined_all <- bind_rows(parent_all, child_all)
 
 ```

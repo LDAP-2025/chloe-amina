@@ -10,7 +10,7 @@
 <link href="LDAP_Project_T3_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.5.57">
 
-  <meta name="author" content="Chloe Hunt, Amina Harrath">
+  <meta name="author" content="Chloe Hunt and Amina Harrath">
   <title>LDP Project T3</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -331,913 +331,211 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Chloe Hunt, Amina Harrath 
+Chloe Hunt and Amina Harrath 
 </div>
 </div>
 </div>
 
 </section>
-<section id="quarto" class="slide level2">
-<h2>Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <a href="https://quarto.org/docs/presentations/" class="uri">https://quarto.org/docs/presentations/</a>.</p>
+<section id="trauma-and-memory" class="slide level2">
+<h2>Trauma and memory</h2>
+<p>We’re examining factors that predict hot memory encoding of traumatic events in children. The project is grounded in the premise that traumatic experiences activate a psychological alarm response, leading to heightened amygdala activity and suppressed hippocampal function.</p>
+<p>This neurological profile contributes to non-optimal encoding, in which emotional, cognitive, sensory and physiological aspects of the event (hot memories) are stored without their temporal and spatial context (cold memory). Such disturbances may underpin subjective experiences like flashbacks.</p>
+<p>Interventions such as Narrative Exposure Therapy (NET) place traumatic events in chronological order as way to re-process the memories through a slow and detailed reliving connecting the hot and cold memory together with additional awareness and recognition of the wider context and meaning of these events for the individual.</p>
 </section>
-<section id="bullets" class="slide level2">
-<h2>Bullets</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes:</p>
+<section id="data-set" class="slide level2">
+<h2>Data set</h2>
+<p>We are using the UK Data Service PROTECT data set that captures measures exploring the role of trauma specific behaviours and parenting style in facilitating child psychological adjustment.</p>
+<p>The data set includes self-reported questionnaires of children and parents who have experienced a traumatic event, including:</p>
 <ul>
-<li>Content authored with markdown</li>
-<li>Output from executable code</li>
+<li><p>Child Post-trauma Behaviour Questionnaire</p></li>
+<li><p>Child Post-trauma Cognition Inventory Questionnaire</p></li>
+<li><p>Parent Trauma Response Questionnaire</p></li>
 </ul>
 </section>
-<section id="data-exploration" class="slide level2">
-<h2>Data Exploration</h2>
-<p>When you click the <strong>Render</strong> button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
-<p>Visual exploration</p>
+<section id="data-set-1" class="slide level2">
+<h2>Data set</h2>
+<p>The collection contains data from three time points:</p>
+<ul>
+<li><p>T1: Within six weeks of the traumatic event</p></li>
+<li><p>T2: Three months after the traumatic event</p></li>
+<li><p>T3: Six months after the traumatic event</p></li>
+</ul>
+</section>
+<section id="hypotheses" class="slide level2">
+<h2>Hypotheses</h2>
+<ol type="1">
+<li><p><strong>H1:</strong> Higher levels of maladaptive child beliefs will be associated with greater hot memory encoding of the traumatic event</p></li>
+<li><p><strong>H2:</strong> Higher levels of child maladaptive behaviours will be associated with greater hot memory encoding</p></li>
+<li><p><strong>H3:</strong> Child beliefs will indirectly influence hot memory encoding through their impact on child behaviours</p></li>
+<li><p><strong>H4:</strong> Parental trauma-related beliefs will be associated with more maladaptive child beliefs</p></li>
+<li><p><strong>H5:</strong> Parental trauma-related beliefs will influence child beliefs indirectly through their effect on parental behaviours</p></li>
+</ol>
+</section>
+<section id="parenting-behaviour-in-response-to-trauma-over-time" class="slide level2">
+<h2>Parenting behaviour in response to trauma over time</h2>
+
+<img data-src="LDAP_Project_T3_files/figure-revealjs/‘Parent%20behaviour%20data%20visualisation’-1.png" width="960" class="r-stretch"></section>
+<section id="parenting-beliefs-in-response-to-trauma-over-time" class="slide level2">
+<h2>Parenting beliefs in response to trauma over time</h2>
+
+<img data-src="LDAP_Project_T3_files/figure-revealjs/‘Parent%20belief%20data%20visualisation’-1.png" width="960" class="r-stretch"></section>
+<section id="design-model" class="slide level2">
+<h2>Design model</h2>
+<p>Run the model</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 127
-Columns: 293
-$ ID               &lt;chr&gt; "P_001", "P_003", "P_004", "P_006", "P_007", "P_008",…
-$ p1_pqrst_aq1_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0…
-$ p1_pqrst_aq2_t1  &lt;dbl+lbl&gt; 2, 3, 0, 1, 0, 2, 3, 0, 0, 3, 1, 0, 0, 2, 2, 1, 1…
-$ p1_pqrst_aq3_t1  &lt;dbl+lbl&gt; 3, 2, 1, 1, 2, 3, 3, 1, 1, 2, 0, 0, 1, 3, 1, 0, 2…
-$ p1_pqrst_aq4_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1…
-$ p1_pqrst_aq5_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0…
-$ p1_pqrst_aq6_t1  &lt;dbl+lbl&gt;  1,  0,  0,  0,  0,  0,  2,  0,  1, NA,  0,  0,  …
-$ p1_pqrst_aq7_t1  &lt;dbl+lbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1…
-$ p1_pqrst_aq8_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0…
-$ p1_pqrst_aq9_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0…
-$ p1_pqrst_aq10_t1 &lt;dbl+lbl&gt; 0, 1, 0, 0, 1, 0, 3, 0, 0, 0, 0, 0, 3, 0, 1, 0, 0…
-$ p1_pqrst_aq11_t1 &lt;dbl+lbl&gt; 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq12_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq13_t1 &lt;dbl+lbl&gt; 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0…
-$ p1_pqrst_aq14_t1 &lt;dbl+lbl&gt; 3, 1, 0, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq15_t1 &lt;dbl+lbl&gt; 1, 1, 0, 0, 2, 2, 2, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1…
-$ p1_pqrst_aq16_t1 &lt;dbl+lbl&gt; 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1…
-$ p1_pqrst_aq17_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0…
-$ p1_pqrst_aq18_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0…
-$ p1_pqrst_aq19_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0…
-$ p1_pqrst_aq20_t1 &lt;dbl+lbl&gt; 1, 1, 0, 0, 1, 1, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1…
-$ p1_pqrst_aq21_t1 &lt;dbl+lbl&gt; 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0…
-$ p1_pqrst_aq22_t1 &lt;dbl+lbl&gt; 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq23_t1 &lt;dbl+lbl&gt; 0, 2, 0, 1, 1, 2, 1, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0…
-$ p1_pqrst_aq24_t1 &lt;dbl+lbl&gt; 0, 2, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq25_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq26_t1 &lt;dbl+lbl&gt; 3, 3, 0, 1, 1, 3, 3, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1…
-$ p1_pqrst_aq27_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0…
-$ p1_pqrst_aq28_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq29_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0…
-$ p1_pqrst_aq30_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq31_t1 &lt;dbl+lbl&gt; 3, 0, 0, 2, 0, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1…
-$ p1_pqrst_aq32_t1 &lt;dbl+lbl&gt; 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq33_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0…
-$ p1_pqrst_aq34_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_aq35_t1 &lt;dbl+lbl&gt; 3, 3, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1…
-$ p1_pqrst_aq36_t1 &lt;dbl+lbl&gt; 3, 3, 0, 2, 1, 2, 3, 0, 1, 2, 1, 2, 3, 2, 2, 1, 2…
-$ p1_pqrst_aq37_t1 &lt;dbl+lbl&gt; 0, 2, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1…
-$ p1_pqrst_aq38_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1…
-$ p1_pqrst_aq39_t1 &lt;dbl+lbl&gt; 0, 3, 0, 1, 1, 3, 1, 1, 1, 0, 0, 2, 0, 2, 0, 0, 0…
-$ p1_pqrst_aq40_t1 &lt;dbl+lbl&gt; 3, 2, 0, 0, 1, 3, 3, 0, 1, 2, 1, 0, 1, 2, 0, 1, 2…
-$ p1_pqrst_aq41_t1 &lt;dbl+lbl&gt; 0, 2, 0, 0, 1, 3, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2…
-$ p1_pqrst_aq42_t1 &lt;dbl+lbl&gt; 0, 1, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0…
-$ p1_pqrst_aq43_t1 &lt;dbl+lbl&gt; 0, 0, 0, 1, 0, 3, 3, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1…
-$ p1_pqrst_aq44_t1 &lt;dbl+lbl&gt; 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1…
-$ p1_pqrst_bq1_t1  &lt;dbl+lbl&gt; 1, 1, 0, 0, 2, 1, 2, 0, 0, 0, 0, 0, 2, 0, 1, 0, 1…
-$ p1_pqrst_bq2_t1  &lt;dbl+lbl&gt; 0, 3, 1, 2, 2, 2, 3, 1, 1, 1, 1, 0, 3, 2, 1, 0, 1…
-$ p1_pqrst_bq3_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_bq4_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0…
-$ p1_pqrst_bq5_t1  &lt;dbl+lbl&gt; 0, 0, 0, 2, 0, 1, 3, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0…
-$ p1_pqrst_bq6_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_bq7_t1  &lt;dbl+lbl&gt; 2, 3, 2, 3, 3, 3, 3, 1, 2, 2, 2, 1, 1, 3, 1, 2, 2…
-$ p1_pqrst_bq8_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0…
-$ p1_pqrst_bq9_t1  &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_bq10_t1 &lt;dbl+lbl&gt; 1, 0, 0, 2, 0, 1, 3, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0…
-$ p1_pqrst_bq11_t1 &lt;dbl+lbl&gt; 1, 3, 2, 3, 3, 3, 2, 3, 2, 3, 3, 1, 2, 2, 1, 1, 2…
-$ p1_pqrst_bq12_t1 &lt;dbl+lbl&gt; 2, 3, 2, 3, 1, 3, 2, 2, 2, 3, 1, 1, 1, 3, 1, 1, 1…
-$ p1_pqrst_bq13_t1 &lt;dbl+lbl&gt; 2, 3, 2, 3, 2, 3, 2, 1, 2, 2, 1, 1, 1, 1, 1, 2, 2…
-$ p1_pqrst_bq14_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0…
-$ p1_pqrst_bq15_t1 &lt;dbl+lbl&gt; 0, 1, 0, 1, 2, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0…
-$ p1_pqrst_bq16_t1 &lt;dbl+lbl&gt; 3, 3, 2, 2, 0, 3, 0, 3, 2, 3, 2, 3, 3, 2, 1, 3, 2…
-$ p1_pqrst_bq17_t1 &lt;dbl+lbl&gt; 3, 3, 1, 2, 3, 3, 3, 3, 3, 3, 3, 1, 2, 3, 2, 2, 2…
-$ p1_pqrst_bq18_t1 &lt;dbl+lbl&gt; 3, 3, 0, 3, 3, 2, 3, 0, 3, 3, 1, 1, 0, 1, 1, 1, 1…
-$ p1_pqrst_bq19_t1 &lt;dbl+lbl&gt; 3, 3, 1, 2, 3, 1, 1, 3, 3, 3, 3, 0, 3, 3, 0, 3, 2…
-$ p1_pqrst_bq20_t1 &lt;dbl+lbl&gt; 3, 0, 3, 2, 3, 2, 0, 3, 3, 3, 3, 3, 3, 2, 0, 3, 1…
-$ p1_pqrst_bq21_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0…
-$ p1_pqrst_bq22_t1 &lt;dbl+lbl&gt; 0, 2, 0, 1, 0, 3, 0, 2, 0, 3, 0, 1, 0, 2, 2, 0, 2…
-$ p1_pqrst_bq23_t1 &lt;dbl+lbl&gt; 1, 3, 3, 1, 0, 3, 1, 3, 2, 3, 3, 2, 1, 2, 1, 2, 2…
-$ p1_pqrst_bq24_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0…
-$ p1_pqrst_bq25_t1 &lt;dbl+lbl&gt;  0,  3,  3,  1,  0,  0,  1,  2,  2,  0,  2,  1,  …
-$ p1_pqrst_bq26_t1 &lt;dbl+lbl&gt; 3, 3, 3, 2, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 0, 3, 2…
-$ p1_pqrst_bq27_t1 &lt;dbl+lbl&gt; 3, 0, 0, 0, 0, 3, 3, 0, 2, 0, 1, 0, 2, 0, 0, 0, 0…
-$ p1_pqrst_bq28_t1 &lt;dbl+lbl&gt; 3, 2, 3, 1, 2, 3, 3, 2, 3, 3, 0, 1, 0, 1, 0, 3, 1…
-$ p1_pqrst_bq29_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0…
-$ p1_pqrst_bq30_t1 &lt;dbl+lbl&gt; 3, 1, 0, 2, 0, 3, 3, 0, 0, 0, 0, 0, 0, 3, 0, 2, 1…
-$ p1_pqrst_bq31_t1 &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_pqrst_bq32_t1 &lt;dbl+lbl&gt; 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 2…
-$ p1_pqrst_bq33_t1 &lt;dbl+lbl&gt; 3, 2, 0, 1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0…
-$ p1_pqrst_bq34_t1 &lt;dbl+lbl&gt; 1, 1, 0, 1, 0, 3, 3, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1…
-$ p1_poi_q1_t1     &lt;dbl+lbl&gt; 4, 4, 1, 2, 4, 1, 4, 1, 3, 3, 3, 3, 3, 4, 4, 2, 2…
-$ p1_poi_q2_t1     &lt;dbl+lbl&gt;  4,  1,  2,  3,  2,  4,  3,  1,  2,  1,  0,  4,  …
-$ p1_poi_q3_t1     &lt;dbl+lbl&gt;  4,  2,  0,  3,  1,  1,  4,  1,  0,  3,  2,  1,  …
-$ p1_poi_q4_t1     &lt;dbl+lbl&gt; 4, 3, 1, 3, 2, 0, 4, 1, 0, 4, 3, 1, 0, 2, 2, 0, 0…
-$ p1_poi_q5_t1     &lt;dbl+lbl&gt; 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
-$ p1_poi_q6_t1     &lt;dbl+lbl&gt; 4, 4, 1, 1, 4, 0, 4, 0, 3, 4, 2, 2, 2, 1, 0, 4, 1…
-$ p1_poi_q7_t1     &lt;dbl+lbl&gt; 2, 2, 0, 3, 2, 2, 3, 1, 1, 3, 1, 3, 0, 1, 1, 2, 2…
-$ p1_poi_q8_t1     &lt;dbl+lbl&gt; 4, 2, 0, 2, 1, 0, 2, 0, 3, 4, 1, 1, 1, 1, 0, 0, 0…
-$ p1_poi_q9_t1     &lt;dbl+lbl&gt; 2, 2, 1, 2, 2, 2, 4, 1, 1, 4, 1, 0, 1, 1, 0, 1, 0…
-$ p1_poi_q10_t1    &lt;dbl+lbl&gt; 2, 3, 2, 3, 1, 2, 2, 1, 0, 4, 2, 0, 0, 0, 1, 0, 1…
-$ p1_poi_q11_t1    &lt;dbl+lbl&gt; 2, 1, 2, 0, 0, 0, 0, 1, 3, 4, 1, 2, 0, 0, 0, 0, 0…
-$ p1_poi_q12_t1    &lt;dbl+lbl&gt; 2, 0, 1, 1, 0, 0, 0, 1, 0, 4, 1, 0, 2, 1, 1, 0, 0…
-$ p1_poi_q13_t1    &lt;dbl+lbl&gt; 0, 4, 1, 4, 0, 1, 2, 0, 3, 4, 0, 2, 0, 1, 1, 0, 0…
-$ p1_poi_q14_t1    &lt;dbl+lbl&gt; 4, 0, 1, 1, 0, 4, 0, 0, 3, 2, 1, 0, 0, 0, 0, 0, 0…
-$ p1_poi_q15_t1    &lt;dbl+lbl&gt; 0, 0, 1, 2, 0, 4, 4, 0, 3, 2, 0, 0, 0, 1, 1, 0, 0…
-$ p1_poi_q16_t1    &lt;dbl+lbl&gt; 0, 0, 0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 3, 0, 0, 0, 0…
-$ p1_poi_q17_t1    &lt;dbl+lbl&gt; 2, 2, 1, 1, 0, 0, 2, 1, 0, 3, 1, 0, 2, 0, 3, 0, 0…
-$ p1_poi_q18_t1    &lt;dbl+lbl&gt; 4, 4, 1, 3, 0, 2, 4, 1, 1, 4, 2, 1, 3, 2, 3, 2, 2…
-$ p1_poi_q19_t1    &lt;dbl+lbl&gt; 2, 4, 1, 3, 1, 0, 2, 2, 0, 3, 1, 0, 1, 2, 2, 2, 2…
-$ p2_pqrst_aq1_t2  &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq2_t2  &lt;dbl+lbl&gt;  1, NA,  0,  2,  0,  0,  3,  0,  0, NA,  1,  0,  …
-$ p2_pqrst_aq3_t2  &lt;dbl+lbl&gt;  2, NA,  0,  1,  1,  3,  3,  1,  1, NA,  0,  0,  …
-$ p2_pqrst_aq4_t2  &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq5_t2  &lt;dbl+lbl&gt;  0, NA,  0,  0,  1,  1,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq6_t2  &lt;dbl+lbl&gt;  1, NA,  0,  0,  0,  0,  2,  0,  1, NA,  0,  0,  …
-$ p2_pqrst_aq7_t2  &lt;dbl+lbl&gt;  1, NA,  1,  0,  0,  0,  2,  0,  1, NA,  0,  0,  …
-$ p2_pqrst_aq8_t2  &lt;dbl+lbl&gt;  0, NA,  0,  0,  1,  0,  1,  0,  0, NA,  0,  1,  …
-$ p2_pqrst_aq9_t2  &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  2,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq10_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq11_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq12_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq13_t2 &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  0,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq14_t2 &lt;dbl+lbl&gt;  1, NA,  0,  0,  2,  2,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq15_t2 &lt;dbl+lbl&gt;  1, NA,  0,  0,  2,  2,  3,  0,  0, NA,  0,  1,  …
-$ p2_pqrst_aq16_t2 &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq17_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq18_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  2,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq19_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq20_t2 &lt;dbl+lbl&gt;  1, NA,  0,  0,  0,  1,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq21_t2 &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  1,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq22_t2 &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  0,  0,  0,  1, NA,  0,  0,  …
-$ p2_pqrst_aq23_t2 &lt;dbl+lbl&gt;  0, NA,  0,  2,  1,  1,  2,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq24_t2 &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  0,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq25_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq26_t2 &lt;dbl+lbl&gt;  1, NA,  0,  2,  0,  3,  3,  0,  1, NA,  1,  0,  …
-$ p2_pqrst_aq27_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq28_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq29_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq30_t2 &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq31_t2 &lt;dbl+lbl&gt;  0, NA,  0,  2,  1,  0,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq32_t2 &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  0,  2,  0,  1, NA,  0,  0,  …
-$ p2_pqrst_aq33_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq34_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq35_t2 &lt;dbl+lbl&gt;  1, NA,  0,  3,  0,  3,  3,  0,  0, NA,  0,  1,  …
-$ p2_pqrst_aq36_t2 &lt;dbl+lbl&gt;  3, NA,  0,  2,  2,  3,  3,  1,  1, NA,  1,  1,  …
-$ p2_pqrst_aq37_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq38_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq39_t2 &lt;dbl+lbl&gt;  0, NA,  0,  2,  1,  3,  3,  0,  0, NA,  0,  2,  …
-$ p2_pqrst_aq40_t2 &lt;dbl+lbl&gt;  1, NA,  0,  0,  1,  0,  3,  0,  2, NA,  0,  0,  …
-$ p2_pqrst_aq41_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  1,  2,  2,  0,  1, NA,  0,  0,  …
-$ p2_pqrst_aq42_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq43_t2 &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  0,  2,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_aq44_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq1_t2  &lt;dbl+lbl&gt;  1, NA,  0,  1,  0,  0,  1,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq2_t2  &lt;dbl+lbl&gt;  0, NA,  1,  2,  1,  0,  3,  0,  1, NA,  0,  1,  …
-$ p2_pqrst_bq3_t2  &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq4_t2  &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  2,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq5_t2  &lt;dbl+lbl&gt;  0, NA,  0,  2,  1,  1,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq6_t2  &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq7_t2  &lt;dbl+lbl&gt;  1, NA,  0,  2,  2,  1,  3,  1,  3, NA,  0,  2,  …
-$ p2_pqrst_bq8_t2  &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq9_t2  &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq10_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  1,  0,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq11_t2 &lt;dbl+lbl&gt;  1, NA,  0,  3,  1,  2,  2,  3,  3, NA,  2,  1,  …
-$ p2_pqrst_bq12_t2 &lt;dbl+lbl&gt;  1, NA,  0,  3,  2,  2,  3,  2,  1, NA,  1,  2,  …
-$ p2_pqrst_bq13_t2 &lt;dbl+lbl&gt;  1, NA,  0,  3,  2,  2,  3,  2,  3, NA,  3,  1,  …
-$ p2_pqrst_bq14_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq15_t2 &lt;dbl+lbl&gt;  0, NA,  0,  1,  1,  0,  1,  1,  1, NA,  0,  0,  …
-$ p2_pqrst_bq16_t2 &lt;dbl+lbl&gt;  3, NA,  0,  2,  0,  1,  0,  3,  2, NA,  3,  3,  …
-$ p2_pqrst_bq17_t2 &lt;dbl+lbl&gt;  3, NA,  0,  3,  1,  2,  3,  2,  3, NA,  2,  1,  …
-$ p2_pqrst_bq18_t2 &lt;dbl+lbl&gt;  3, NA,  0,  3,  3,  1,  3,  1,  2, NA,  1,  0,  …
-$ p2_pqrst_bq19_t2 &lt;dbl+lbl&gt;  3, NA,  0,  2,  0,  0,  1,  3,  3, NA,  3,  0,  …
-$ p2_pqrst_bq20_t2 &lt;dbl+lbl&gt;  3, NA,  0,  3,  0,  1,  0,  3,  3, NA,  3,  3,  …
-$ p2_pqrst_bq21_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  1,  0,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq22_t2 &lt;dbl+lbl&gt;  1, NA,  0,  2,  0,  1,  0,  1,  0, NA,  0,  1,  …
-$ p2_pqrst_bq23_t2 &lt;dbl+lbl&gt;  1, NA,  0,  2,  1,  1,  2,  2,  3, NA,  3,  1,  …
-$ p2_pqrst_bq24_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  2,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq25_t2 &lt;dbl+lbl&gt;  0, NA,  0,  2,  0,  2,  1,  2,  2, NA,  1,  1,  …
-$ p2_pqrst_bq26_t2 &lt;dbl+lbl&gt;  3, NA,  0,  3,  3,  2,  1,  3,  3, NA,  3,  3,  …
-$ p2_pqrst_bq27_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  2,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq28_t2 &lt;dbl+lbl&gt;  3, NA,  0,  2,  2,  2,  3,  2,  3, NA,  1,  1,  …
-$ p2_pqrst_bq29_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  2,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq30_t2 &lt;dbl+lbl&gt;  3, NA, NA,  1,  1,  1,  3,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq31_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  1,  0,  0,  0, NA,  0,  0,  …
-$ p2_pqrst_bq32_t2 &lt;dbl+lbl&gt;  3, NA,  1,  3,  1,  2,  3,  3,  3, NA,  3,  3,  …
-$ p2_pqrst_bq33_t2 &lt;dbl+lbl&gt;  0, NA,  0,  0,  1,  3,  0,  0,  0, NA,  0,  1,  …
-$ p2_pqrst_bq34_t2 &lt;dbl+lbl&gt;  2, NA,  0,  2,  1,  1,  3,  0,  3, NA,  0,  1,  …
-$ p2_poi_q1_t2     &lt;dbl+lbl&gt;  4, NA,  0,  3,  3,  1,  4,  1,  2,  3,  2,  4,  …
-$ p2_poi_q2_t2     &lt;dbl+lbl&gt;  2, NA,  0,  3,  2,  1,  4,  0,  1,  3,  0,  3,  …
-$ p2_poi_q3_t2     &lt;dbl+lbl&gt;  4, NA,  0,  3,  1,  1,  4,  2,  1,  4,  2,  1,  …
-$ p2_poi_q4_t2     &lt;dbl+lbl&gt;  2, NA,  0,  3,  4,  1,  4,  1,  1,  3,  2,  3,  …
-$ p2_poi_q5_t2     &lt;dbl+lbl&gt;  0, NA,  0,  0,  0,  0,  2,  0,  0,  0,  0,  0,  …
-$ p2_poi_q6_t2     &lt;dbl+lbl&gt;  4, NA,  0,  2,  4,  0,  4,  0,  2,  3,  2,  3,  …
-$ p2_poi_q7_t2     &lt;dbl+lbl&gt;  2, NA,  0,  3,  3,  1,  4,  1,  2,  3,  1,  2,  …
-$ p2_poi_q8_t2     &lt;dbl+lbl&gt;  2, NA,  0,  2,  3,  1,  4,  0,  2,  3,  1,  1,  …
-$ p2_poi_q9_t2     &lt;dbl+lbl&gt;  0, NA,  0,  4,  3,  2,  4,  1,  1,  2,  1,  1,  …
-$ p2_poi_q10_t2    &lt;dbl+lbl&gt;  2, NA,  0,  2,  2,  1,  4,  1,  0,  2,  1,  0,  …
-$ p2_poi_q11_t2    &lt;dbl+lbl&gt;  0, NA,  0,  1,  0,  0,  4,  1,  0,  4,  1,  3,  …
-$ p2_poi_q12_t2    &lt;dbl+lbl&gt;  0, NA,  0,  2,  0,  0,  1,  1,  0,  3,  1,  0,  …
-$ p2_poi_q13_t2    &lt;dbl+lbl&gt;  1, NA,  0,  2,  0,  0,  1,  0,  2,  2,  0,  2,  …
-$ p2_poi_q14_t2    &lt;dbl+lbl&gt;  0, NA,  0,  1,  1,  2,  2,  0,  0,  2,  0,  0,  …
-$ p2_poi_q15_t2    &lt;dbl+lbl&gt;  0, NA,  0,  4,  0,  0,  4,  0,  2,  4,  0,  4,  …
-$ p2_poi_q16_t2    &lt;dbl+lbl&gt;  0, NA,  0,  4,  0,  0,  2,  0,  0,  1,  0,  2,  …
-$ p2_poi_q17_t2    &lt;dbl+lbl&gt;  1, NA,  0,  2,  0,  0,  3,  1,  1,  3,  1,  0,  …
-$ p2_poi_q18_t2    &lt;dbl+lbl&gt;  1, NA,  0,  3,  3,  2,  4,  1,  1,  4,  1,  0,  …
-$ p2_poi_q19_t2    &lt;dbl+lbl&gt;  1, NA,  0,  2,  2,  0,  2,  1,  1,  3,  1,  0,  …
-$ p3_pqrst_aq1_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq2_t3  &lt;dbl+lbl&gt;  1, NA, NA,  2,  0,  0,  3,  0,  0,  2,  0,  0,  …
-$ p3_pqrst_aq3_t3  &lt;dbl+lbl&gt;  1, NA, NA,  1,  1,  2,  3,  0,  1,  2,  0,  0,  …
-$ p3_pqrst_aq4_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq5_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  1,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq6_t3  &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq7_t3  &lt;dbl+lbl&gt;  1, NA, NA,  0,  0,  0,  3,  1,  0,  0,  0,  0,  …
-$ p3_pqrst_aq8_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq9_t3  &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq10_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq11_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq12_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  0,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq13_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  1,  0,  1,  0,  0,  0,  …
-$ p3_pqrst_aq14_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  1,  1,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq15_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  1,  1,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq16_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  0,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq17_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq18_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq19_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq20_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  1,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq21_t3 &lt;dbl+lbl&gt;  0, NA, NA,  2,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq22_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq23_t3 &lt;dbl+lbl&gt;  0, NA, NA,  2,  0,  2,  2,  0,  1,  1,  1,  1,  …
-$ p3_pqrst_aq24_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq25_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq26_t3 &lt;dbl+lbl&gt;  1, NA, NA,  1,  0,  2,  3,  0,  1,  1,  0,  1,  …
-$ p3_pqrst_aq27_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  2,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq28_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq29_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  2,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq30_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq31_t3 &lt;dbl+lbl&gt;  0, NA, NA,  2,  0,  0,  3,  0,  0,  1,  0,  0,  …
-$ p3_pqrst_aq32_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq33_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  0,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq34_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  0,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq35_t3 &lt;dbl+lbl&gt;  1, NA, NA,  2,  0,  0,  3,  0,  0,  1,  0,  0,  …
-$ p3_pqrst_aq36_t3 &lt;dbl+lbl&gt;  1, NA, NA,  1,  1,  2,  3,  0,  1,  1,  1,  1,  …
-$ p3_pqrst_aq37_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq38_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq39_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  1,  0,  0,  0,  1,  1,  …
-$ p3_pqrst_aq40_t3 &lt;dbl+lbl&gt;  1, NA, NA,  0,  1,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq41_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  2,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq42_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq43_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_aq44_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  0,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq1_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  1,  0,  2,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq2_t3  &lt;dbl+lbl&gt;  0, NA, NA,  2,  1,  0,  3,  0,  0,  0,  0,  1,  …
-$ p3_pqrst_bq3_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq4_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq5_t3  &lt;dbl+lbl&gt;  0, NA, NA,  2,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq6_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq7_t3  &lt;dbl+lbl&gt;  1, NA, NA,  2,  1,  2,  3,  1,  0,  0,  3,  0,  …
-$ p3_pqrst_bq8_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  2,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq9_t3  &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  0,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq10_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  1,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq11_t3 &lt;dbl+lbl&gt;  1, NA, NA,  3,  0,  0,  1,  2,  0,  0,  3,  1,  …
-$ p3_pqrst_bq12_t3 &lt;dbl+lbl&gt;  1, NA, NA,  3,  1,  0,  3,  2,  1,  0,  1,  1,  …
-$ p3_pqrst_bq13_t3 &lt;dbl+lbl&gt;  1, NA, NA,  2,  1,  0,  3,  1,  0,  0,  3,  1,  …
-$ p3_pqrst_bq14_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  1,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq15_t3 &lt;dbl+lbl&gt;  1, NA, NA,  1,  1,  0,  1,  1,  0,  0,  0,  0,  …
-$ p3_pqrst_bq16_t3 &lt;dbl+lbl&gt;  1, NA, NA,  0,  0,  0,  0,  3,  3,  0,  3,  3,  …
-$ p3_pqrst_bq17_t3 &lt;dbl+lbl&gt;  1, NA, NA,  1,  1,  0,  3,  1,  3,  0,  2,  0,  …
-$ p3_pqrst_bq18_t3 &lt;dbl+lbl&gt;  1, NA, NA,  2,  1,  2,  3,  1,  3,  3,  0,  0,  …
-$ p3_pqrst_bq19_t3 &lt;dbl+lbl&gt;  1, NA, NA,  0,  1,  0,  1,  1,  2,  0,  3,  0,  …
-$ p3_pqrst_bq20_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  3,  3,  0,  3,  3,  …
-$ p3_pqrst_bq21_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  0,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq22_t3 &lt;dbl+lbl&gt;  1, NA, NA,  2,  0,  2,  1,  1,  2,  0,  1,  0,  …
-$ p3_pqrst_bq23_t3 &lt;dbl+lbl&gt;  1, NA, NA,  2,  1,  2,  1,  2,  3,  0,  3,  0,  …
-$ p3_pqrst_bq24_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq25_t3 &lt;dbl+lbl&gt;  0, NA, NA,  2,  0,  0,  2,  3,  3,  0,  2,  0,  …
-$ p3_pqrst_bq26_t3 &lt;dbl+lbl&gt;  3, NA, NA,  3,  3,  0,  2,  3,  3,  0,  3,  3,  …
-$ p3_pqrst_bq27_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  2,  3,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq28_t3 &lt;dbl+lbl&gt;  3, NA, NA,  1,  2,  1,  3,  1,  3,  0,  1,  0,  …
-$ p3_pqrst_bq29_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq30_t3 &lt;dbl+lbl&gt;  3, NA, NA,  1,  0,  1,  1,  1,  0,  0,  0,  0,  …
-$ p3_pqrst_bq31_t3 &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  1,  0,  0,  0,  0,  0,  …
-$ p3_pqrst_bq32_t3 &lt;dbl+lbl&gt;  1, NA, NA,  3,  0,  0,  3,  3,  3,  0,  3,  1,  …
-$ p3_pqrst_bq33_t3 &lt;dbl+lbl&gt;  0, NA, NA,  1,  1,  0,  1,  0,  1,  0,  0,  0,  …
-$ p3_pqrst_bq34_t3 &lt;dbl+lbl&gt;  1, NA, NA,  1,  1,  0,  3,  0,  0,  0,  1,  0,  …
-$ p3_poi_q1_t3     &lt;dbl+lbl&gt;  4, NA, NA,  2,  3,  0,  4,  0,  2,  2,  2,  3,  …
-$ p3_poi_q2_t3     &lt;dbl+lbl&gt;  1, NA, NA,  3,  1,  1,  4,  0,  1,  3,  1,  3,  …
-$ p3_poi_q3_t3     &lt;dbl+lbl&gt;  1, NA, NA,  3,  2,  0,  4,  0,  0,  3,  1,  0,  …
-$ p3_poi_q4_t3     &lt;dbl+lbl&gt;  1, NA, NA,  2,  2,  0,  4,  0,  0,  3,  2,  1,  …
-$ p3_poi_q5_t3     &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  0,  0,  0,  1,  0,  0,  …
-$ p3_poi_q6_t3     &lt;dbl+lbl&gt;  3, NA, NA,  1,  4,  0,  2,  0,  2,  2,  1,  0,  …
-$ p3_poi_q7_t3     &lt;dbl+lbl&gt;  1, NA, NA,  3,  2,  1,  4,  1,  1,  4,  2,  2,  …
-$ p3_poi_q8_t3     &lt;dbl+lbl&gt;  2, NA, NA,  3,  1,  0,  4,  0,  2,  3,  1,  1,  …
-$ p3_poi_q9_t3     &lt;dbl+lbl&gt;  1, NA, NA,  3,  1,  0,  4,  0,  0,  3,  2,  1,  …
-$ p3_poi_q10_t3    &lt;dbl+lbl&gt;  1, NA, NA,  3,  1,  0,  4,  0,  0,  3,  1,  0,  …
-$ p3_poi_q11_t3    &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  4,  0,  0,  3,  1,  3,  …
-$ p3_poi_q12_t3    &lt;dbl+lbl&gt;  1, NA, NA,  0,  1,  0,  2,  1,  0,  3,  1,  1,  …
-$ p3_poi_q13_t3    &lt;dbl+lbl&gt;  0, NA, NA,  1,  0,  0,  3,  0,  1,  3,  0,  1,  …
-$ p3_poi_q14_t3    &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  3,  4,  0,  0,  2,  0,  0,  …
-$ p3_poi_q15_t3    &lt;dbl+lbl&gt;  1, NA, NA,  3,  0,  0,  4,  0,  0,  3,  0,  4,  …
-$ p3_poi_q16_t3    &lt;dbl+lbl&gt;  0, NA, NA,  0,  0,  0,  4,  0,  0,  0,  0,  0,  …
-$ p3_poi_q17_t3    &lt;dbl+lbl&gt;  1, NA, NA,  1,  1,  0,  4,  0,  0,  2,  0,  0,  …
-$ p3_poi_q18_t3    &lt;dbl+lbl&gt;  2, NA, NA,  3,  1,  0,  4,  0,  0,  4,  1,  2,  …
-$ p3_poi_q19_t3    &lt;dbl+lbl&gt;  2, NA, NA,  2,  1,  0,  4,  0,  2,  3,  1,  0,  …
-$ group            &lt;chr&gt; "parent", "parent", "parent", "parent", "parent", "pa…</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      ID            p1_pqrst_aq1_t1  p1_pqrst_aq2_t1 p1_pqrst_aq3_t1
- Length:127         Min.   :0.0000   Min.   :0.000   Min.   :0.000  
- Class :character   1st Qu.:0.0000   1st Qu.:1.000   1st Qu.:1.000  
- Mode  :character   Median :0.0000   Median :1.000   Median :2.000  
-                    Mean   :0.2195   Mean   :1.602   Mean   :1.959  
-                    3rd Qu.:0.0000   3rd Qu.:3.000   3rd Qu.:3.000  
-                    Max.   :2.0000   Max.   :3.000   Max.   :3.000  
-                    NA's   :4        NA's   :4       NA's   :4      
- p1_pqrst_aq4_t1  p1_pqrst_aq5_t1  p1_pqrst_aq6_t1  p1_pqrst_aq7_t1 
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.1057   Mean   :0.4836   Mean   :0.7131   Mean   :0.6967  
- 3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
- Max.   :2.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :4        NA's   :5        NA's   :5        NA's   :5       
- p1_pqrst_aq8_t1  p1_pqrst_aq9_t1  p1_pqrst_aq10_t1 p1_pqrst_aq11_t1
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000   
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000   
- Median :0.0000   Median :0.0000   Median :0.0000   Median :0.000   
- Mean   :0.6475   Mean   :0.3361   Mean   :0.6179   Mean   :0.374   
- 3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.000   
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.000   
- NA's   :5        NA's   :5        NA's   :4        NA's   :4       
- p1_pqrst_aq12_t1  p1_pqrst_aq13_t1 p1_pqrst_aq14_t1 p1_pqrst_aq15_t1
- Min.   :0.00000   Min.   :0.000    Min.   :0.000    Min.   :0.000   
- 1st Qu.:0.00000   1st Qu.:0.000    1st Qu.:0.000    1st Qu.:0.000   
- Median :0.00000   Median :0.000    Median :0.000    Median :1.000   
- Mean   :0.07317   Mean   :0.561    Mean   :0.748    Mean   :1.057   
- 3rd Qu.:0.00000   3rd Qu.:1.000    3rd Qu.:1.000    3rd Qu.:2.000   
- Max.   :2.00000   Max.   :3.000    Max.   :3.000    Max.   :3.000   
- NA's   :4         NA's   :4        NA's   :4        NA's   :4       
- p1_pqrst_aq16_t1 p1_pqrst_aq17_t1 p1_pqrst_aq18_t1 p1_pqrst_aq19_t1
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.3008   Mean   :0.2541   Mean   :0.1803   Mean   :0.1789  
- 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :4        NA's   :5        NA's   :5        NA's   :4       
- p1_pqrst_aq20_t1 p1_pqrst_aq21_t1 p1_pqrst_aq22_t1 p1_pqrst_aq23_t1
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.000    Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.626    Mean   :0.2927   Mean   :0.4228   Mean   :0.6803  
- 3rd Qu.:1.000    3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :4        NA's   :4        NA's   :4        NA's   :5       
- p1_pqrst_aq24_t1 p1_pqrst_aq25_t1 p1_pqrst_aq26_t1 p1_pqrst_aq27_t1
- Min.   :0.0000   Min.   :0.0000   Min.   :0.000    Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :1.000    Median :0.0000  
- Mean   :0.6341   Mean   :0.2049   Mean   :1.341    Mean   :0.1639  
- 3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:3.000    3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.000    Max.   :3.0000  
- NA's   :4        NA's   :5        NA's   :4        NA's   :5       
- p1_pqrst_aq28_t1  p1_pqrst_aq29_t1 p1_pqrst_aq30_t1 p1_pqrst_aq31_t1
- Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.00000   Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.09756   Mean   :0.1626   Mean   :0.3821   Mean   :0.9024  
- 3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.5000  
- Max.   :2.00000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :4         NA's   :4        NA's   :4        NA's   :4       
- p1_pqrst_aq32_t1 p1_pqrst_aq33_t1 p1_pqrst_aq34_t1 p1_pqrst_aq35_t1
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000   
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000   
- Median :0.0000   Median :0.0000   Median :0.0000   Median :1.000   
- Mean   :0.7236   Mean   :0.2459   Mean   :0.1463   Mean   :1.211   
- 3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:2.000   
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.000   
- NA's   :4        NA's   :5        NA's   :4        NA's   :4       
- p1_pqrst_aq36_t1 p1_pqrst_aq37_t1 p1_pqrst_aq38_t1 p1_pqrst_aq39_t1
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.000   
- 1st Qu.:1.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000   
- Median :2.000    Median :1.0000   Median :0.0000   Median :1.000   
- Mean   :1.959    Mean   :0.8852   Mean   :0.2358   Mean   :1.146   
- 3rd Qu.:3.000    3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:2.000   
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.000   
- NA's   :5        NA's   :5        NA's   :4        NA's   :4       
- p1_pqrst_aq40_t1 p1_pqrst_aq41_t1 p1_pqrst_aq42_t1 p1_pqrst_aq43_t1
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :1.000    Median :1.0000   Median :0.0000   Median :0.0000  
- Mean   :1.431    Mean   :0.9594   Mean   :0.4065   Mean   :0.8943  
- 3rd Qu.:3.000    3rd Qu.:2.0000   3rd Qu.:0.0000   3rd Qu.:2.0000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :4        NA's   :4        NA's   :4        NA's   :4       
- p1_pqrst_aq44_t1 p1_pqrst_bq1_t1  p1_pqrst_bq2_t1 p1_pqrst_bq3_t1 
- Min.   :0.0000   Min.   :0.0000   Min.   :0.00    Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.00    1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :1.00    Median :0.0000  
- Mean   :0.2764   Mean   :0.6992   Mean   :1.39    Mean   :0.1707  
- 3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:2.00    3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.00    Max.   :3.0000  
- NA's   :4        NA's   :4        NA's   :4       NA's   :4       
- p1_pqrst_bq4_t1  p1_pqrst_bq5_t1  p1_pqrst_bq6_t1  p1_pqrst_bq7_t1
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.000  
- Median :0.0000   Median :0.0000   Median :0.0000   Median :2.000  
- Mean   :0.2927   Mean   :0.5285   Mean   :0.3008   Mean   :1.894  
- 3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:3.000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.000  
- NA's   :4        NA's   :4        NA's   :4        NA's   :4      
- p1_pqrst_bq8_t1  p1_pqrst_bq9_t1  p1_pqrst_bq10_t1 p1_pqrst_bq11_t1
- Min.   :0.0000   Min.   :0.0000   Min.   :0.000    Min.   :0.000   
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:1.000   
- Median :0.0000   Median :0.0000   Median :0.000    Median :2.000   
- Mean   :0.3496   Mean   :0.3415   Mean   :0.626    Mean   :1.852   
- 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.000    3rd Qu.:3.000   
- Max.   :3.0000   Max.   :3.0000   Max.   :3.000    Max.   :3.000   
- NA's   :4        NA's   :4        NA's   :4        NA's   :5       
- p1_pqrst_bq12_t1 p1_pqrst_bq13_t1 p1_pqrst_bq14_t1 p1_pqrst_bq15_t1
- Min.   :0.000    Min.   :0.000    Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:1.000    1st Qu.:1.000    1st Qu.:0.0000   1st Qu.:0.0000  
- Median :2.000    Median :2.000    Median :0.0000   Median :0.0000  
- Mean   :1.878    Mean   :1.976    Mean   :0.2951   Mean   :0.4309  
- 3rd Qu.:3.000    3rd Qu.:3.000    3rd Qu.:0.0000   3rd Qu.:1.0000  
- Max.   :3.000    Max.   :3.000    Max.   :3.0000   Max.   :3.0000  
- NA's   :4        NA's   :4        NA's   :5        NA's   :4       
- p1_pqrst_bq16_t1 p1_pqrst_bq17_t1 p1_pqrst_bq18_t1 p1_pqrst_bq19_t1
- Min.   :0.000    Min.   :0.000    Min.   :0.000    Min.   :0.000   
- 1st Qu.:1.000    1st Qu.:2.000    1st Qu.:1.000    1st Qu.:1.000   
- Median :2.000    Median :3.000    Median :2.000    Median :2.000   
- Mean   :1.919    Mean   :2.415    Mean   :1.797    Mean   :2.033   
- 3rd Qu.:3.000    3rd Qu.:3.000    3rd Qu.:3.000    3rd Qu.:3.000   
- Max.   :3.000    Max.   :3.000    Max.   :3.000    Max.   :3.000   
- NA's   :4        NA's   :4        NA's   :4        NA's   :4       
- p1_pqrst_bq20_t1 p1_pqrst_bq21_t1 p1_pqrst_bq22_t1 p1_pqrst_bq23_t1
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.000   
- 1st Qu.:2.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.000   
- Median :3.000    Median :0.0000   Median :1.0000   Median :2.000   
- Mean   :2.236    Mean   :0.2195   Mean   :0.9431   Mean   :1.894   
- 3rd Qu.:3.000    3rd Qu.:0.0000   3rd Qu.:2.0000   3rd Qu.:3.000   
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.000   
- NA's   :4        NA's   :4        NA's   :4        NA's   :4       
- p1_pqrst_bq24_t1 p1_pqrst_bq25_t1 p1_pqrst_bq26_t1 p1_pqrst_bq27_t1
- Min.   :0.0000   Min.   :0.000    Min.   :0.000    Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:2.000    1st Qu.:0.0000  
- Median :0.0000   Median :1.000    Median :3.000    Median :0.0000  
- Mean   :0.2846   Mean   :1.066    Mean   :2.553    Mean   :0.4472  
- 3rd Qu.:0.0000   3rd Qu.:2.000    3rd Qu.:3.000    3rd Qu.:1.0000  
- Max.   :3.0000   Max.   :3.000    Max.   :3.000    Max.   :3.0000  
- NA's   :4        NA's   :6        NA's   :4        NA's   :4       
- p1_pqrst_bq28_t1 p1_pqrst_bq29_t1 p1_pqrst_bq30_t1 p1_pqrst_bq31_t1
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:1.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :1.000    Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :1.492    Mean   :0.3171   Mean   :0.8443   Mean   :0.1707  
- 3rd Qu.:2.000    3rd Qu.:0.0000   3rd Qu.:2.0000   3rd Qu.:0.0000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :5        NA's   :4        NA's   :5        NA's   :4       
- p1_pqrst_bq32_t1 p1_pqrst_bq33_t1 p1_pqrst_bq34_t1  p1_poi_q1_t1  
- Min.   :0.000    Min.   :0.0000   Min.   :0.000    Min.   :0.000  
- 1st Qu.:2.500    1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:2.000  
- Median :3.000    Median :0.0000   Median :1.000    Median :3.000  
- Mean   :2.593    Mean   :0.6639   Mean   :1.423    Mean   :3.057  
- 3rd Qu.:3.000    3rd Qu.:1.0000   3rd Qu.:3.000    3rd Qu.:4.000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.000    Max.   :4.000  
- NA's   :4        NA's   :5        NA's   :4        NA's   :5      
-  p1_poi_q2_t1    p1_poi_q3_t1   p1_poi_q4_t1   p1_poi_q5_t1     p1_poi_q6_t1  
- Min.   :0.000   Min.   :0.00   Min.   :0.00   Min.   :0.0000   Min.   :0.000  
- 1st Qu.:1.000   1st Qu.:0.00   1st Qu.:1.00   1st Qu.:0.0000   1st Qu.:1.000  
- Median :2.000   Median :2.00   Median :2.00   Median :0.0000   Median :2.000  
- Mean   :1.917   Mean   :1.79   Mean   :2.05   Mean   :0.5082   Mean   :1.983  
- 3rd Qu.:3.000   3rd Qu.:3.00   3rd Qu.:3.00   3rd Qu.:0.0000   3rd Qu.:3.000  
- Max.   :4.000   Max.   :4.00   Max.   :4.00   Max.   :4.0000   Max.   :4.000  
- NA's   :6       NA's   :8      NA's   :6      NA's   :5        NA's   :6      
-  p1_poi_q7_t1    p1_poi_q8_t1    p1_poi_q9_t1   p1_poi_q10_t1  
- Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0.000  
- 1st Qu.:1.000   1st Qu.:0.000   1st Qu.:1.000   1st Qu.:0.000  
- Median :2.000   Median :1.000   Median :1.000   Median :1.000  
- Mean   :1.902   Mean   :1.433   Mean   :1.574   Mean   :1.484  
- 3rd Qu.:3.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000  
- Max.   :4.000   Max.   :4.000   Max.   :4.000   Max.   :4.000  
- NA's   :5       NA's   :7       NA's   :5       NA's   :5      
- p1_poi_q11_t1    p1_poi_q12_t1    p1_poi_q13_t1   p1_poi_q14_t1   
- Min.   :0.0000   Min.   :0.0000   Min.   :0.000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :1.000   Median :0.0000  
- Mean   :0.7295   Mean   :0.8595   Mean   :1.377   Mean   :0.7049  
- 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:2.000   3rd Qu.:1.0000  
- Max.   :4.0000   Max.   :4.0000   Max.   :4.000   Max.   :4.0000  
- NA's   :5        NA's   :6        NA's   :5       NA's   :5       
- p1_poi_q15_t1   p1_poi_q16_t1    p1_poi_q17_t1   p1_poi_q18_t1  
- Min.   :0.000   Min.   :0.0000   Min.   :0.000   Min.   :0.000  
- 1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:1.000  
- Median :1.000   Median :0.0000   Median :1.000   Median :3.000  
- Mean   :1.713   Mean   :0.8197   Mean   :1.281   Mean   :2.512  
- 3rd Qu.:4.000   3rd Qu.:1.0000   3rd Qu.:2.000   3rd Qu.:4.000  
- Max.   :4.000   Max.   :4.0000   Max.   :4.000   Max.   :4.000  
- NA's   :5       NA's   :5        NA's   :6       NA's   :6      
- p1_poi_q19_t1   p2_pqrst_aq1_t2  p2_pqrst_aq2_t2 p2_pqrst_aq3_t2
- Min.   :0.000   Min.   :0.0000   Min.   :0.000   Min.   :0.000  
- 1st Qu.:1.000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:1.000  
- Median :2.000   Median :0.0000   Median :1.000   Median :1.000  
- Mean   :1.975   Mean   :0.3404   Mean   :1.117   Mean   :1.426  
- 3rd Qu.:3.000   3rd Qu.:0.0000   3rd Qu.:1.750   3rd Qu.:2.750  
- Max.   :4.000   Max.   :3.0000   Max.   :3.000   Max.   :3.000  
- NA's   :5       NA's   :33       NA's   :33      NA's   :33     
- p2_pqrst_aq4_t2  p2_pqrst_aq5_t2  p2_pqrst_aq6_t2  p2_pqrst_aq7_t2 
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.1489   Mean   :0.5376   Mean   :0.6808   Mean   :0.5851  
- 3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :33       NA's   :34       NA's   :33       NA's   :33      
- p2_pqrst_aq8_t2  p2_pqrst_aq9_t2 p2_pqrst_aq10_t2 p2_pqrst_aq11_t2
- Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.0000   Median :0.000   Median :0.0000   Median :0.0000  
- Mean   :0.7021   Mean   :0.266   Mean   :0.6277   Mean   :0.2979  
- 3rd Qu.:1.0000   3rd Qu.:0.000   3rd Qu.:1.0000   3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :3.000   Max.   :3.0000   Max.   :3.0000  
- NA's   :33       NA's   :33      NA's   :33       NA's   :33      
- p2_pqrst_aq12_t2  p2_pqrst_aq13_t2 p2_pqrst_aq14_t2 p2_pqrst_aq15_t2
- Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0       
- 1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0       
- Median :0.00000   Median :0.0000   Median :0.0000   Median :1       
- Mean   :0.06383   Mean   :0.3871   Mean   :0.5054   Mean   :1       
- 3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1       
- Max.   :2.00000   Max.   :3.0000   Max.   :3.0000   Max.   :3       
- NA's   :33        NA's   :34       NA's   :34       NA's   :34      
- p2_pqrst_aq16_t2 p2_pqrst_aq17_t2 p2_pqrst_aq18_t2 p2_pqrst_aq19_t2
- Min.   :0.0000   Min.   :0.000    Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.0000   Median :0.000    Median :0.0000   Median :0.0000  
- Mean   :0.2796   Mean   :0.215    Mean   :0.2796   Mean   :0.2043  
- 3rd Qu.:0.0000   3rd Qu.:0.000    3rd Qu.:0.0000   3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :2.000    Max.   :3.0000   Max.   :3.0000  
- NA's   :34       NA's   :34       NA's   :34       NA's   :34      
- p2_pqrst_aq20_t2 p2_pqrst_aq21_t2 p2_pqrst_aq22_t2 p2_pqrst_aq23_t2
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.000    Median :0.0000   Median :0.0000   Median :1.0000  
- Mean   :0.587    Mean   :0.2796   Mean   :0.3871   Mean   :0.6774  
- 3rd Qu.:1.000    3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :35       NA's   :34       NA's   :34       NA's   :34      
- p2_pqrst_aq24_t2 p2_pqrst_aq25_t2 p2_pqrst_aq26_t2 p2_pqrst_aq27_t2
- Min.   :0.0000   Min.   :0.0000   Min.   :0.000    Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :1.000    Median :0.0000  
- Mean   :0.4086   Mean   :0.2258   Mean   :1.054    Mean   :0.1828  
- 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:2.000    3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.000    Max.   :3.0000  
- NA's   :34       NA's   :34       NA's   :34       NA's   :34      
- p2_pqrst_aq28_t2  p2_pqrst_aq29_t2 p2_pqrst_aq30_t2 p2_pqrst_aq31_t2
- Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.00000   Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.05376   Mean   :0.1505   Mean   :0.3118   Mean   :0.7527  
- 3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.0000  
- Max.   :1.00000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :34        NA's   :34       NA's   :34       NA's   :34      
- p2_pqrst_aq32_t2 p2_pqrst_aq33_t2 p2_pqrst_aq34_t2 p2_pqrst_aq35_t2
- Min.   :0.0000   Min.   :0.0000   Min.   :0.000    Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :0.000    Median :1.0000  
- Mean   :0.6452   Mean   :0.3118   Mean   :0.215    Mean   :0.9677  
- 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.000    3rd Qu.:1.0000  
- Max.   :3.0000   Max.   :2.0000   Max.   :3.000    Max.   :3.0000  
- NA's   :34       NA's   :34       NA's   :34       NA's   :34      
- p2_pqrst_aq36_t2 p2_pqrst_aq37_t2 p2_pqrst_aq38_t2 p2_pqrst_aq39_t2
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:1.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :2.000    Median :0.0000   Median :0.0000   Median :1.0000  
- Mean   :1.806    Mean   :0.6667   Mean   :0.1613   Mean   :0.8925  
- 3rd Qu.:3.000    3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :34       NA's   :34       NA's   :34       NA's   :34      
- p2_pqrst_aq40_t2 p2_pqrst_aq41_t2 p2_pqrst_aq42_t2 p2_pqrst_aq43_t2
- Min.   :0.00     Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.00     1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :1.00     Median :1.0000   Median :0.0000   Median :0.0000  
- Mean   :1.25     Mean   :0.9247   Mean   :0.3871   Mean   :0.6237  
- 3rd Qu.:2.00     3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000  
- Max.   :3.00     Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :35       NA's   :34       NA's   :34       NA's   :34      
- p2_pqrst_aq44_t2 p2_pqrst_bq1_t2  p2_pqrst_bq2_t2 p2_pqrst_bq3_t2  
- Min.   :0.0000   Min.   :0.0000   Min.   :0.000   Min.   :0.00000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.00000  
- Median :0.0000   Median :0.0000   Median :1.000   Median :0.00000  
- Mean   :0.1613   Mean   :0.5532   Mean   :1.181   Mean   :0.07447  
- 3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:2.000   3rd Qu.:0.00000  
- Max.   :2.0000   Max.   :3.0000   Max.   :3.000   Max.   :3.00000  
- NA's   :34       NA's   :33       NA's   :33      NA's   :33       
- p2_pqrst_bq4_t2 p2_pqrst_bq5_t2  p2_pqrst_bq6_t2   p2_pqrst_bq7_t2
- Min.   :0.000   Min.   :0.0000   Min.   :0.00000   Min.   :0.000  
- 1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:1.000  
- Median :0.000   Median :0.0000   Median :0.00000   Median :2.000  
- Mean   :0.234   Mean   :0.3723   Mean   :0.07447   Mean   :1.564  
- 3rd Qu.:0.000   3rd Qu.:0.0000   3rd Qu.:0.00000   3rd Qu.:2.000  
- Max.   :3.000   Max.   :3.0000   Max.   :2.00000   Max.   :3.000  
- NA's   :33      NA's   :33       NA's   :33        NA's   :33     
- p2_pqrst_bq8_t2  p2_pqrst_bq9_t2  p2_pqrst_bq10_t2 p2_pqrst_bq11_t2
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0      Min.   :0.000   
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0      1st Qu.:1.000   
- Median :0.0000   Median :0.0000   Median :0.0      Median :2.000   
- Mean   :0.1702   Mean   :0.2021   Mean   :0.5      Mean   :1.755   
- 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.0      3rd Qu.:3.000   
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0      Max.   :3.000   
- NA's   :33       NA's   :33       NA's   :33       NA's   :33      
- p2_pqrst_bq12_t2 p2_pqrst_bq13_t2 p2_pqrst_bq14_t2 p2_pqrst_bq15_t2
- Min.   :0.000    Min.   :0.000    Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:1.000    1st Qu.:1.000    1st Qu.:0.0000   1st Qu.:0.0000  
- Median :2.000    Median :2.000    Median :0.0000   Median :0.0000  
- Mean   :1.596    Mean   :1.723    Mean   :0.1596   Mean   :0.3723  
- 3rd Qu.:2.000    3rd Qu.:2.000    3rd Qu.:0.0000   3rd Qu.:1.0000  
- Max.   :3.000    Max.   :3.000    Max.   :3.0000   Max.   :3.0000  
- NA's   :33       NA's   :33       NA's   :33       NA's   :33      
- p2_pqrst_bq16_t2 p2_pqrst_bq17_t2 p2_pqrst_bq18_t2 p2_pqrst_bq19_t2
- Min.   :0.000    Min.   :0.000    Min.   :0.000    Min.   :0       
- 1st Qu.:1.000    1st Qu.:2.000    1st Qu.:1.000    1st Qu.:1       
- Median :3.000    Median :3.000    Median :2.000    Median :2       
- Mean   :2.032    Mean   :2.266    Mean   :1.606    Mean   :2       
- 3rd Qu.:3.000    3rd Qu.:3.000    3rd Qu.:3.000    3rd Qu.:3       
- Max.   :3.000    Max.   :3.000    Max.   :3.000    Max.   :3       
- NA's   :33       NA's   :33       NA's   :33       NA's   :34      
- p2_pqrst_bq20_t2 p2_pqrst_bq21_t2 p2_pqrst_bq22_t2 p2_pqrst_bq23_t2
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.000   
- 1st Qu.:1.250    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.000   
- Median :3.000    Median :0.0000   Median :1.0000   Median :2.000   
- Mean   :2.223    Mean   :0.1383   Mean   :0.8387   Mean   :1.872   
- 3rd Qu.:3.000    3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:3.000   
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.000   
- NA's   :33       NA's   :33       NA's   :34       NA's   :33      
- p2_pqrst_bq24_t2 p2_pqrst_bq25_t2 p2_pqrst_bq26_t2 p2_pqrst_bq27_t2
- Min.   :0.0000   Min.   :0.000    Min.   :0.000    Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:3.000    1st Qu.:0.0000  
- Median :0.0000   Median :1.000    Median :3.000    Median :0.0000  
- Mean   :0.1596   Mean   :1.409    Mean   :2.628    Mean   :0.3191  
- 3rd Qu.:0.0000   3rd Qu.:2.000    3rd Qu.:3.000    3rd Qu.:0.0000  
- Max.   :2.0000   Max.   :3.000    Max.   :3.000    Max.   :3.0000  
- NA's   :33       NA's   :34       NA's   :33       NA's   :33      
- p2_pqrst_bq28_t2 p2_pqrst_bq29_t2 p2_pqrst_bq30_t2 p2_pqrst_bq31_t2
- Min.   :0.000    Min.   :0.000    Min.   :0.000    Min.   :0.000   
- 1st Qu.:1.000    1st Qu.:0.000    1st Qu.:0.000    1st Qu.:0.000   
- Median :2.000    Median :0.000    Median :0.000    Median :0.000   
- Mean   :1.617    Mean   :0.172    Mean   :0.663    Mean   :0.172   
- 3rd Qu.:2.000    3rd Qu.:0.000    3rd Qu.:1.000    3rd Qu.:0.000   
- Max.   :3.000    Max.   :3.000    Max.   :3.000    Max.   :3.000   
- NA's   :33       NA's   :34       NA's   :35       NA's   :34      
- p2_pqrst_bq32_t2 p2_pqrst_bq33_t2 p2_pqrst_bq34_t2  p2_poi_q1_t2  
- Min.   :0.000    Min.   :0.0000   Min.   :0.000    Min.   :0.000  
- 1st Qu.:2.000    1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:2.000  
- Median :3.000    Median :0.0000   Median :1.000    Median :3.000  
- Mean   :2.587    Mean   :0.6087   Mean   :1.183    Mean   :2.656  
- 3rd Qu.:3.000    3rd Qu.:1.0000   3rd Qu.:2.000    3rd Qu.:4.000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.000    Max.   :4.000  
- NA's   :35       NA's   :35       NA's   :34       NA's   :34     
-  p2_poi_q2_t2    p2_poi_q3_t2    p2_poi_q4_t2    p2_poi_q5_t2   
- Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0.0000  
- 1st Qu.:0.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.:0.0000  
- Median :1.000   Median :1.000   Median :2.000   Median :0.0000  
- Mean   :1.559   Mean   :1.652   Mean   :1.783   Mean   :0.4946  
- 3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:3.000   3rd Qu.:0.0000  
- Max.   :4.000   Max.   :4.000   Max.   :4.000   Max.   :4.0000  
- NA's   :34      NA's   :35      NA's   :35      NA's   :34      
-  p2_poi_q6_t2    p2_poi_q7_t2    p2_poi_q8_t2    p2_poi_q9_t2  p2_poi_q10_t2  
- Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0.00   Min.   :0.000  
- 1st Qu.:1.000   1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.00   1st Qu.:0.000  
- Median :1.000   Median :1.000   Median :1.000   Median :1.00   Median :1.000  
- Mean   :1.495   Mean   :1.581   Mean   :1.344   Mean   :1.43   Mean   :1.323  
- 3rd Qu.:2.000   3rd Qu.:3.000   3rd Qu.:2.000   3rd Qu.:2.00   3rd Qu.:2.000  
- Max.   :4.000   Max.   :4.000   Max.   :4.000   Max.   :4.00   Max.   :4.000  
- NA's   :34      NA's   :34      NA's   :34      NA's   :34     NA's   :34     
- p2_poi_q11_t2    p2_poi_q12_t2   p2_poi_q13_t2    p2_poi_q14_t2   
- Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.0000   Median :0.000   Median :0.0000   Median :0.0000  
- Mean   :0.7742   Mean   :0.785   Mean   :0.9239   Mean   :0.6344  
- 3rd Qu.:1.0000   3rd Qu.:1.000   3rd Qu.:1.2500   3rd Qu.:1.0000  
- Max.   :4.0000   Max.   :3.000   Max.   :4.0000   Max.   :4.0000  
- NA's   :34       NA's   :34      NA's   :35       NA's   :34      
- p2_poi_q15_t2   p2_poi_q16_t2    p2_poi_q17_t2   p2_poi_q18_t2  
- Min.   :0.000   Min.   :0.0000   Min.   :0.000   Min.   :0.000  
- 1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:1.000  
- Median :1.000   Median :0.0000   Median :1.000   Median :1.000  
- Mean   :1.473   Mean   :0.6237   Mean   :1.075   Mean   :1.871  
- 3rd Qu.:4.000   3rd Qu.:1.0000   3rd Qu.:2.000   3rd Qu.:3.000  
- Max.   :4.000   Max.   :4.0000   Max.   :4.000   Max.   :4.000  
- NA's   :34      NA's   :34       NA's   :34      NA's   :34     
- p2_poi_q19_t2   p3_pqrst_aq1_t3  p3_pqrst_aq2_t3  p3_pqrst_aq3_t3
- Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
- 1st Qu.:1.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000  
- Median :1.000   Median :0.0000   Median :1.0000   Median :1.000  
- Mean   :1.462   Mean   :0.2479   Mean   :0.9504   Mean   :1.405  
- 3rd Qu.:2.000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:2.000  
- Max.   :4.000   Max.   :3.0000   Max.   :3.0000   Max.   :3.000  
- NA's   :34      NA's   :6        NA's   :6        NA's   :6      
- p3_pqrst_aq4_t3   p3_pqrst_aq5_t3  p3_pqrst_aq6_t3  p3_pqrst_aq7_t3 
- Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.00000   Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.09917   Mean   :0.4215   Mean   :0.5868   Mean   :0.5785  
- 3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
- Max.   :2.00000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :6         NA's   :6        NA's   :6        NA's   :6       
- p3_pqrst_aq8_t3 p3_pqrst_aq9_t3  p3_pqrst_aq10_t3 p3_pqrst_aq11_t3
- Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.000   Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.595   Mean   :0.2479   Mean   :0.4793   Mean   :0.2645  
- 3rd Qu.:1.000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000  
- Max.   :3.000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :6       NA's   :6        NA's   :6        NA's   :6       
- p3_pqrst_aq12_t3 p3_pqrst_aq13_t3 p3_pqrst_aq14_t3 p3_pqrst_aq15_t3
- Min.   :0.0000   Min.   :0.0000   Min.   :0.000    Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :0.000    Median :0.0000  
- Mean   :0.1074   Mean   :0.3223   Mean   :0.418    Mean   :0.7459  
- 3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.000    3rd Qu.:1.0000  
- Max.   :2.0000   Max.   :3.0000   Max.   :3.000    Max.   :3.0000  
- NA's   :6        NA's   :6        NA's   :5        NA's   :5       
- p3_pqrst_aq16_t3 p3_pqrst_aq17_t3 p3_pqrst_aq18_t3 p3_pqrst_aq19_t3
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.2541   Mean   :0.2623   Mean   :0.2213   Mean   :0.2213  
- 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :5        NA's   :5        NA's   :5        NA's   :5       
- p3_pqrst_aq20_t3 p3_pqrst_aq21_t3 p3_pqrst_aq22_t3 p3_pqrst_aq23_t3
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.000    Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.377    Mean   :0.2541   Mean   :0.3443   Mean   :0.7273  
- 3rd Qu.:0.000    3rd Qu.:0.0000   3rd Qu.:0.7500   3rd Qu.:1.0000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :5        NA's   :5        NA's   :5        NA's   :6       
- p3_pqrst_aq24_t3 p3_pqrst_aq25_t3 p3_pqrst_aq26_t3 p3_pqrst_aq27_t3
- Min.   :0.0000   Min.   :0.0000   Min.   :0.000    Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :1.000    Median :0.0000  
- Mean   :0.4098   Mean   :0.2459   Mean   :1.025    Mean   :0.2213  
- 3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:2.000    3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.000    Max.   :3.0000  
- NA's   :5        NA's   :5        NA's   :6        NA's   :5       
- p3_pqrst_aq28_t3  p3_pqrst_aq29_t3 p3_pqrst_aq30_t3 p3_pqrst_aq31_t3
- Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.00000   Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :0.09836   Mean   :0.1901   Mean   :0.2295   Mean   :0.7131  
- 3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.0000  
- Max.   :1.00000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :5         NA's   :6        NA's   :5        NA's   :5       
- p3_pqrst_aq32_t3 p3_pqrst_aq33_t3 p3_pqrst_aq34_t3 p3_pqrst_aq35_t3
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :0.0000   Median :0.0000   Median :0.0000   Median :1.0000  
- Mean   :0.5492   Mean   :0.2623   Mean   :0.1803   Mean   :0.9508  
- 3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:2.0000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :5        NA's   :5        NA's   :5        NA's   :5       
- p3_pqrst_aq36_t3 p3_pqrst_aq37_t3 p3_pqrst_aq38_t3 p3_pqrst_aq39_t3
- Min.   :0.00     Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:1.00     1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :1.00     Median :0.0000   Median :0.0000   Median :1.0000  
- Mean   :1.50     Mean   :0.4918   Mean   :0.2049   Mean   :0.8443  
- 3rd Qu.:2.75     3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000  
- Max.   :3.00     Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :5        NA's   :5        NA's   :5        NA's   :5       
- p3_pqrst_aq40_t3 p3_pqrst_aq41_t3 p3_pqrst_aq42_t3 p3_pqrst_aq43_t3
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :1.000    Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :1.213    Mean   :0.7787   Mean   :0.2951   Mean   :0.5656  
- 3rd Qu.:2.000    3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :5        NA's   :5        NA's   :5        NA's   :5       
- p3_pqrst_aq44_t3 p3_pqrst_bq1_t3 p3_pqrst_bq2_t3 p3_pqrst_bq3_t3 
- Min.   :0.0000   Min.   :0.000   Min.   :0.000   Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.0000  
- Median :0.0000   Median :0.000   Median :1.000   Median :0.0000  
- Mean   :0.2131   Mean   :0.459   Mean   :1.057   Mean   :0.2049  
- 3rd Qu.:0.0000   3rd Qu.:1.000   3rd Qu.:2.000   3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :3.000   Max.   :4.000   Max.   :3.0000  
- NA's   :5        NA's   :5       NA's   :5       NA's   :5       
- p3_pqrst_bq4_t3  p3_pqrst_bq5_t3  p3_pqrst_bq6_t3  p3_pqrst_bq7_t3
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000  
- Median :0.0000   Median :0.0000   Median :0.0000   Median :1.000  
- Mean   :0.3279   Mean   :0.4508   Mean   :0.3115   Mean   :1.197  
- 3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:2.000  
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.000  
- NA's   :5        NA's   :5        NA's   :5        NA's   :5      
- p3_pqrst_bq8_t3  p3_pqrst_bq9_t3  p3_pqrst_bq10_t3 p3_pqrst_bq11_t3
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000   
- 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.000   
- Median :0.0000   Median :0.0000   Median :0.0000   Median :2.000   
- Mean   :0.2869   Mean   :0.2623   Mean   :0.3934   Mean   :1.545   
- 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:3.000   
- Max.   :3.0000   Max.   :3.0000   Max.   :3.0000   Max.   :3.000   
- NA's   :5        NA's   :5        NA's   :5        NA's   :6       
- p3_pqrst_bq12_t3 p3_pqrst_bq13_t3 p3_pqrst_bq14_t3 p3_pqrst_bq15_t3
- Min.   :0.00     Min.   :0.000    Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:1.00     1st Qu.:1.000    1st Qu.:0.0000   1st Qu.:0.0000  
- Median :2.00     Median :1.500    Median :0.0000   Median :0.0000  
- Mean   :1.59     Mean   :1.492    Mean   :0.2295   Mean   :0.3689  
- 3rd Qu.:3.00     3rd Qu.:2.000    3rd Qu.:0.0000   3rd Qu.:1.0000  
- Max.   :3.00     Max.   :3.000    Max.   :3.0000   Max.   :3.0000  
- NA's   :5        NA's   :5        NA's   :5        NA's   :5       
- p3_pqrst_bq16_t3 p3_pqrst_bq17_t3 p3_pqrst_bq18_t3 p3_pqrst_bq19_t3
- Min.   :0.00     Min.   :0.000    Min.   :0.000    Min.   :0.000   
- 1st Qu.:1.00     1st Qu.:1.000    1st Qu.:0.250    1st Qu.:1.000   
- Median :2.00     Median :2.000    Median :2.000    Median :2.000   
- Mean   :1.91     Mean   :1.959    Mean   :1.615    Mean   :1.752   
- 3rd Qu.:3.00     3rd Qu.:3.000    3rd Qu.:3.000    3rd Qu.:3.000   
- Max.   :3.00     Max.   :3.000    Max.   :3.000    Max.   :3.000   
- NA's   :5        NA's   :5        NA's   :5        NA's   :6       
- p3_pqrst_bq20_t3 p3_pqrst_bq21_t3 p3_pqrst_bq22_t3 p3_pqrst_bq23_t3
- Min.   :0.000    Min.   :0.0000   Min.   :0.000    Min.   :0.000   
- 1st Qu.:0.750    1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:1.000   
- Median :3.000    Median :0.0000   Median :1.000    Median :2.000   
- Mean   :2.042    Mean   :0.2295   Mean   :1.008    Mean   :1.713   
- 3rd Qu.:3.000    3rd Qu.:0.0000   3rd Qu.:2.000    3rd Qu.:3.000   
- Max.   :3.000    Max.   :3.0000   Max.   :3.000    Max.   :3.000   
- NA's   :7        NA's   :5        NA's   :5        NA's   :5       
- p3_pqrst_bq24_t3 p3_pqrst_bq25_t3 p3_pqrst_bq26_t3 p3_pqrst_bq27_t3
- Min.   :0.0000   Min.   :0.000    Min.   :0.0      Min.   :0.0000  
- 1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:3.0      1st Qu.:0.0000  
- Median :0.0000   Median :1.000    Median :3.0      Median :0.0000  
- Mean   :0.2541   Mean   :1.388    Mean   :2.5      Mean   :0.2975  
- 3rd Qu.:0.0000   3rd Qu.:3.000    3rd Qu.:3.0      3rd Qu.:0.0000  
- Max.   :3.0000   Max.   :3.000    Max.   :3.0      Max.   :3.0000  
- NA's   :5        NA's   :6        NA's   :5        NA's   :6       
- p3_pqrst_bq28_t3 p3_pqrst_bq29_t3 p3_pqrst_bq30_t3 p3_pqrst_bq31_t3
- Min.   :0.000    Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:1.000    1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
- Median :2.000    Median :0.0000   Median :0.0000   Median :0.0000  
- Mean   :1.653    Mean   :0.2417   Mean   :0.7603   Mean   :0.1475  
- 3rd Qu.:3.000    3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.0000  
- Max.   :3.000    Max.   :3.0000   Max.   :3.0000   Max.   :3.0000  
- NA's   :6        NA's   :7        NA's   :6        NA's   :5       
- p3_pqrst_bq32_t3 p3_pqrst_bq33_t3 p3_pqrst_bq34_t3  p3_poi_q1_t3
- Min.   :0.000    Min.   :0.0000   Min.   :0.000    Min.   :0.0  
- 1st Qu.:2.000    1st Qu.:0.0000   1st Qu.:0.000    1st Qu.:2.0  
- Median :3.000    Median :0.0000   Median :1.000    Median :2.0  
- Mean   :2.336    Mean   :0.7295   Mean   :1.123    Mean   :2.5  
- 3rd Qu.:3.000    3rd Qu.:1.0000   3rd Qu.:2.000    3rd Qu.:4.0  
- Max.   :3.000    Max.   :3.0000   Max.   :3.000    Max.   :4.0  
- NA's   :5        NA's   :5        NA's   :5        NA's   :7    
-  p3_poi_q2_t3    p3_poi_q3_t3   p3_poi_q4_t3    p3_poi_q5_t3   
- Min.   :0.000   Min.   :0.00   Min.   :0.000   Min.   :0.0000  
- 1st Qu.:0.000   1st Qu.:1.00   1st Qu.:1.000   1st Qu.:0.0000  
- Median :1.000   Median :1.00   Median :1.500   Median :0.0000  
- Mean   :1.458   Mean   :1.75   Mean   :1.669   Mean   :0.4793  
- 3rd Qu.:3.000   3rd Qu.:3.00   3rd Qu.:3.000   3rd Qu.:0.0000  
- Max.   :4.000   Max.   :4.00   Max.   :4.000   Max.   :4.0000  
- NA's   :7       NA's   :7      NA's   :9       NA's   :6       
-  p3_poi_q6_t3    p3_poi_q7_t3    p3_poi_q8_t3    p3_poi_q9_t3  
- Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0.000  
- 1st Qu.:0.000   1st Qu.:1.000   1st Qu.:0.000   1st Qu.:0.000  
- Median :1.000   Median :1.000   Median :1.000   Median :1.000  
- Mean   :1.545   Mean   :1.554   Mean   :1.397   Mean   :1.562  
- 3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:3.000  
- Max.   :4.000   Max.   :4.000   Max.   :4.000   Max.   :4.000  
- NA's   :6       NA's   :6       NA's   :6       NA's   :6      
- p3_poi_q10_t3   p3_poi_q11_t3    p3_poi_q12_t3    p3_poi_q13_t3  
- Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
- 1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000  
- Median :1.000   Median :0.0000   Median :1.0000   Median :1.000  
- Mean   :1.446   Mean   :0.7603   Mean   :0.9417   Mean   :1.083  
- 3rd Qu.:2.000   3rd Qu.:1.0000   3rd Qu.:2.0000   3rd Qu.:2.000  
- Max.   :4.000   Max.   :4.0000   Max.   :4.0000   Max.   :4.000  
- NA's   :6       NA's   :6        NA's   :7        NA's   :6      
- p3_poi_q14_t3    p3_poi_q15_t3   p3_poi_q16_t3    p3_poi_q17_t3  
- Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.000  
- 1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.000  
- Median :0.0000   Median :1.000   Median :0.0000   Median :1.000  
- Mean   :0.5041   Mean   :1.562   Mean   :0.4959   Mean   :1.067  
- 3rd Qu.:0.0000   3rd Qu.:4.000   3rd Qu.:0.0000   3rd Qu.:2.000  
- Max.   :4.0000   Max.   :4.000   Max.   :4.0000   Max.   :4.000  
- NA's   :6        NA's   :6       NA's   :6        NA's   :7      
- p3_poi_q18_t3   p3_poi_q19_t3      group          
- Min.   :0.000   Min.   :0.000   Length:127        
- 1st Qu.:1.000   1st Qu.:1.000   Class :character  
- Median :2.000   Median :1.000   Mode  :character  
- Mean   :1.909   Mean   :1.562                     
- 3rd Qu.:3.000   3rd Qu.:2.000                     
- Max.   :4.000   Max.   :4.000                     
- NA's   :6       NA's   :6                         </code></pre>
+<pre><code>lavaan 0.6-19 ended normally after 96 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        52
+
+                                                  Used       Total
+  Number of observations                           114         129
+  Number of missing patterns                        11            
+
+Model Test User Model:
+                                                      
+  Test statistic                               229.607
+  Degrees of freedom                                63
+  P-value (Chi-square)                           0.000
+
+Model Test Baseline Model:
+
+  Test statistic                               942.121
+  Degrees of freedom                                95
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.803
+  Tucker-Lewis Index (TLI)                       0.703
+                                                      
+  Robust Comparative Fit Index (CFI)             0.783
+  Robust Tucker-Lewis Index (TLI)                0.673
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)               -440.124
+  Loglikelihood unrestricted model (H1)       -325.320
+                                                      
+  Akaike (AIC)                                 984.247
+  Bayesian (BIC)                              1126.529
+  Sample-size adjusted Bayesian (SABIC)        962.175
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.152
+  90 Percent confidence interval - lower         0.131
+  90 Percent confidence interval - upper         0.174
+  P-value H_0: RMSEA &lt;= 0.050                    0.000
+  P-value H_0: RMSEA &gt;= 0.080                    1.000
+                                                      
+  Robust RMSEA                                   0.180
+  90 Percent confidence interval - lower         0.156
+  90 Percent confidence interval - upper         0.205
+  P-value H_0: Robust RMSEA &lt;= 0.050             0.000
+  P-value H_0: Robust RMSEA &gt;= 0.080             1.000
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.160
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Observed
+  Observed information based on                Hessian
+
+Regressions:
+                        Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  hot_memory_t2 ~                                                            
+    hot_memory_t1          0.569    0.101    5.629    0.000    0.569    0.557
+  hot_memory_t3 ~                                                            
+    hot_memory_t2          0.545    0.086    6.360    0.000    0.545    0.542
+  cpbq_behaviours_t2 ~                                                       
+    cpbq_behvrs_t1         0.571    0.123    4.629    0.000    0.571    0.535
+  cpbq_behaviours_t3 ~                                                       
+    cpbq_behvrs_t2         0.225    0.080    2.798    0.005    0.225    0.276
+  cptci_beliefs_t2 ~                                                         
+    cptci_belfs_t1         0.542    0.106    5.098    0.000    0.542    0.446
+  cptci_beliefs_t3 ~                                                         
+    cptci_belfs_t2         0.483    0.062    7.748    0.000    0.483    0.651
+  pqrst_behaviours_t2 ~                                                      
+    pqrst_bhvrs_t1         0.638    0.091    6.995    0.000    0.638    0.629
+  pqrst_behaviours_t3 ~                                                      
+    pqrst_bhvrs_t2         0.754    0.087    8.617    0.000    0.754    0.644
+  pqrst_beliefs_t2 ~                                                         
+    pqrst_belfs_t1         0.803    0.051   15.646    0.000    0.803    0.857
+  pqrst_beliefs_t3 ~                                                         
+    pqrst_belfs_t2         0.820    0.047   17.303    0.000    0.820    0.865
+  hot_memory_t2 ~                                                            
+    cpbq_behvrs_t1         0.138    0.098    1.402    0.161    0.138    0.153
+    cptci_belfs_t1        -0.070    0.128   -0.549    0.583   -0.070   -0.059
+  hot_memory_t3 ~                                                            
+    cpbq_behvrs_t2        -0.140    0.092   -1.517    0.129   -0.140   -0.165
+    cptci_belfs_t2         0.312    0.109    2.865    0.004    0.312    0.317
+  cpbq_behaviours_t2 ~                                                       
+    cptci_belfs_t1         0.083    0.160    0.522    0.602    0.083    0.059
+    pqrst_bhvrs_t1         0.129    0.213    0.604    0.546    0.129    0.065
+  cpbq_behaviours_t3 ~                                                       
+    cptci_belfs_t2         0.506    0.099    5.086    0.000    0.506    0.536
+    pqrst_bhvrs_t2         0.035    0.128    0.272    0.785    0.035    0.022
+  cptci_beliefs_t2 ~                                                         
+    pqrst_bhvrs_t1        -0.409    0.190   -2.150    0.032   -0.409   -0.238
+    pqrst_belfs_t1         0.464    0.127    3.665    0.000    0.464    0.379
+  cptci_beliefs_t3 ~                                                         
+    pqrst_bhvrs_t2         0.125    0.110    1.136    0.256    0.125    0.100
+    pqrst_belfs_t2         0.058    0.084    0.688    0.491    0.058    0.060
+
+Covariances:
+                         Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+ .hot_memory_t3 ~~                                                            
+   .cpbq_behvrs_t3          0.117    0.029    4.066    0.000    0.117    0.482
+   .cptci_belfs_t3          0.088    0.021    4.093    0.000    0.088    0.476
+   .pqrst_bhvrs_t3          0.005    0.020    0.248    0.804    0.005    0.027
+   .pqrst_belfs_t3          0.008    0.013    0.625    0.532    0.008    0.068
+ .cpbq_behaviours_t3 ~~                                                       
+   .cptci_belfs_t3          0.090    0.021    4.246    0.000    0.090    0.512
+   .pqrst_bhvrs_t3          0.021    0.019    1.131    0.258    0.021    0.123
+   .pqrst_belfs_t3          0.019    0.013    1.450    0.147    0.019    0.161
+ .cptci_beliefs_t3 ~~                                                         
+   .pqrst_bhvrs_t3          0.003    0.015    0.191    0.848    0.003    0.022
+   .pqrst_belfs_t3          0.002    0.010    0.169    0.866    0.002    0.018
+ .pqrst_behaviours_t3 ~~                                                      
+   .pqrst_belfs_t3          0.048    0.011    4.325    0.000    0.048    0.547
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .hot_memory_t2     0.786    0.208    3.784    0.000    0.786    1.197
+   .hot_memory_t3     0.299    0.178    1.678    0.093    0.299    0.453
+   .cpbq_behvrs_t2    0.053    0.314    0.170    0.865    0.053    0.069
+   .cpbq_behvrs_t3   -0.427    0.184   -2.317    0.020   -0.427   -0.674
+   .cptci_belfs_t2    0.937    0.256    3.667    0.000    0.937    1.396
+   .cptci_belfs_t3    0.499    0.142    3.520    0.000    0.499    1.003
+   .pqrst_bhvrs_t2    0.351    0.101    3.459    0.001    0.351    0.882
+   .pqrst_bhvrs_t3    0.177    0.098    1.807    0.071    0.177    0.380
+   .pqrst_belfs_t2    0.061    0.042    1.458    0.145    0.061    0.119
+   .pqrst_belfs_t3    0.009    0.037    0.235    0.814    0.009    0.018
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .hot_memory_t2     0.271    0.041    6.555    0.000    0.271    0.628
+   .hot_memory_t3     0.255    0.038    6.769    0.000    0.255    0.584
+   .cpbq_behvrs_t2    0.399    0.062    6.443    0.000    0.399    0.659
+   .cpbq_behvrs_t3    0.232    0.035    6.675    0.000    0.232    0.579
+   .cptci_belfs_t2    0.301    0.046    6.548    0.000    0.301    0.668
+   .cptci_belfs_t3    0.132    0.019    6.816    0.000    0.132    0.534
+   .pqrst_bhvrs_t2    0.095    0.015    6.446    0.000    0.095    0.605
+   .pqrst_bhvrs_t3    0.126    0.019    6.643    0.000    0.126    0.585
+   .pqrst_belfs_t2    0.071    0.011    6.721    0.000    0.071    0.266
+   .pqrst_belfs_t3    0.060    0.009    6.387    0.000    0.060    0.251</code></pre>
 </div>
 </div>
+</section>
+<section id="archive" class="slide level2">
+<h2>Archive</h2>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
