@@ -5,6 +5,8 @@ format: revealjs
 editor: visual
 ---
 
+
+
 ## Trauma and memory
 
 We're examining factors that predict hot memory encoding of traumatic events in children. The project is grounded in the premise that traumatic experiences activate a psychological alarm response, leading to heightened amygdala activity and suppressed hippocampal function.
@@ -40,6 +42,8 @@ The collection contains data from three time points:
 -   T2: Three months after the traumatic event
 
 -   T3: Six months after the traumatic event
+
+
 
 ```{r}
 #| label: ‘Set up’
@@ -169,6 +173,8 @@ dyad_all_clean <- dyad_all %>%
       
 ```
 
+
+
 ## Hypotheses
 
 1.  **H1:** Higher levels of maladaptive child beliefs will be associated with greater hot memory encoding of the traumatic event
@@ -182,6 +188,8 @@ dyad_all_clean <- dyad_all %>%
 5.  **H5:** Parental trauma-related beliefs will influence child beliefs indirectly through their effect on parental behaviours
 
 ## Parent's behaviour in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Parent behaviour data visualisation set up’
@@ -519,7 +527,11 @@ grid.arrange(p1_parent_behaviour, p2_parent_behaviour, p3_parent_behaviour, ncol
 
 ```
 
+
+
 ## Parent's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Parent beliefs data visualisation set up’
@@ -1061,7 +1073,11 @@ grid.arrange(p1_parent_beliefs, p2_parent_beliefs, p3_parent_beliefs, ncol = 3)
 
 ```
 
+
+
 ## Child's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Child beliefs data visualisation set up’
@@ -1278,7 +1294,11 @@ grid.arrange(p1_child_beliefs, p2_child_beliefs, p3_child_beliefs, ncol = 3)
 
 ```
 
+
+
 ## Child's behaviours in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Child behaviour data visualisation set up’
@@ -1588,7 +1608,11 @@ grid.arrange(p1_child_behaviour, p2_child_behaviour, p3_child_behaviour, ncol = 
 
 
 
+
+
 ## Cross-Lagged Panel Model (CLPM)
+
+
 
 ```{r}
 #| label: ‘create model’
@@ -1658,7 +1682,11 @@ lavaan::summary(mod, fit.measures = TRUE, standardized = TRUE)
 
 ```
 
+
+
 ## Archive
+
+
 
 ```{r}
 #Old code
@@ -1763,3 +1791,4 @@ cptci_t3 ~ pqrst_t2 + pqrst_t2
 # combined_all <- bind_rows(parent_all, child_all)
 
 ```
+
