@@ -1617,9 +1617,18 @@ print(ACTMQ_t1_cold_freq)
 ACTMQ_t1_hot_prop  <- to_proportions(ACTMQ_t1_hot_freq)
 ACTMQ_t1_cold_prop <- to_proportions(ACTMQ_t1_cold_freq)
 
+
+prop_to_df5 <- function(prop_table, group_name) {
+  df <- as.data.frame(prop_table)
+  colnames(df) <- c("FreqPoint", "Proportion")
+  df$FreqPoint <- factor(df$FreqPoint, levels = c("1","2","3","4"))
+  df$Group <- group_name
+  return(df)
+}
+
 # Create data frames from each proportion table
-df_t1_hot_prop  <- prop_to_df(ACTMQ_t1_hot_prop,  "hot memory")
-df_t1_cold_prop <- prop_to_df(ACTMQ_t1_cold_prop, "cold memory")
+df_t1_hot_prop  <- prop_to_df5(ACTMQ_t1_hot_prop,  "hot memory")
+df_t1_cold_prop <- prop_to_df5(ACTMQ_t1_cold_prop, "cold memory")
 
 df_t1_prop <- bind_rows(df_t1_hot_prop, df_t1_cold_prop)
 
@@ -1649,8 +1658,8 @@ ACTMQ_t2_hot_prop  <- to_proportions(ACTMQ_t2_hot_freq)
 ACTMQ_t2_cold_prop <- to_proportions(ACTMQ_t2_cold_freq)
 
 # Create data frames from each proportion table
-df_t2_hot_prop  <- prop_to_df(ACTMQ_t2_hot_prop,  "hot memory")
-df_t2_cold_prop <- prop_to_df(ACTMQ_t2_cold_prop, "cold memory")
+df_t2_hot_prop  <- prop_to_df5(ACTMQ_t2_hot_prop,  "hot memory")
+df_t2_cold_prop <- prop_to_df5(ACTMQ_t2_cold_prop, "cold memory")
 
 df_t2_prop <- bind_rows(df_t2_hot_prop, df_t2_cold_prop)
 
@@ -1680,14 +1689,11 @@ ACTMQ_t3_hot_prop  <- to_proportions(ACTMQ_t3_hot_freq)
 ACTMQ_t3_cold_prop <- to_proportions(ACTMQ_t3_cold_freq)
 
 # Create data frames from each proportion table
-df_t3_hot_prop  <- prop_to_df(ACTMQ_t3_hot_prop,  "hot memory")
-df_t3_cold_prop <- prop_to_df(ACTMQ_t3_cold_prop, "cold memory")
+df_t3_hot_prop  <- prop_to_df5(ACTMQ_t3_hot_prop,  "hot memory")
+df_t3_cold_prop <- prop_to_df5(ACTMQ_t3_cold_prop, "cold memory")
 
 df_t3_prop <- bind_rows(df_t3_hot_prop, df_t3_cold_prop)
 ```
-
-
-
 
 ```{r}
 #| label: ‘Hot vs cold memory data visualisation’
