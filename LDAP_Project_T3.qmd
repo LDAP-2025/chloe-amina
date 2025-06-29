@@ -1586,6 +1586,184 @@ grid.arrange(p1_child_behaviour, p2_child_behaviour, p3_child_behaviour, ncol = 
 
 ```
 
+## Child hot vs. cold memory
+
+```{r}
+#| label: ‘Hot vs cold memory data visualisation set up’
+#| echo: false
+#| output: false
+
+## T1: HOT VS COLD MEMORY
+ACTMQ_t1_freq <- lapply(ACTMQ_t1[ , !(names(ACTMQ_t1) %in% c("ID", "Date")) ], table)
+ACTMQ_t1_freq
+
+# hot memory
+ACTMQ_t1_hot_freq <- ACTMQ_t1_freq[c("c1_actmq_q1", "c1_actmq_q2", "c1_actmq_q3", "c1_actmq_q4", "c1_actmq_q5", "c1_actmq_q7", "c1_actmq_q8", "c1_actmq_q10", "c1_actmq_q11", "c1_actmq_q18")]
+ACTMQ_t1_hot_freq <- Reduce(`+`, ACTMQ_t1_hot_freq)
+print(ACTMQ_t1_hot_freq)
+
+# cold memory
+ACTMQ_t1_cold_freq <- ACTMQ_t1_freq[c("c1_actmq_q6", "c1_actmq_q9", "c1_actmq_q12", "c1_actmq_q13", "c1_actmq_q14", "c1_actmq_q15", "c1_actmq_q16", "c1_actmq_q17")]
+
+reverse_items3 <- c("c1_actmq_q6")
+ACTMQ_t1_cold_freq[reverse_items] <- lapply(ACTMQ_t1_cold_freq[reverse_items3], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+ACTMQ_t1_cold_freq <- Reduce(`+`, ACTMQ_t1_cold_freq)
+print(ACTMQ_t1_cold_freq)
+
+# converts frequency table to proportions
+ACTMQ_t1_hot_prop  <- to_proportions(ACTMQ_t1_hot_freq)
+ACTMQ_t1_cold_prop <- to_proportions(ACTMQ_t1_cold_freq)
+
+# Create data frames from each proportion table
+df_t1_hot_prop  <- prop_to_df(ACTMQ_t1_hot_prop,  "hot memory")
+df_t1_cold_prop <- prop_to_df(ACTMQ_t1_cold_prop, "cold memory")
+
+df_t1_prop <- bind_rows(df_t1_hot_prop, df_t1_cold_prop)
+
+
+## T2: HOT VS COLD MEMORY
+ACTMQ_t2_freq <- lapply(ACTMQ_t2[ , !(names(ACTMQ_t2) %in% c("ID", "Date")) ], table)
+ACTMQ_t2_freq
+
+# hot memory
+ACTMQ_t2_hot_freq <- ACTMQ_t2_freq[c("c2_actmq_q1", "c2_actmq_q2", "c2_actmq_q3", "c2_actmq_q4", "c2_actmq_q5", "c2_actmq_q7", "c2_actmq_q8", "c2_actmq_q10", "c2_actmq_q11", "c2_actmq_q18")]
+ACTMQ_t2_hot_freq <- Reduce(`+`, ACTMQ_t2_hot_freq)
+print(ACTMQ_t2_hot_freq)
+
+# cold memory
+ACTMQ_t2_cold_freq <- ACTMQ_t2_freq[c("c2_actmq_q6", "c2_actmq_q9", "c2_actmq_q12", "c2_actmq_q13", "c2_actmq_q14", "c2_actmq_q15", "c2_actmq_q16", "c2_actmq_q17")]
+
+reverse_items3 <- c("c2_actmq_q6")
+ACTMQ_t2_cold_freq[reverse_items] <- lapply(ACTMQ_t2_cold_freq[reverse_items3], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+ACTMQ_t2_cold_freq <- Reduce(`+`, ACTMQ_t2_cold_freq)
+print(ACTMQ_t2_cold_freq)
+
+# converts frequency table to proportions
+ACTMQ_t2_hot_prop  <- to_proportions(ACTMQ_t2_hot_freq)
+ACTMQ_t2_cold_prop <- to_proportions(ACTMQ_t2_cold_freq)
+
+# Create data frames from each proportion table
+df_t2_hot_prop  <- prop_to_df(ACTMQ_t2_hot_prop,  "hot memory")
+df_t2_cold_prop <- prop_to_df(ACTMQ_t2_cold_prop, "cold memory")
+
+df_t2_prop <- bind_rows(df_t2_hot_prop, df_t2_cold_prop)
+
+
+## T3: HOT VS COLD MEMORY
+ACTMQ_t3_freq <- lapply(ACTMQ_t3[ , !(names(ACTMQ_t3) %in% c("ID", "Date")) ], table)
+ACTMQ_t3_freq
+
+# hot memory
+ACTMQ_t3_hot_freq <- ACTMQ_t3_freq[c("c3_actmq_q1", "c3_actmq_q2", "c3_actmq_q3", "c3_actmq_q4", "c3_actmq_q5", "c3_actmq_q7", "c3_actmq_q8", "c3_actmq_q10", "c3_actmq_q11", "c3_actmq_q18")]
+ACTMQ_t3_hot_freq <- Reduce(`+`, ACTMQ_t3_hot_freq)
+print(ACTMQ_t3_hot_freq)
+
+# cold memory
+ACTMQ_t3_cold_freq <- ACTMQ_t3_freq[c("c3_actmq_q6", "c3_actmq_q9", "c3_actmq_q12", "c3_actmq_q13", "c3_actmq_q14", "c3_actmq_q15", "c3_actmq_q16", "c3_actmq_q17")]
+
+reverse_items3 <- c("c3_actmq_q6")
+ACTMQ_t3_cold_freq[reverse_items] <- lapply(ACTMQ_t3_cold_freq[reverse_items3], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+ACTMQ_t3_cold_freq <- Reduce(`+`, ACTMQ_t3_cold_freq)
+print(ACTMQ_t3_cold_freq)
+
+# converts frequency table to proportions
+ACTMQ_t3_hot_prop  <- to_proportions(ACTMQ_t3_hot_freq)
+ACTMQ_t3_cold_prop <- to_proportions(ACTMQ_t3_cold_freq)
+
+# Create data frames from each proportion table
+df_t3_hot_prop  <- prop_to_df(ACTMQ_t3_hot_prop,  "hot memory")
+df_t3_cold_prop <- prop_to_df(ACTMQ_t3_cold_prop, "cold memory")
+
+df_t3_prop <- bind_rows(df_t3_hot_prop, df_t3_cold_prop)
+```
+
+
+
+
+```{r}
+#| label: ‘Hot vs cold memory data visualisation’
+#| echo: false
+#| output: true
+
+
+p1_hot_cold <- ggplot(df_t1_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Memory type",
+    y = "Proportion",
+    fill = "Response Level",
+    title = "T1: within 6 weeks") +
+  scale_x_discrete(
+    labels = c(
+      hotmemory = "Hot memory",
+      coldmemory = "Cold memory")) +
+  scale_fill_manual(
+    values = c(
+      "Don't agree at all" = "#d73027",
+      "Don't agree a bit"  = "#fc8d59",
+      "Agree a bit"        = "#fee090",
+      "Agree a lot"        = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+p2_hot_cold <- ggplot(df_t2_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Memory type",
+    y = "Proportion",
+    fill = "Response Level",
+    title = "T2: after 3 months") +
+  scale_x_discrete(
+    labels = c(
+      hotmemory = "Hot memory",
+      coldmemory = "Cold memory")) +
+  scale_fill_manual(
+    values = c(
+      "Don't agree at all" = "#d73027",
+      "Don't agree a bit"  = "#fc8d59",
+      "Agree a bit"        = "#fee090",
+      "Agree a lot"        = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+p3_hot_cold <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Memory type",
+    y = "Proportion",
+    fill = "Response Level",
+    title = "T3: after 6 months") +
+  scale_x_discrete(
+    labels = c(
+      hotmemory = "Hot memory",
+      coldmemory = "Cold memory")) +
+  scale_fill_manual(
+    values = c(
+      "Don't agree at all" = "#d73027",
+      "Don't agree a bit"  = "#fc8d59",
+      "Agree a bit"        = "#fee090",
+      "Agree a lot"        = "#91bfdb")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+grid.arrange(p1_hot_cold, p2_hot_cold, p3_hot_cold, ncol = 3)
+
+```
+
+
+
 
 
 ## Cross-Lagged Panel Model (CLPM)
