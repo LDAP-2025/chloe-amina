@@ -60,34 +60,34 @@ library(tidyverse)
 ## Load data
 ## Parental questionnaires 
 # Parental Trauma Responses Questionnaire 
-PQRST_t1 <- read_sav("00.Raw_Data/T1/Parent/p1_PTRQ_(Parent Trauma Response Questionnaire).sav")
-PQRST_t2 <- read_sav("00.Raw_Data/T2/Parent/p2_PTRQ_(Parent Trauma Response Questionnaire).sav")
-PQRST_t3 <- read_sav("00.Raw_Data/T3/Parent/p3_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PQRST_t1 <- read_sav("../00.Raw_Data/T1/Parent/p1_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PQRST_t2 <- read_sav("../00.Raw_Data/T2/Parent/p2_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PQRST_t3 <- read_sav("../00.Raw_Data/T3/Parent/p3_PTRQ_(Parent Trauma Response Questionnaire).sav")
 
 # Parental overprotection scale
-POI_t1 <- read_sav("00.Raw_Data/T1/Parent/p1_POI_(Parental Overprotection Scale.sav")
-POI_t2 <- read_sav("00.Raw_Data/T2/Parent/p2_POI_(Parental Overprotection Scale).sav")
-POI_t3 <- read_sav("00.Raw_Data/T3/Parent/p3_POI_(Parental Overprotection Scale).sav")
+POI_t1 <- read_sav("../00.Raw_Data/T1/Parent/p1_POI_(Parental Overprotection Scale.sav")
+POI_t2 <- read_sav("../00.Raw_Data/T2/Parent/p2_POI_(Parental Overprotection Scale).sav")
+POI_t3 <- read_sav("../00.Raw_Data/T3/Parent/p3_POI_(Parental Overprotection Scale).sav")
 
 # Child questionnaires
 # Child Post-Traumatic Cognition Inventory
-CPTCI_t1 <- read_sav("00.Raw_Data/T1/Child and Teenager/c1_CPTCI_(Child Posttraumatic Cognitions Inventory).sav")
-CPTCI_t2 <- read_sav("00.Raw_Data/T2/Child and Teenager/c2_CPTCI_(Child Postraumatic Cognitions Inventory).sav")
-CPTCI_t3 <- read_sav("00.Raw_Data/T3/Child and Teenager/c3_CPTCI_(Child Posttraumatic Cognitions Inventory).sav")
+CPTCI_t1 <- read_sav("../00.Raw_Data/T1/Child and Teenager/c1_CPTCI_(Child Posttraumatic Cognitions Inventory).sav")
+CPTCI_t2 <- read_sav("../00.Raw_Data/T2/Child and Teenager/c2_CPTCI_(Child Postraumatic Cognitions Inventory).sav")
+CPTCI_t3 <- read_sav("../00.Raw_Data/T3/Child and Teenager/c3_CPTCI_(Child Posttraumatic Cognitions Inventory).sav")
 
 # Multidimensional scale of perceived social support
-MPSS_t1 <- read_sav("00.Raw_Data/T1/Child and Teenager/c1_MSPSS (Multidimensional Scale of Perceived Social Support).sav")
-MPSS_t2 <- read_sav("00.Raw_Data/T2/Child and Teenager/c2_MSPSS (Multidimensional Scale of Perceived Social Support).sav")
+MPSS_t1 <- read_sav("../00.Raw_Data/T1/Child and Teenager/c1_MSPSS (Multidimensional Scale of Perceived Social Support).sav")
+MPSS_t2 <- read_sav("../00.Raw_Data/T2/Child and Teenager/c2_MSPSS (Multidimensional Scale of Perceived Social Support).sav")
 
 # Child posttrauma behaviour questionnaire
-CPBQ_t1 <- read_sav("00.Raw_Data/T1/Child and Teenager/c1_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
-CPBQ_t2 <- read_sav("00.Raw_Data/T2/Child and Teenager/c2_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
-CPBQ_t3 <- read_sav("00.Raw_Data/T3/Child and Teenager/c3_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
+CPBQ_t1 <- read_sav("../00.Raw_Data/T1/Child and Teenager/c1_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
+CPBQ_t2 <- read_sav("../00.Raw_Data/T2/Child and Teenager/c2_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
+CPBQ_t3 <- read_sav("../00.Raw_Data/T3/Child and Teenager/c3_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
 
 # Child memory questionnaire
-ACTMQ_t1 <- read_sav("00.Raw_Data/T1/Child and Teenager/c1_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
-ACTMQ_t2 <- read_sav("00.Raw_Data/T2/Child and Teenager/c2_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
-ACTMQ_t3 <- read_sav("00.Raw_Data/T3/Child and Teenager/c3_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
+ACTMQ_t1 <- read_sav("../00.Raw_Data/T1/Child and Teenager/c1_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
+ACTMQ_t2 <- read_sav("../00.Raw_Data/T2/Child and Teenager/c2_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
+ACTMQ_t3 <- read_sav("../00.Raw_Data/T3/Child and Teenager/c3_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
 
 
 ## Merge the dataset wide
@@ -587,8 +587,6 @@ ggplot(spaghetti_data, aes(x = timepoint, y = parentbehaviours_mean, col = facto
   guides(col = guide_legend(nrow = 3)) +
   theme(legend.position = "none")
 ```
-
-
 
 ## Parent's beliefs in response to trauma over time
 
@@ -1133,6 +1131,7 @@ grid.arrange(p1_parent_beliefs, p2_parent_beliefs, p3_parent_beliefs, ncol = 3)
 ```
 
 ## Parent's beliefs in response to trauma over time
+
 ```{r}
 #| label: ‘parent belief's spaghetti plot’
 #| echo: false
@@ -1168,8 +1167,6 @@ ggplot(spaghetti_data, aes(x = timepoint, y = parentbeliefs_mean, col = factor(d
   guides(col = guide_legend(nrow = 3)) +
   theme(legend.position = "none")
 ```
-
-
 
 ## Child's beliefs in response to trauma over time
 
@@ -1423,7 +1420,6 @@ ggplot(spaghetti_data_childbeliefs, aes(x = timepoint, y = childbeliefs_mean, co
   guides(col = guide_legend(nrow = 3)) +
   theme(legend.position = "none")
 ```
-
 
 ## Child's behaviours in response to trauma over time
 
@@ -1769,7 +1765,6 @@ ggplot(spaghetti_data_child, aes(x = timepoint, y = childbehaviours_mean, col = 
   theme(legend.position = "none")
 ```
 
-
 ## Child hot vs. cold memory
 
 ```{r}
@@ -1968,10 +1963,7 @@ grid.arrange(p1_hot_cold, p2_hot_cold, p3_hot_cold, ncol = 3)
 
 ```
 
-
-
-
-
+## Cross-Lagged Panel Model (CLPM)
 
 ## Cross-Lagged Panel Model (CLPM)
 
@@ -2043,8 +2035,8 @@ lavaan::summary(mod, fit.measures = TRUE, standardized = TRUE)
 
 ```
 
-
 ## Cross-Lagged Panel Model (CLPM)
+
 ```{r}
 #| label: ‘hypotheses tested’
 #| echo: false
@@ -2083,8 +2075,8 @@ hypothesis_table <- tibble(
 print(hypothesis_table)
 ```
 
-
 ## Cross-Lagged Panel Model (CLPM)
+
 ```{r}
 #| label: ‘clpm visualise results’
 #| echo: false
@@ -2099,7 +2091,3 @@ lvplot <- lavaanPlot(model = mod,
            graph_options = list(rankdir = "LR")) # left-to-right layout
 lvplot
 ```
-
-
-
-
