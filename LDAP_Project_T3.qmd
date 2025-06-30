@@ -52,6 +52,10 @@ library(ggplot2)
 library(tidyr)
 library(lavaan)
 library(gridExtra)
+library(tibble)
+library(knitr)
+library(kableExtra)
+library(tidyverse)
 
 ## Load data
 ## Parental questionnaires 
@@ -518,6 +522,73 @@ grid.arrange(p1_parent_behaviour, p2_parent_behaviour, p3_parent_behaviour, ncol
 
 
 ```
+
+```{r}
+#| label: ‘creating data set for spaghetti plot’
+#| echo: false
+#| output: false
+
+spaghetti_plot_dataset <- dyad_all_clean %>%
+  mutate(
+    # T1
+    t1_childbehaviours_mean = rowMeans(select(., matches("c1_cpbq_a_q(1|2|3|5)|c1_cpbq_b_q(1|2|3|5|9|10|11)")), na.rm = TRUE),
+    t1_childbeliefs_mean = rowMeans(select(., matches("c1_cptci_q(6|14|19|23|24|1|5|10|18|25)")), na.rm = TRUE),
+    t1_parentbehaviours_mean = rowMeans(select(., matches("p1_pqrst_bq(3|4|5|10|11|15|20|22|23|24|26|34)")), na.rm = TRUE),
+    t1_parentbeliefs_mean = rowMeans(select(., matches("p1_pqrst_aq(2|4|6|9|14|17|22|26|27|29|31|33|34|35|36|37|41|42)")), na.rm = TRUE),
+    t2_childbehaviours_mean = rowMeans(select(., matches("c2_cpbq_a_q(1|2|3|5)|c2_cpbq_b_q(1|2|3|5|9|10|11)")), na.rm = TRUE),
+    t2_childbeliefs_mean = rowMeans(select(., matches("c2_cptci_q(6|14|19|23|24|1|5|10|18|25)")), na.rm = TRUE),
+    t2_parentbehaviours_mean = rowMeans(select(., matches("p2_pqrst_bq(3|4|5|10|11|15|20|22|23|24|26|34)")), na.rm = TRUE),
+    t2_parentbeliefs_mean = rowMeans(select(., matches("p2_pqrst_aq(2|4|6|9|14|17|22|26|27|29|31|33|34|35|36|37|41|42)")), na.rm = TRUE),
+    t3_childbehaviours_mean = rowMeans(select(., matches("c3_cpbq_a_q(1|2|3|5)|c3_cpbq_b_q(1|2|3|5|9|10|11)")), na.rm = TRUE),
+    t3_childbeliefs_mean = rowMeans(select(., matches("c3_cptci_q(6|14|19|23|24|1|5|10|18|25)")), na.rm = TRUE),
+    t3_parentbehaviours_mean = rowMeans(select(., matches("p3_pqrst_bq(3|4|5|10|11|15|20|22|23|24|26|34)")), na.rm = TRUE),
+    t3_parentbeliefs_mean = rowMeans(select(., matches("p3_pqrst_aq(2|4|6|9|14|17|22|26|27|29|31|33|34|35|36|37|41|42)")), na.rm = TRUE)
+  ) %>%
+  # Select only dyad_ID and the new mean columns
+  select(dyad_ID, ends_with("_mean")) %>%
+  # Convert NaN to NA
+  mutate(across(everything(), ~ ifelse(is.nan(.), NA, .)))
+
+```
+
+## Parent's behaviour in response to trauma over time
+
+```{r}
+#| label: ‘parent behaviour's spaghetti plot’
+#| echo: false
+#| output: true
+
+# Pivot to long format and remove missing values
+spaghetti_data <- spaghetti_plot_dataset %>%
+  select(dyad_ID, starts_with("t1_parentbehaviours_mean"),
+         starts_with("t2_parentbehaviours_mean"),
+         starts_with("t3_parentbehaviours_mean")) %>%
+  pivot_longer(
+    cols = -dyad_ID,
+    names_to = "timepoint",
+    values_to = "parentbehaviours_mean"
+  ) %>%
+  mutate(timepoint = case_when(
+    str_detect(timepoint, "t1") ~ "T1",
+    str_detect(timepoint, "t2") ~ "T2",
+    str_detect(timepoint, "t3") ~ "T3"
+  )) %>%
+  filter(!is.na(parentbehaviours_mean) & !is.nan(parentbehaviours_mean))
+
+# Spaghetti plot
+ggplot(spaghetti_data, aes(x = timepoint, y = parentbehaviours_mean, col = factor(dyad_ID))) +
+  geom_smooth(aes(group = dyad_ID), method = "lm", se = FALSE, alpha = 0.05, linewidth = 0.5) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, colour = "black", linewidth = 1) +
+  labs(
+    x = "Time Point",
+    y = "Mean Parent Behaviours",
+    col = "Dyad ID"
+  ) +
+  guides(col = guide_legend(nrow = 3)) +
+  theme(legend.position = "none")
+```
+
+
 
 ## Parent's beliefs in response to trauma over time
 
@@ -1061,6 +1132,45 @@ grid.arrange(p1_parent_beliefs, p2_parent_beliefs, p3_parent_beliefs, ncol = 3)
 
 ```
 
+## Parent's beliefs in response to trauma over time
+```{r}
+#| label: ‘parent belief's spaghetti plot’
+#| echo: false
+#| output: true
+
+
+# Pivot to long format and remove missing values
+spaghetti_data <- spaghetti_plot_dataset %>%
+  select(dyad_ID, starts_with("t1_parentbeliefs_mean"),
+         starts_with("t2_parentbeliefs_mean"),
+         starts_with("t3_parentbeliefs_mean")) %>%
+  pivot_longer(
+    cols = -dyad_ID,
+    names_to = "timepoint",
+    values_to = "parentbeliefs_mean"
+  ) %>%
+  mutate(timepoint = case_when(
+    str_detect(timepoint, "t1") ~ "T1",
+    str_detect(timepoint, "t2") ~ "T2",
+    str_detect(timepoint, "t3") ~ "T3"
+  )) %>%
+  filter(!is.na(parentbeliefs_mean) & !is.nan(parentbeliefs_mean))
+
+# Spaghetti plot for Parent Beliefs
+ggplot(spaghetti_data, aes(x = timepoint, y = parentbeliefs_mean, col = factor(dyad_ID))) +
+  geom_smooth(aes(group = dyad_ID), method = "lm", se = FALSE, alpha = 0.05, linewidth = 0.5) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, colour = "black", linewidth = 1) +
+  labs(
+    x = "Time Point",
+    y = "Mean Parent Beliefs",
+    col = "Dyad ID"
+  ) +
+  guides(col = guide_legend(nrow = 3)) +
+  theme(legend.position = "none")
+```
+
+
+
 ## Child's beliefs in response to trauma over time
 
 ```{r}
@@ -1277,6 +1387,43 @@ p3_child_beliefs <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = Fre
 grid.arrange(p1_child_beliefs, p2_child_beliefs, p3_child_beliefs, ncol = 3)
 
 ```
+
+## Child's beliefs in response to trauma over time
+
+```{r}
+#| label: ‘child belief's's spaghetti plot’
+#| echo: false
+
+# Pivot to long format and remove missing values for child beliefs
+spaghetti_data_childbeliefs <- spaghetti_plot_dataset %>%
+  select(dyad_ID, starts_with("t1_childbeliefs_mean"),
+         starts_with("t2_childbeliefs_mean"),
+         starts_with("t3_childbeliefs_mean")) %>%
+  pivot_longer(
+    cols = -dyad_ID,
+    names_to = "timepoint",
+    values_to = "childbeliefs_mean"
+  ) %>%
+  mutate(timepoint = case_when(
+    str_detect(timepoint, "t1") ~ "T1",
+    str_detect(timepoint, "t2") ~ "T2",
+    str_detect(timepoint, "t3") ~ "T3"
+  )) %>%
+  filter(!is.na(childbeliefs_mean) & !is.nan(childbeliefs_mean))
+
+# Spaghetti plot for Child Beliefs
+ggplot(spaghetti_data_childbeliefs, aes(x = timepoint, y = childbeliefs_mean, col = factor(dyad_ID))) +
+  geom_smooth(aes(group = dyad_ID), method = "lm", se = FALSE, alpha = 0.05, linewidth = 0.5) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, colour = "black", linewidth = 1) +
+  labs(
+    x = "Time Point",
+    y = "Mean Child Beliefs",
+    col = "Dyad ID"
+  ) +
+  guides(col = guide_legend(nrow = 3)) +
+  theme(legend.position = "none")
+```
+
 
 ## Child's behaviours in response to trauma over time
 
@@ -1586,12 +1733,50 @@ grid.arrange(p1_child_behaviour, p2_child_behaviour, p3_child_behaviour, ncol = 
 
 ```
 
+## Child's behaviours in response to trauma over time
+
+```{r}
+#| label: ‘child behaviour's spaghetti plot’
+#| echo: false
+
+# Pivot to long format and remove missing values
+spaghetti_data_child <- spaghetti_plot_dataset %>%
+  select(dyad_ID, starts_with("t1_childbehaviours_mean"),
+         starts_with("t2_childbehaviours_mean"),
+         starts_with("t3_childbehaviours_mean")) %>%
+  pivot_longer(
+    cols = -dyad_ID,
+    names_to = "timepoint",
+    values_to = "childbehaviours_mean"
+  ) %>%
+  mutate(timepoint = case_when(
+    str_detect(timepoint, "t1") ~ "T1",
+    str_detect(timepoint, "t2") ~ "T2",
+    str_detect(timepoint, "t3") ~ "T3"
+  )) %>%
+  filter(!is.na(childbehaviours_mean) & !is.nan(childbehaviours_mean))
+
+# Spaghetti plot for Child Behaviours
+ggplot(spaghetti_data_child, aes(x = timepoint, y = childbehaviours_mean, col = factor(dyad_ID))) +
+  geom_smooth(aes(group = dyad_ID), method = "lm", se = FALSE, alpha = 0.05, linewidth = 0.5) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, colour = "black", linewidth = 1) +
+  labs(
+    x = "Time Point",
+    y = "Mean Child Behaviours",
+    col = "Dyad ID"
+  ) +
+  guides(col = guide_legend(nrow = 3)) +
+  theme(legend.position = "none")
+```
+
+
 ## Child hot vs. cold memory
 
 ```{r}
 #| label: ‘Hot vs cold memory data visualisation set up’
 #| echo: false
 #| output: false
+
 
 ## T1: HOT VS COLD MEMORY
 ACTMQ_t1_freq <- lapply(ACTMQ_t1[ , !(names(ACTMQ_t1) %in% c("ID", "Date")) ], table)
@@ -1618,15 +1803,30 @@ ACTMQ_t1_hot_prop  <- to_proportions(ACTMQ_t1_hot_freq)
 ACTMQ_t1_cold_prop <- to_proportions(ACTMQ_t1_cold_freq)
 
 
-prop_to_df5 <- function(prop_table, group_name) {
-  df <- as.data.frame(prop_table)
-  colnames(df) <- c("FreqPoint", "Proportion")
-  df$FreqPoint <- factor(df$FreqPoint, levels = c("1","2","3","4"))
-  df$Group <- group_name
-  return(df)
-}
 
-# Create data frames from each proportion table
+
+
+
+
+
+
+
+
+
+
+prop_to_df5 <- function(x, group_name) {
+  expected_levels <- as.character(1:4)
+ 
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+ 
+  data.frame(
+	Group = group_name,
+	FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Disagree a lot", "Disagree a bit", "Agree a bit", "Agree a lot")),
+	Proportion = as.numeric(padded))}
+ 
 df_t1_hot_prop  <- prop_to_df5(ACTMQ_t1_hot_prop,  "hot memory")
 df_t1_cold_prop <- prop_to_df5(ACTMQ_t1_cold_prop, "cold memory")
 
@@ -1714,8 +1914,8 @@ p1_hot_cold <- ggplot(df_t1_prop, aes(x = Group, y = Proportion, fill = FreqPoin
       coldmemory = "Cold memory")) +
   scale_fill_manual(
     values = c(
-      "Don't agree at all" = "#d73027",
-      "Don't agree a bit"  = "#fc8d59",
+      "Disagree a lot" = "#d73027",
+      "Disagree a bit"  = "#fc8d59",
       "Agree a bit"        = "#fee090",
       "Agree a lot"        = "#91bfdb")) +
   theme_minimal() +
@@ -1735,8 +1935,8 @@ p2_hot_cold <- ggplot(df_t2_prop, aes(x = Group, y = Proportion, fill = FreqPoin
       coldmemory = "Cold memory")) +
   scale_fill_manual(
     values = c(
-      "Don't agree at all" = "#d73027",
-      "Don't agree a bit"  = "#fc8d59",
+      "Disagree a lot" = "#d73027",
+      "Disagree a bit"  = "#fc8d59",
       "Agree a bit"        = "#fee090",
       "Agree a lot"        = "#91bfdb")) +
   theme_minimal() +
@@ -1756,8 +1956,8 @@ p3_hot_cold <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = FreqPoin
       coldmemory = "Cold memory")) +
   scale_fill_manual(
     values = c(
-      "Don't agree at all" = "#d73027",
-      "Don't agree a bit"  = "#fc8d59",
+      "Disagree a lot" = "#d73027",
+      "Disagree a bit"  = "#fc8d59",
       "Agree a bit"        = "#fee090",
       "Agree a lot"        = "#91bfdb")) +
   theme_minimal() +
@@ -1767,6 +1967,7 @@ p3_hot_cold <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = FreqPoin
 grid.arrange(p1_hot_cold, p2_hot_cold, p3_hot_cold, ncol = 3)
 
 ```
+
 
 
 
@@ -1842,108 +2043,63 @@ lavaan::summary(mod, fit.measures = TRUE, standardized = TRUE)
 
 ```
 
-## Archive
 
+## Cross-Lagged Panel Model (CLPM)
 ```{r}
-#Old code
-mod_spec <- '
-## hot memory
-hot_memory_t1 =~ c1_actmq_q3_t1 + c1_actmq_q5_t1 + c1_actmq_q7_t1 + c1_actmq_q12_t1 + c1_actmq_q15_t1 + c1_actmq_q17_t1
-
-hot_memory_t2 =~ c2_actmq_q3_t2 + c2_actmq_q5_t2 + c2_actmq_q7_t2 + c2_actmq_q12_t2 + c2_actmq_q15_t2 + c2_actmq_q17_t2
-
-hot_memory_t3 =~c3_actmq_q3_t3 + c3_actmq_q5_t3 + c3_actmq_q7_t3 + c3_actmq_q12_t3 + c3_actmq_q15_t3 + c3_actmq_q17_t3
-
-
-## child behaviour
-cpbq_t1 =~c1_cpbq_a_q1_t1 + c1_cpbq_a_q2_t1 + c1_cpbq_a_q3_t1 + c1_cpbq_a_q5_t1 + c1_cpbq_b_q1_t1 + c1_cpbq_b_q2_t1 + c1_cpbq_b_q9_t1 + c1_cpbq_b_q10_t1 + c1_cpbq_b_q11_t1
-
-cpbq_t2 =~ c2_cpbq_a_q1_t2 + c2_cpbq_a_q2_t2 + c2_cpbq_a_q3_t2 + c2_cpbq_a_q5_t2 + c2_cpbq_b_q1_t2 + c2_cpbq_b_q2_t2 + c2_cpbq_b_q9_t2 + c2_cpbq_b_q10_t2 + c2_cpbq_b_q11_t2
-
-cpbq_t3 =~ c3_cpbq_a_q1_t3 + c3_cpbq_a_q2_t3 + c3_cpbq_a_q3_t3 + c3_cpbq_a_q5_t3 + c3_cpbq_b_q1_t3 + c3_cpbq_b_q2_t3 + c3_cpbq_b_q9_t3 + c3_cpbq_b_q10_t3 + c3_cpbq_b_q11_t3
+#| label: ‘hypotheses tested’
+#| echo: false
+#| output: true
+# Get parameter estimates
+params <- parameterEstimates(mod, standardized = TRUE)
+# Helper function to get formatted estimate and p-value
+get_estimate <- function(lhs, rhs) {
+  row <- params %>%
+    filter(lhs == !!lhs, rhs == !!rhs, op == "~") # regression paths
+  if (nrow(row) == 0) return("N/A")
+  est <- round(row$est, 3)
+  pval <- row$pvalue
+  pval_str <- ifelse(pval < 0.001, "< 0.001", paste0("= ", round(pval, 3)))
+  return(paste0(est, " (p ", pval_str, ")"))}
 
 
+# Create the table
+hypothesis_table <- tibble(
+  Hypothesis = c("H1: Child beliefs → Hot memory",
+                 "H2: Child behaviour → Hot memory",
+                 "H3: Child beliefs → Child behaviour → Hot memory",
+                 "H4: Parental beliefs → Child beliefs",
+                 "H5: Parental beliefs → Parental behaviour → Child beliefs"),
+  `Estimate (t1 to t2)` = c(get_estimate("hot_memory_t2", "cptci_beliefs_t1"),
+                           get_estimate("hot_memory_t2", "cpbq_behaviours_t1"),
+                           get_estimate("cpbq_behaviours_t2", "cptci_beliefs_t1"),
+                           get_estimate("cptci_beliefs_t2", "pqrst_beliefs_t1"),
+                           get_estimate("cptci_beliefs_t2","pqrst_behaviours_t1")),
+  `Estimate (t2 to t3)` = c(get_estimate("hot_memory_t3", "cptci_beliefs_t2"),
+                           get_estimate("hot_memory_t3", "cpbq_behaviours_t2"),
+                           get_estimate("cpbq_behaviours_t3", "cptci_beliefs_t2"),
+                            get_estimate("cptci_beliefs_t3", "pqrst_beliefs_t2"),
+                           get_estimate("cptci_beliefs_t3","pqrst_behaviours_t2")))
 
-## child beliefs
-cptci_t1 =~  c1_cptci_q6_t1 + c1_cptci_q14_t1 + c1_cptci_q19_t1 + c1_cptci_q23_t1 + c1_cptci_q24_t1 + c1_cptci_q1_t1 + c1_cptci_q5_t1 + c1_cptci_q10_t1 + c1_cptci_q18_t1 + c1_cptci_q25_t1
-
-cptci_t2 =~ c2_cptci_q6_t2 + c2_cptci_q14_t2 + c2_cptci_q19_t2 + c2_cptci_q23_t2 + c2_cptci_q24_t2 + c2_cptci_q1_t2 + c2_cptci_q5_t2 + c2_cptci_q10_t2 + c2_cptci_q18_t2 + c2_cptci_q25_t2
-
-cptci_t3 =~ c3_cptci_q6_t3 + c3_cptci_q14_t3 + c3_cptci_q19_t3 + c3_cptci_q23_t3 + c3_cptci_q24_t3 + c3_cptci_q1_t3 + c3_cptci_q5_t3 + c3_cptci_q10_t3 + c3_cptci_q18_t3 + c3_cptci_q25_t3
-
-
-## Parent behaviours
-pqrst_t1 =~ p1_pqrst_bq3_t1 + p1_pqrst_bq4_t1 + p1_pqrst_bq5_t1 + p1_pqrst_bq10_t1 + p1_pqrst_bq11_t1 + p1_pqrst_bq15_t1 + p1_pqrst_bq20_t1 + p1_pqrst_bq22_t1 + p1_pqrst_bq23_t1 + p1_pqrst_bq24_t1 + p1_pqrst_bq26_t1 + p1_pqrst_bq34_t1
-
-pqrst_t2 =~ p2_pqrst_bq3_t2 + p2_pqrst_bq4_t2 + p2_pqrst_bq5_t2 + p2_pqrst_bq10_t2 + p2_pqrst_bq11_t2 + p2_pqrst_bq15_t2 + p2_pqrst_bq20_t2 + p2_pqrst_bq22_t2 + p2_pqrst_bq23_t2 + p2_pqrst_bq24_t2 + p2_pqrst_bq26_t2 + p2_pqrst_bq34_t2
-
-pqrst_t3 =~  p3_pqrst_bq3_t3 + p3_pqrst_bq4_t3 + p3_pqrst_bq5_t3 + p3_pqrst_bq10_t3 + p3_pqrst_bq11_t3 + p3_pqrst_bq15_t3 + p3_pqrst_bq20_t3 + p3_pqrst_bq22_t3 + p3_pqrst_bq23_t3 + p3_pqrst_bq24_t3 + p3_pqrst_bq26_t3 + p3_pqrst_bq34_t3
-
-
-## Parent beliefs
-pqrst_beliefs_t1 =~ p1_pqrst_aq2_t1 + p1_pqrst_aq4_t1   + p1_pqrst_aq6_t1 + p1_pqrst_aq9_t1
-      + p1_pqrst_aq14_t1 + p1_pqrst_aq17_t1 + 
-      p1_pqrst_aq22_t1 + 
-      p1_pqrst_aq26_t1 + p1_pqrst_aq27_t1 + p1_pqrst_aq29_t1 + p1_pqrst_aq31_t1 + p1_pqrst_aq33_t1 + 
-      p1_pqrst_aq34_t1 + p1_pqrst_aq35_t1 + p1_pqrst_aq36_t1 + p1_pqrst_aq37_t1 + p1_pqrst_aq41_t1 + 
-      p1_pqrst_aq42_t1
-
-pqrst_beliefs_t2 =~ p2_pqrst_aq2_t2 + p2_pqrst_aq4_t2 + p2_pqrst_aq6_t2 + p2_pqrst_aq9_t2 + p2_pqrst_aq14_t2 + p2_pqrst_aq17_t2 + p2_pqrst_aq22_t2 + p2_pqrst_aq26_t2 + p2_pqrst_aq27_t2 + p2_pqrst_aq29_t2 + p2_pqrst_aq31_t2 + p2_pqrst_aq33_t2 + p2_pqrst_aq34_t2 + p2_pqrst_aq35_t2 + p2_pqrst_aq36_t2 + p2_pqrst_aq37_t2 + p2_pqrst_aq41_t2 + p2_pqrst_aq42_t2
-
-
-      
-pqrst_beliefs_t3 =~ p3_pqrst_aq2_t3 + p3_pqrst_aq4_t3 + p3_pqrst_aq6_t3 + p3_pqrst_aq9_t3 + p3_pqrst_aq14_t3 + p3_pqrst_aq17_t3 + p3_pqrst_aq22_t3 + p3_pqrst_aq26_t3 + p3_pqrst_aq27_t3 + p3_pqrst_aq29_t3 + p3_pqrst_aq31_t3 + p3_pqrst_aq33_t3 + p3_pqrst_aq34_t3 + p3_pqrst_aq35_t3 + p3_pqrst_aq36_t3 + p3_pqrst_aq37_t3 + p3_pqrst_aq41_t3 + p3_pqrst_aq42_t3
-
-
-## Create autoregressive paths
-# child hot memory
-hot_memory_t2 ~ hot_memory_t1
-hot_memory_t3 ~ hot_memory_t2 
-# child behaviour
-cpbq_t2 ~ cpbq_t1
-cpbq_t3 ~ cpbq_t2
-# child beliefs
-cptci_t2 ~ cptci_t1
-cptci_t3 ~ cptci_t2 
-# parent behaviour
-pqrst_t2 ~ pqrst_t1 
-pqrst_t3 ~ pqrst_t2
-# parent beliefs
-pqrst_beliefs_t2 ~ pqrst_beliefs_t1
-pqrst_beliefs_t3 ~ pqrst_beliefs_t2
-
-## Create cross-lagged direct paths
-# hot memory loaded on by child beliefs and child behaviour
-hot_memory_t2 ~ cpbq_t1 + cptci_t1
-hot_memory_t3 ~ cpbq_t2 + cptci_t2
-# child behaviour loaded on by child beliefs and parent behaviour 
-cpbq_t2 ~ cptci_t1 + pqrst_t1
-cpbq_t3 ~ cptci_t2 + pqrst_t2
-# child beliefs loaded on by parent behaviour and parent beliefs
-cptci_t2 ~ pqrst_t1 + pqrst_t1
-cptci_t3 ~ pqrst_t2 + pqrst_t2
-'
-# Merge them into a single dyadic dataset
-# dyad_all <- full_join(child_all, parent_all, by = "dyad_ID", suffix = c("_child", "_parent"))
-
-# Merge them into a single dyadic dataset
-# dyad_all <- full_join(child_all, parent_all, by = "dyad_ID", suffix = c("_child", "_parent"))
-
-
-## Combine parent and child datasets long
-## Add group variable
-# parent_all <- parent_all |>
-#  mutate(group = "parent")
-# child_all <- child_all |>
-#  mutate(group = "child")
-
-# Rename ID so they are not duplicate
-# parent_all <- parent_all |>
-#  mutate(ID = paste0("P_", ID), group = "parent")
-# child_all <- child_all |>
-#  mutate(ID = paste0("C_", ID), group = "child")
-
-## Combine both datasets, wide
-# combined_all <- bind_rows(parent_all, child_all)
-
+print(hypothesis_table)
 ```
+
+
+## Cross-Lagged Panel Model (CLPM)
+```{r}
+#| label: ‘clpm visualise results’
+#| echo: false
+#| output: true
+
+library(lavaanPlot)
+
+lvplot <- lavaanPlot(model = mod,
+           coef = TRUE,        # show coefficients
+           stand = TRUE,       # use standardized estimates
+           stars = "regress",  # add significance stars to regressions
+           graph_options = list(rankdir = "LR")) # left-to-right layout
+lvplot
+```
+
+
+
+

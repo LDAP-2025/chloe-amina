@@ -320,6 +320,11 @@
       margin-right: 0; 
     }
   </style>
+  <link href="LDAP_Project_T3_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+  <script src="LDAP_Project_T3_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+  <script src="LDAP_Project_T3_files/libs/viz-1.8.2/viz.js"></script>
+  <link href="LDAP_Project_T3_files/libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+  <script src="LDAP_Project_T3_files/libs/grViz-binding-1.0.11/grViz.js"></script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -383,18 +388,34 @@ Chloe Hunt and Amina Harrath
 <h2>Parent’s behaviour in response to trauma over time</h2>
 
 <img data-src="LDAP_Project_T3_files/figure-revealjs/‘Parent%20behaviour%20data%20visualisation’-1.png" width="960" class="r-stretch"></section>
+<section id="parents-behaviour-in-response-to-trauma-over-time-1" class="slide level2">
+<h2>Parent’s behaviour in response to trauma over time</h2>
+
+<img data-src="LDAP_Project_T3_files/figure-revealjs/‘parent%20behaviour's%20spaghetti%20plot’-1.png" width="960" class="r-stretch"></section>
 <section id="parents-beliefs-in-response-to-trauma-over-time" class="slide level2">
 <h2>Parent’s beliefs in response to trauma over time</h2>
 
 <img data-src="LDAP_Project_T3_files/figure-revealjs/‘Parent%20belief%20data%20visualisation’-1.png" width="960" class="r-stretch"></section>
+<section id="parents-beliefs-in-response-to-trauma-over-time-1" class="slide level2">
+<h2>Parent’s beliefs in response to trauma over time</h2>
+
+<img data-src="LDAP_Project_T3_files/figure-revealjs/‘parent%20belief's%20spaghetti%20plot’-1.png" width="960" class="r-stretch"></section>
 <section id="childs-beliefs-in-response-to-trauma-over-time" class="slide level2">
 <h2>Child’s beliefs in response to trauma over time</h2>
 
 <img data-src="LDAP_Project_T3_files/figure-revealjs/‘Child%20belief%20data%20visualisation’-1.png" width="960" class="r-stretch"></section>
+<section id="childs-beliefs-in-response-to-trauma-over-time-1" class="slide level2">
+<h2>Child’s beliefs in response to trauma over time</h2>
+
+<img data-src="LDAP_Project_T3_files/figure-revealjs/‘child%20belief's's%20spaghetti%20plot’-1.png" width="960" class="r-stretch"></section>
 <section id="childs-behaviours-in-response-to-trauma-over-time" class="slide level2">
 <h2>Child’s behaviours in response to trauma over time</h2>
 
 <img data-src="LDAP_Project_T3_files/figure-revealjs/‘Child%20behaviour%20data%20visualisation’-1.png" width="960" class="r-stretch"></section>
+<section id="childs-behaviours-in-response-to-trauma-over-time-1" class="slide level2">
+<h2>Child’s behaviours in response to trauma over time</h2>
+
+<img data-src="LDAP_Project_T3_files/figure-revealjs/‘child%20behaviour's%20spaghetti%20plot’-1.png" width="960" class="r-stretch"></section>
 <section id="child-hot-vs.-cold-memory" class="slide level2">
 <h2>Child hot vs.&nbsp;cold memory</h2>
 
@@ -552,8 +573,29 @@ Variances:
 </div>
 </div>
 </section>
-<section id="archive" class="slide level2">
-<h2>Archive</h2>
+<section id="cross-lagged-panel-model-clpm-1" class="slide level2">
+<h2>Cross-Lagged Panel Model (CLPM)</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  Hypothesis                         `Estimate (t1 to t2)` `Estimate (t2 to t3)`
+  &lt;chr&gt;                              &lt;chr&gt;                 &lt;chr&gt;                
+1 H1: Child beliefs → Hot memory     -0.07 (p = 0.583)     0.312 (p = 0.004)    
+2 H2: Child behaviour → Hot memory   0.138 (p = 0.161)     -0.14 (p = 0.129)    
+3 H3: Child beliefs → Child behavio… 0.083 (p = 0.602)     0.506 (p &lt; 0.001)    
+4 H4: Parental beliefs → Child beli… 0.464 (p &lt; 0.001)     0.058 (p = 0.491)    
+5 H5: Parental beliefs → Parental b… -0.409 (p = 0.032)    0.125 (p = 0.256)    </code></pre>
+</div>
+</div>
+</section>
+<section id="cross-lagged-panel-model-clpm-2" class="slide level2">
+<h2>Cross-Lagged Panel Model (CLPM)</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="grViz html-widget html-fill-item" id="htmlwidget-6f031fa0d3bd107a626c" style="width:960px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-6f031fa0d3bd107a626c">{"x":{"diagram":" digraph plot { \n graph [ rankdir = LR ] \n node [ shape = box ] \n node [shape = box] \n hot_memory_t1; hot_memory_t2; cpbq_behaviours_t1; cpbq_behaviours_t2; cptci_beliefs_t1; cptci_beliefs_t2; pqrst_behaviours_t1; pqrst_behaviours_t2; pqrst_beliefs_t1; pqrst_beliefs_t2; hot_memory_t3; cpbq_behaviours_t3; cptci_beliefs_t3; pqrst_behaviours_t3; pqrst_beliefs_t3 \n node [shape = oval] \n  \n \n edge [ color = black ] \n hot_memory_t1->hot_memory_t2 [label = \"0.56***\"] hot_memory_t2->hot_memory_t3 [label = \"0.54***\"] cpbq_behaviours_t1->cpbq_behaviours_t2 [label = \"0.53***\"] cpbq_behaviours_t2->cpbq_behaviours_t3 [label = \"0.28**\"] cptci_beliefs_t1->cptci_beliefs_t2 [label = \"0.45***\"] cptci_beliefs_t2->cptci_beliefs_t3 [label = \"0.65***\"] pqrst_behaviours_t1->pqrst_behaviours_t2 [label = \"0.63***\"] pqrst_behaviours_t2->pqrst_behaviours_t3 [label = \"0.64***\"] pqrst_beliefs_t1->pqrst_beliefs_t2 [label = \"0.86***\"] pqrst_beliefs_t2->pqrst_beliefs_t3 [label = \"0.87***\"] cpbq_behaviours_t1->hot_memory_t2 [label = \"0.15\"] cptci_beliefs_t1->hot_memory_t2 [label = \"-0.06\"] cpbq_behaviours_t2->hot_memory_t3 [label = \"-0.16\"] cptci_beliefs_t2->hot_memory_t3 [label = \"0.32**\"] cptci_beliefs_t1->cpbq_behaviours_t2 [label = \"0.06\"] pqrst_behaviours_t1->cpbq_behaviours_t2 [label = \"0.06\"] cptci_beliefs_t2->cpbq_behaviours_t3 [label = \"0.54***\"] pqrst_behaviours_t2->cpbq_behaviours_t3 [label = \"0.02\"] pqrst_behaviours_t1->cptci_beliefs_t2 [label = \"-0.24*\"] pqrst_beliefs_t1->cptci_beliefs_t2 [label = \"0.38***\"] pqrst_behaviours_t2->cptci_beliefs_t3 [label = \"0.1\"] pqrst_beliefs_t2->cptci_beliefs_t3 [label = \"0.06\"]  \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
