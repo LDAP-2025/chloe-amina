@@ -5,6 +5,8 @@ format: revealjs
 editor: visual
 ---
 
+
+
 ## Trauma and memory
 
 We're examining factors that predict hot memory encoding of traumatic events in children. The project is grounded in the premise that traumatic experiences activate a psychological alarm response, leading to heightened amygdala activity and suppressed hippocampal function.
@@ -40,6 +42,8 @@ The collection contains data from three time points:
 -   T2: Three months after the traumatic event
 
 -   T3: Six months after the traumatic event
+
+
 
 ```{r}
 #| label: ‘Set up’
@@ -173,6 +177,8 @@ dyad_all_clean <- dyad_all %>%
       
 ```
 
+
+
 ## Hypotheses
 
 1.  **H1:** Higher levels of maladaptive child beliefs will be associated with greater hot memory encoding of the traumatic event
@@ -186,6 +192,8 @@ dyad_all_clean <- dyad_all %>%
 5.  **H5:** Parental trauma-related beliefs will influence child beliefs indirectly through their effect on parental behaviours
 
 ## Parent's behaviour in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Parent behaviour data visualisation set up’
@@ -518,11 +526,7 @@ p3_parent_behaviour <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = 
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
 
-barplot_parentbehaviour <- grid.arrange(p1_parent_behaviour, p2_parent_behaviour, p3_parent_behaviour, ncol = 3)
-ggsave("../02.Figures/parent_behaviour_panels.png",
-       plot = barplot_parentbehaviour,
-       width = 12, height = 4, dpi = 300)
-
+grid.arrange(p1_parent_behaviour, p2_parent_behaviour, p3_parent_behaviour, ncol = 3)
 
 ```
 
@@ -554,7 +558,11 @@ spaghetti_plot_dataset <- dyad_all_clean %>%
 
 ```
 
+
+
 ## Parent's behaviour in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘parent behaviour's spaghetti plot’
@@ -591,7 +599,11 @@ ggplot(spaghetti_data, aes(x = timepoint, y = parentbehaviours_mean, col = facto
   theme(legend.position = "none")
 ```
 
+
+
 ## Parent's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Parent beliefs data visualisation set up’
@@ -1133,7 +1145,11 @@ grid.arrange(p1_parent_beliefs, p2_parent_beliefs, p3_parent_beliefs, ncol = 3)
 
 ```
 
+
+
 ## Parent's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘parent belief's spaghetti plot’
@@ -1171,7 +1187,11 @@ ggplot(spaghetti_data, aes(x = timepoint, y = parentbeliefs_mean, col = factor(d
   theme(legend.position = "none")
 ```
 
+
+
 ## Child's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Child beliefs data visualisation set up’
@@ -1388,7 +1408,11 @@ grid.arrange(p1_child_beliefs, p2_child_beliefs, p3_child_beliefs, ncol = 3)
 
 ```
 
+
+
 ## Child's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘child belief's's spaghetti plot’
@@ -1424,7 +1448,11 @@ ggplot(spaghetti_data_childbeliefs, aes(x = timepoint, y = childbeliefs_mean, co
   theme(legend.position = "none")
 ```
 
+
+
 ## Child's behaviours in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Child behaviour data visualisation set up’
@@ -1732,7 +1760,11 @@ grid.arrange(p1_child_behaviour, p2_child_behaviour, p3_child_behaviour, ncol = 
 
 ```
 
+
+
 ## Child's behaviours in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘child behaviour's spaghetti plot’
@@ -1768,7 +1800,11 @@ ggplot(spaghetti_data_child, aes(x = timepoint, y = childbehaviours_mean, col = 
   theme(legend.position = "none")
 ```
 
+
+
 ## Child hot vs. cold memory
+
+
 
 ```{r}
 #| label: ‘Hot vs cold memory data visualisation set up’
@@ -1966,9 +2002,13 @@ grid.arrange(p1_hot_cold, p2_hot_cold, p3_hot_cold, ncol = 3)
 
 ```
 
+
+
 ## Cross-Lagged Panel Model (CLPM)
 
 ## Cross-Lagged Panel Model (CLPM)
+
+
 
 ```{r}
 #| label: ‘create model’
@@ -2038,7 +2078,11 @@ lavaan::summary(mod, fit.measures = TRUE, standardized = TRUE)
 
 ```
 
+
+
 ## Cross-Lagged Panel Model (CLPM)
+
+
 
 ```{r}
 #| label: ‘hypotheses tested’
@@ -2078,7 +2122,11 @@ hypothesis_table <- tibble(
 print(hypothesis_table)
 ```
 
+
+
 ## Cross-Lagged Panel Model (CLPM)
+
+
 
 ```{r}
 #| label: ‘clpm visualise results’
@@ -2094,3 +2142,4 @@ lvplot <- lavaanPlot(model = mod,
            graph_options = list(rankdir = "LR")) # left-to-right layout
 lvplot
 ```
+
