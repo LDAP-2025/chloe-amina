@@ -5,6 +5,8 @@ format: revealjs
 editor: visual
 ---
 
+
+
 ## Trauma and memory
 
 We're examining factors that predict hot memory encoding of traumatic events in children. The project is grounded in the premise that traumatic experiences activate a psychological alarm response, leading to heightened amygdala activity and suppressed hippocampal function.
@@ -40,6 +42,8 @@ The collection contains data from three time points:
 -   T2: Three months after the traumatic event
 
 -   T3: Six months after the traumatic event
+
+
 
 ```{r}
 #| label: ‘Set up’
@@ -173,6 +177,8 @@ dyad_all_clean <- dyad_all %>%
       
 ```
 
+
+
 ## Hypotheses
 
 1.  **H1:** Higher levels of maladaptive child beliefs will be associated with greater hot memory encoding of the traumatic event
@@ -187,6 +193,8 @@ dyad_all_clean <- dyad_all %>%
 
 ## Hypotheses
 
+
+
 ```{r}
 #| label: ‘Hypothesis Diagram’
 #| echo: false
@@ -196,7 +204,11 @@ knitr::include_graphics("../02.Figures/hyp_diagram.png")
 
 ```
 
+
+
 ## Parent's behaviour in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Parent behaviour data visualisation set up’
@@ -561,7 +573,11 @@ spaghetti_plot_dataset <- dyad_all_clean %>%
 
 ```
 
+
+
 ## Parent's behaviour in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘parent behaviour's spaghetti plot’
@@ -598,7 +614,11 @@ ggplot(spaghetti_data, aes(x = timepoint, y = parentbehaviours_mean, col = facto
   theme(legend.position = "none")
 ```
 
+
+
 ## Parent's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Parent beliefs data visualisation set up’
@@ -1140,7 +1160,11 @@ grid.arrange(p1_parent_beliefs, p2_parent_beliefs, p3_parent_beliefs, ncol = 3)
 
 ```
 
+
+
 ## Parent's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘parent belief's spaghetti plot’
@@ -1178,7 +1202,11 @@ ggplot(spaghetti_data, aes(x = timepoint, y = parentbeliefs_mean, col = factor(d
   theme(legend.position = "none")
 ```
 
+
+
 ## Child's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Child beliefs data visualisation set up’
@@ -1395,7 +1423,11 @@ grid.arrange(p1_child_beliefs, p2_child_beliefs, p3_child_beliefs, ncol = 3)
 
 ```
 
+
+
 ## Child's beliefs in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘child belief's's spaghetti plot’
@@ -1431,7 +1463,11 @@ ggplot(spaghetti_data_childbeliefs, aes(x = timepoint, y = childbeliefs_mean, co
   theme(legend.position = "none")
 ```
 
+
+
 ## Child's behaviours in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘Child behaviour data visualisation set up’
@@ -1739,7 +1775,11 @@ grid.arrange(p1_child_behaviour, p2_child_behaviour, p3_child_behaviour, ncol = 
 
 ```
 
+
+
 ## Child's behaviours in response to trauma over time
+
+
 
 ```{r}
 #| label: ‘child behaviour's spaghetti plot’
@@ -1775,7 +1815,11 @@ ggplot(spaghetti_data_child, aes(x = timepoint, y = childbehaviours_mean, col = 
   theme(legend.position = "none")
 ```
 
+
+
 ## Child hot vs. cold memory
+
+
 
 ```{r}
 #| label: ‘Hot vs cold memory data visualisation set up’
@@ -1973,6 +2017,8 @@ grid.arrange(p1_hot_cold, p2_hot_cold, p3_hot_cold, ncol = 3)
 
 ```
 
+
+
 ## Cross-Lagged Panel Model (CLPM)
 
 A Cross-Lagged Panel Model (CLPM) is a type of statistical model used to understand how different variables influence each other over time.
@@ -1982,6 +2028,8 @@ Autoregressive paths: how a variable predicts itself over time (e.g. beliefs at 
 Cross-lagged paths: how one variable predicts a different variable over time (e.g. beliefs at T1 → memory at T2, or memory at T1 → beliefs at T2)
 
 ## Cross-Lagged Panel Model (CLPM)
+
+
 
 ```{r}
 #| label: ‘create model’
@@ -2051,7 +2099,11 @@ lavaan::summary(mod, fit.measures = TRUE, standardized = TRUE)
 
 ```
 
+
+
 ## Cross-Lagged Panel Model (CLPM)
+
+
 
 ```{r}
 #| label: ‘hypotheses tested’
@@ -2091,7 +2143,11 @@ hypothesis_table <- tibble(
 print(hypothesis_table)
 ```
 
+
+
 ## Cross-Lagged Panel Model (CLPM)
+
+
 
 ```{r}
 #| label: ‘clpm visualise results’
@@ -2107,3 +2163,4 @@ lvplot <- lavaanPlot(model = mod,
            graph_options = list(rankdir = "LR")) # left-to-right layout
 lvplot
 ```
+
