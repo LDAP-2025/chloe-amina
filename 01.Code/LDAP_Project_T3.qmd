@@ -185,6 +185,18 @@ dyad_all_clean <- dyad_all %>%
 
 5.  **H5:** Parental trauma-related beliefs will influence child beliefs indirectly through their effect on parental behaviours
 
+## Hypotheses
+
+```{r}
+#| label: ‘Hypothesis Diagram’
+#| echo: false
+#| output: true
+
+knitr::include_graphics("../02.Figures/hyp_diagram.png")
+
+```
+
+
 ## Parent's behaviour in response to trauma over time
 
 ```{r}
