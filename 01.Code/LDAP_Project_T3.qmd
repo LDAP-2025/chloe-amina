@@ -518,11 +518,7 @@ p3_parent_behaviour <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = 
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
 
-barplot_parentbehaviour <- grid.arrange(p1_parent_behaviour, p2_parent_behaviour, p3_parent_behaviour, ncol = 3)
-ggsave("../02.Figures/parent_behaviour_panels.png",
-       plot = barplot_parentbehaviour,
-       width = 12, height = 4, dpi = 300)
-
+grid.arrange(p1_parent_behaviour, p2_parent_behaviour, p3_parent_behaviour, ncol = 3)
 
 ```
 
