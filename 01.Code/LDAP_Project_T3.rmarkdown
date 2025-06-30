@@ -1,0 +1,2145 @@
+---
+title: "LDP Project T3"
+author: "Chloe Hunt and Amina Harrath"
+format: revealjs
+editor: visual
+---
+
+
+
+## Trauma and memory
+
+We're examining factors that predict hot memory encoding of traumatic events in children. The project is grounded in the premise that traumatic experiences activate a psychological alarm response, leading to heightened amygdala activity and suppressed hippocampal function.
+
+## Trauma and memory
+
+We're examining factors that predict hot memory encoding of traumatic events in children. The project is grounded in the premise that traumatic experiences activate a psychological alarm response, leading to heightened amygdala activity and suppressed hippocampal function.
+
+This neurological profile contributes to non-optimal encoding, in which emotional, cognitive, sensory and physiological aspects of the event (hot memories) are stored without their temporal and spatial context (cold memory). Such disturbances may underpin subjective experiences like flashbacks.
+
+## Trauma and memory
+
+Interventions such as Narrative Exposure Therapy (NET) place traumatic events in chronological order as way to re-process the memories through a slow and detailed reliving connecting the hot and cold memory together with additional awareness and recognition of the wider context and meaning of these events for the individual.
+
+## Data set
+
+We are using the UK Data Service PROTECT data set that captures measures exploring the role of trauma specific behaviours and parenting style in facilitating child psychological adjustment.
+
+The data set includes self-reported questionnaires of children and parents who have experienced a traumatic event, including:
+
+-   Child Post-trauma Behaviour Questionnaire
+
+-   Child Post-trauma Cognition Inventory Questionnaire
+
+-   Parent Trauma Response Questionnaire
+
+## Data set
+
+The collection contains data from three time points:
+
+-   T1: Within six weeks of the traumatic event
+
+-   T2: Three months after the traumatic event
+
+-   T3: Six months after the traumatic event
+
+
+
+```{r}
+#| label: ‘Set up’
+#| echo: false
+
+# Load libraries
+library(haven)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(lavaan)
+library(gridExtra)
+library(tibble)
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+
+## Load data
+## Parental questionnaires 
+# Parental Trauma Responses Questionnaire 
+PQRST_t1 <- read_sav("../00.Raw_Data/T1/Parent/p1_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PQRST_t2 <- read_sav("../00.Raw_Data/T2/Parent/p2_PTRQ_(Parent Trauma Response Questionnaire).sav")
+PQRST_t3 <- read_sav("../00.Raw_Data/T3/Parent/p3_PTRQ_(Parent Trauma Response Questionnaire).sav")
+
+# Parental overprotection scale
+POI_t1 <- read_sav("../00.Raw_Data/T1/Parent/p1_POI_(Parental Overprotection Scale.sav")
+POI_t2 <- read_sav("../00.Raw_Data/T2/Parent/p2_POI_(Parental Overprotection Scale).sav")
+POI_t3 <- read_sav("../00.Raw_Data/T3/Parent/p3_POI_(Parental Overprotection Scale).sav")
+
+# Child questionnaires
+# Child Post-Traumatic Cognition Inventory
+CPTCI_t1 <- read_sav("../00.Raw_Data/T1/Child and Teenager/c1_CPTCI_(Child Posttraumatic Cognitions Inventory).sav")
+CPTCI_t2 <- read_sav("../00.Raw_Data/T2/Child and Teenager/c2_CPTCI_(Child Postraumatic Cognitions Inventory).sav")
+CPTCI_t3 <- read_sav("../00.Raw_Data/T3/Child and Teenager/c3_CPTCI_(Child Posttraumatic Cognitions Inventory).sav")
+
+# Multidimensional scale of perceived social support
+MPSS_t1 <- read_sav("../00.Raw_Data/T1/Child and Teenager/c1_MSPSS (Multidimensional Scale of Perceived Social Support).sav")
+MPSS_t2 <- read_sav("../00.Raw_Data/T2/Child and Teenager/c2_MSPSS (Multidimensional Scale of Perceived Social Support).sav")
+
+# Child posttrauma behaviour questionnaire
+CPBQ_t1 <- read_sav("../00.Raw_Data/T1/Child and Teenager/c1_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
+CPBQ_t2 <- read_sav("../00.Raw_Data/T2/Child and Teenager/c2_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
+CPBQ_t3 <- read_sav("../00.Raw_Data/T3/Child and Teenager/c3_CPBQ_(Child Posttrauma Behaviours Questionnaire).sav")
+
+# Child memory questionnaire
+ACTMQ_t1 <- read_sav("../00.Raw_Data/T1/Child and Teenager/c1_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
+ACTMQ_t2 <- read_sav("../00.Raw_Data/T2/Child and Teenager/c2_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
+ACTMQ_t3 <- read_sav("../00.Raw_Data/T3/Child and Teenager/c3_ACTMQ_(Adapted Child Trauma Memory Questionnaire).sav")
+
+
+## Merge the dataset wide
+
+# Merge parent datasets
+# Standardize IDs to 3-digit character format with leading zeros
+PQRST_t1 <- PQRST_t1 |>
+  mutate(ID = sprintf("%03d", as.integer(ID)))
+POI_t1 <- POI_t1 |>
+  mutate(ID = as.character(ID))  # Just to be safe
+parent_t1 <- PQRST_t1 |>
+  full_join(POI_t1, by = "ID", suffix = c("_pqrst", "_poi"))
+
+# Time 2
+PQRST_t2 <- PQRST_t2 |>
+  mutate(ID = sprintf("%03d", as.integer(ID)))
+POI_t2 <- POI_t2 |>
+  mutate(ID = as.character(ID))  # Just to be safe
+parent_t2 <- PQRST_t2 |>
+  full_join(POI_t2, by = "ID", suffix = c("_pqrst", "_poi"))
+
+# Time 3
+PQRST_t3 <- PQRST_t3 |>
+  mutate(ID = sprintf("%03d", as.integer(ID)))
+POI_t3 <- POI_t3 |>
+  mutate(ID = as.character(ID))  # Just to be safe
+parent_t3 <- PQRST_t3 |>
+  full_join(POI_t3, by = "ID", suffix = c("_pqrst", "_poi"))
+
+## Combine parent datasets wide
+parent_t1 <- parent_t1 |> rename_with(~ paste0(.x, "_t1"), -ID)
+parent_t2 <- parent_t2 |> rename_with(~ paste0(.x, "_t2"), -ID)
+parent_t3 <- parent_t3 |> rename_with(~ paste0(.x, "_t3"), -ID)
+parent_all <- parent_t1 |>
+  full_join(parent_t2, by = "ID") |>
+  full_join(parent_t3, by = "ID")
+parent_all <- parent_all %>%
+  mutate(dyad_ID = gsub("P_", "", ID))
+
+
+## Merge child datasets wide
+# Time 1
+child_t1 <- CPBQ_t1 |>
+  full_join(CPTCI_t1, by = "ID", suffix = c("_cpbq", "_cptci")) |>
+  full_join(ACTMQ_t1, by = "ID", suffix = c("", "_actmq"))
+
+# Time 2
+child_t2 <- CPBQ_t2 |>
+  full_join(CPTCI_t2, by = "ID", suffix = c("_cpbq", "_cptci")) |>
+  full_join(ACTMQ_t2, by = "ID", suffix = c("", "_actmq"))
+
+# Time 3
+child_t3 <- CPBQ_t3 |>
+  full_join(CPTCI_t3, by = "ID", suffix = c("_cpbq", "_cptci")) |>
+  full_join(ACTMQ_t3, by = "ID", suffix = c("", "_actmq"))
+
+## Combine child datasets wide
+child_t1 <- child_t1 |> rename_with(~ paste0(.x, "_t1"), -ID)
+child_t2 <- child_t2 |> rename_with(~ paste0(.x, "_t2"), -ID)
+child_t3 <- child_t3 |> rename_with(~ paste0(.x, "_t3"), -ID)
+child_all <- child_t1 |>
+  full_join(child_t2, by = "ID") |>
+  full_join(child_t3, by = "ID")
+
+child_all <- child_all %>%
+  mutate(dyad_ID = gsub("C_", "", ID))
+
+
+## 
+# Remove prefixes and create a common dyad ID
+dyad_all <- full_join(child_all, parent_all, by = "dyad_ID", suffix = c("_child", "_parent"))
+dyad_all <- dyad_all %>%
+  relocate(dyad_ID, ID_child, ID_parent, .before = everything())
+
+dyad_all_clean <- dyad_all %>%
+  select(dyad_ID,
+         matches("actmq_q(3|5|7|12|15|17)"),
+                 matches("cpbq_a_q(1|2|3|5)"),
+                  matches("cpbq_b_q(1|2|9|10|11)"),
+         matches("cptci_q(6|14|19|23|24|1|5|10|18|25)"),
+      matches("pqrst_bq(3|4|5|10|11|15|20|22|23|24|26|34)"),
+      matches("pqrst_aq(2|4|6|9|14|17|22|26|27|29|31|33|34|35|36|37|41|42)"))
+      
+```
+
+
+
+## Hypotheses
+
+1.  **H1:** Higher levels of maladaptive child beliefs will be associated with greater hot memory encoding of the traumatic event
+
+2.  **H2:** Higher levels of child maladaptive behaviours will be associated with greater hot memory encoding
+
+3.  **H3:** Child beliefs will indirectly influence hot memory encoding through their impact on child behaviours
+
+4.  **H4:** Parental trauma-related beliefs will be associated with more maladaptive child beliefs
+
+5.  **H5:** Parental trauma-related beliefs will influence child beliefs indirectly through their effect on parental behaviours
+
+## Parent's behaviour in response to trauma over time
+
+
+
+```{r}
+#| label: ‘Parent behaviour data visualisation set up’
+#| echo: false
+#| output: false
+glimpse(parent_all)
+summary(parent_all)
+
+# T1: PARENT BEHAVIOURS
+PQRST_t1_freq <- lapply(PQRST_t1[ , !(names(PQRST_t1) %in% c("ID", "Date")) ], table)
+PQRST_t1_freq
+
+# overprotectiveness
+PQRST_t1_op_freq <- PQRST_t1_freq[c("p1_pqrst_bq34", "p1_pqrst_bq27", "p1_pqrst_bq2", "p1_pqrst_bq10", "p1_pqrst_bq18", "p1_pqrst_bq5")]
+PQRST_t1_op_freq <- Reduce(`+`, PQRST_t1_op_freq)
+print(PQRST_t1_op_freq)
+
+# discussions with child regarding danger/safety
+PQRST_t1_dsd_freq <- PQRST_t1_freq[c("p1_pqrst_bq12", "p1_pqrst_bq30", "p1_pqrst_bq22", "p1_pqrst_bq28", "p1_pqrst_bq33")]
+PQRST_t1_dsd_freq <- Reduce(`+`, PQRST_t1_dsd_freq)
+print(PQRST_t1_dsd_freq)
+
+# avoidance of discussion
+PQRST_t1_aod_freq <- PQRST_t1_freq[c("p1_pqrst_bq24", "p1_pqrst_bq1", "p1_pqrst_bq24", "p1_pqrst_bq4", "p1_pqrst_bq3", "p1_pqrst_bq29", "p1_pqrst_bq14", "p1_pqrst_bq15", "p1_pqrst_bq23", "p1_pqrst_bq17", "p1_pqrst_bq11", "p1_pqrst_bq7", "p1_pqrst_bq32", "p1_pqrst_bq13")]
+
+reverse_items <- c("p1_pqrst_bq23", "p1_pqrst_bq17", "p1_pqrst_bq11",
+                   "p1_pqrst_bq7", "p1_pqrst_bq32", "p1_pqrst_bq13")
+PQRST_t1_aod_freq[reverse_items] <- lapply(PQRST_t1_aod_freq[reverse_items], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+PQRST_t1_aod_freq <- Reduce(`+`, PQRST_t1_aod_freq)
+print(PQRST_t1_aod_freq)
+
+
+# avoiding reminders
+PQRST_t1_ar_freq <- PQRST_t1_freq[c("p1_pqrst_bq9", "p1_pqrst_bq6", "p1_pqrst_bq8", "p1_pqrst_bq31", "p1_pqrst_bq25", "p1_pqrst_bq20", "p1_pqrst_bq16", "p1_pqrst_bq19", "p1_pqrst_bq26")]
+
+reverse_items2 <- c("p1_pqrst_bq25", "p1_pqrst_bq20", "p1_pqrst_bq16",
+                   "p1_pqrst_bq19", "p1_pqrst_bq26")
+PQRST_t1_ar_freq[reverse_items] <- lapply(PQRST_t1_ar_freq[reverse_items2], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+PQRST_t1_ar_freq <- Reduce(`+`, PQRST_t1_ar_freq)
+print(PQRST_t1_ar_freq)
+
+
+# Converts a named frequency table to proportions
+to_proportions <- function(freq_table) {
+  prop_table <- freq_table / sum(freq_table)
+  return(prop_table)
+  }
+
+PQRST_t1_op_prop  <- to_proportions(PQRST_t1_op_freq)
+PQRST_t1_dsd_prop <- to_proportions(PQRST_t1_dsd_freq)
+PQRST_t1_aod_prop <- to_proportions(PQRST_t1_aod_freq)
+PQRST_t1_ar_prop  <- to_proportions(PQRST_t1_ar_freq)
+
+prop_to_df <- function(prop_table, group_name) {
+  df <- as.data.frame(prop_table)
+  colnames(df) <- c("FreqPoint", "Proportion")
+  df$FreqPoint <- factor(df$FreqPoint, levels = c("0","1","2","3"))
+  df$Group <- group_name
+  return(df)
+}
+
+# Create data frames from each proportion table
+df_t1_op_prop  <- prop_to_df(PQRST_t1_op_prop,  "op")
+df_t1_dsd_prop <- prop_to_df(PQRST_t1_dsd_prop, "dsd")
+df_t1_aod_prop <- prop_to_df(PQRST_t1_aod_prop, "aod")
+df_t1_ar_prop  <- prop_to_df(PQRST_t1_ar_prop,  "ar")
+
+# Combine
+df_t1_prop <- bind_rows(df_t1_op_prop, df_t1_dsd_prop, df_t1_aod_prop, df_t1_ar_prop)
+
+## PARENT BEHAVIOUR - T2
+PQRST_t2_freq <- lapply(PQRST_t2[ , !(names(PQRST_t2) %in% c("ID", "Date")) ], table)
+PQRST_t2_freq
+
+# overprotectiveness
+PQRST_t2_op_freq <- PQRST_t2_freq[c("p2_pqrst_bq34", "p2_pqrst_bq27", "p2_pqrst_bq2", "p2_pqrst_bq10", "p2_pqrst_bq18", "p2_pqrst_bq5")]
+PQRST_t2_op_freq <- Reduce(`+`, PQRST_t2_op_freq)
+print(PQRST_t2_op_freq)
+
+# discussions with child regarding danger/safety
+PQRST_t2_dsd_freq <- PQRST_t2_freq[c("p2_pqrst_bq12", "p2_pqrst_bq30", "p2_pqrst_bq22", "p2_pqrst_bq28", "p2_pqrst_bq33")]
+PQRST_t2_dsd_freq <- Reduce(`+`, PQRST_t2_dsd_freq)
+print(PQRST_t2_dsd_freq)
+
+# avoidance of discussion
+PQRST_t2_aod_freq <- PQRST_t2_freq[c("p2_pqrst_bq24", "p2_pqrst_bq1", "p2_pqrst_bq21", "p2_pqrst_bq4", "p2_pqrst_bq3", "p2_pqrst_bq29", "p2_pqrst_bq14", "p2_pqrst_bq15", "p2_pqrst_bq23", "p2_pqrst_bq17", "p2_pqrst_bq11", "p2_pqrst_bq7", "p2_pqrst_bq32", "p2_pqrst_bq13")]
+
+reverse_items <- c("p2_pqrst_bq23", "p2_pqrst_bq17", "p2_pqrst_bq11",
+                   "p2_pqrst_bq7", "p2_pqrst_bq32", "p2_pqrst_bq13")
+PQRST_t2_aod_freq[reverse_items] <- lapply(PQRST_t2_aod_freq[reverse_items], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+expected_levels <- as.character(0:3)
+PQRST_t2_aod_freq <- lapply(PQRST_t2_aod_freq, function(tbl) {
+  tbl_full <- setNames(rep(0, length(expected_levels)), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)
+})
+
+PQRST_t2_aod_freq <- Reduce(`+`, PQRST_t2_aod_freq)
+print(PQRST_t2_aod_freq)
+
+# avoiding reminders
+PQRST_t2_ar_freq <- PQRST_t2_freq[c("p2_pqrst_bq9", "p2_pqrst_bq6", "p2_pqrst_bq8", "p2_pqrst_bq31", "p2_pqrst_bq25", "p2_pqrst_bq20", "p2_pqrst_bq16", "p2_pqrst_bq19", "p2_pqrst_bq26")]
+
+reverse_items2 <- c("p2_pqrst_bq25", "p2_pqrst_bq20", "p2_pqrst_bq16",
+                   "p2_pqrst_bq19", "p2_pqrst_bq26")
+PQRST_t2_ar_freq[reverse_items] <- lapply(PQRST_t2_ar_freq[reverse_items2], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+
+PQRST_t2_ar_freq <- lapply(PQRST_t2_ar_freq, function(tbl) {
+  tbl_full <- setNames(rep(0, length(expected_levels)), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)
+})
+
+PQRST_t2_ar_freq <- Reduce(`+`, PQRST_t2_ar_freq)
+print(PQRST_t2_ar_freq)
+
+## converting to proportions
+PQRST_t2_op_prop  <- to_proportions(PQRST_t2_op_freq)
+PQRST_t2_dsd_prop <- to_proportions(PQRST_t2_dsd_freq)
+PQRST_t2_aod_prop <- to_proportions(PQRST_t2_aod_freq)
+PQRST_t2_ar_prop  <- to_proportions(PQRST_t2_ar_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+    Proportion = as.numeric(padded))} 
+
+df_t2_op_prop  <- prop_to_df(PQRST_t2_op_prop,  "op")
+df_t2_dsd_prop <- prop_to_df(PQRST_t2_dsd_prop, "dsd")
+df_t2_aod_prop <- prop_to_df(PQRST_t2_aod_prop, "aod")
+df_t2_ar_prop  <- prop_to_df(PQRST_t2_ar_prop,  "ar")
+
+df_t2_prop <- bind_rows(df_t2_op_prop, df_t2_dsd_prop, df_t2_aod_prop, df_t2_ar_prop)
+
+
+### PARENT BEHAVIOUR - T3
+PQRST_t3_freq <- lapply(PQRST_t3[ , !(names(PQRST_t3) %in% c("ID", "Date")) ], table)
+PQRST_t3_freq
+
+# overprotectiveness
+PQRST_t3_op_freq <- PQRST_t3_freq[c("p3_pqrst_bq34", "p3_pqrst_bq27", "p3_pqrst_bq2", "p3_pqrst_bq10", "p3_pqrst_bq18", "p3_pqrst_bq5")]
+
+PQRST_t3_op_freq <- lapply(PQRST_t3_op_freq, function(tbl) {
+  names(tbl) <- as.character(names(tbl))  # ensure names are characters
+  if ("4" %in% names(tbl)) {
+    # Add the count at '4' to '3', or create '3' if missing
+    tbl["3"] <- sum(tbl["3"], tbl["4"], na.rm = TRUE)
+    tbl <- tbl[names(tbl) != "4"]  # remove the '4' entry
+  }
+  return(tbl)})
+
+# Pad each frequency table with missing levels set to zero
+PQRST_t3_op_freq <- lapply(PQRST_t3_op_freq, function(tbl) {
+  full_tbl <- setNames(rep(0, length(expected_levels)), expected_levels)
+  full_tbl[names(tbl)] <- tbl
+  return(full_tbl)})
+
+PQRST_t3_op_freq <- Reduce(`+`, PQRST_t3_op_freq)
+print(PQRST_t3_op_freq)
+
+# discussions with child regarding danger/safety
+PQRST_t3_dsd_freq <- PQRST_t3_freq[c("p3_pqrst_bq12", "p3_pqrst_bq30", "p3_pqrst_bq22", "p3_pqrst_bq28", "p3_pqrst_bq33")]
+PQRST_t3_dsd_freq <- Reduce(`+`, PQRST_t3_dsd_freq)
+print(PQRST_t3_dsd_freq)
+
+# avoidance of discussion
+PQRST_t3_aod_freq <- PQRST_t3_freq[c("p3_pqrst_bq24", "p3_pqrst_bq1", "p3_pqrst_bq21", "p3_pqrst_bq4", "p3_pqrst_bq3", "p3_pqrst_bq29", "p3_pqrst_bq14", "p3_pqrst_bq15", "p3_pqrst_bq23", "p3_pqrst_bq17", "p3_pqrst_bq11", "p3_pqrst_bq7", "p3_pqrst_bq32", "p3_pqrst_bq13")]
+
+reverse_items <- c("p3_pqrst_bq23", "p3_pqrst_bq17", "p3_pqrst_bq11",
+                   "p3_pqrst_bq7", "p3_pqrst_bq32", "p3_pqrst_bq13")
+PQRST_t3_aod_freq[reverse_items] <- lapply(PQRST_t3_aod_freq[reverse_items], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+expected_levels <- as.character(0:3)
+PQRST_t3_aod_freq <- lapply(PQRST_t3_aod_freq, function(tbl) {
+  tbl_full <- setNames(rep(0, length(expected_levels)), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)
+})
+
+PQRST_t3_aod_freq <- Reduce(`+`, PQRST_t3_aod_freq)
+print(PQRST_t3_aod_freq)
+
+# avoiding reminders
+PQRST_t3_ar_freq <- PQRST_t3_freq[c("p3_pqrst_bq9", "p3_pqrst_bq6", "p3_pqrst_bq8", "p3_pqrst_bq31", "p3_pqrst_bq25", "p3_pqrst_bq20", "p3_pqrst_bq16", "p3_pqrst_bq19", "p3_pqrst_bq26")]
+
+reverse_items2 <- c("p3_pqrst_bq25", "p3_pqrst_bq20", "p3_pqrst_bq16",
+                   "p3_pqrst_bq19", "p3_pqrst_bq26")
+PQRST_t3_ar_freq[reverse_items] <- lapply(PQRST_t3_ar_freq[reverse_items2], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+PQRST_t3_ar_freq <- lapply(PQRST_t3_ar_freq, function(tbl) {
+  tbl_full <- setNames(rep(0, length(expected_levels)), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)
+})
+
+PQRST_t3_ar_freq <- Reduce(`+`, PQRST_t3_ar_freq)
+print(PQRST_t3_ar_freq)
+
+## converting to proportions
+PQRST_t3_op_prop  <- to_proportions(PQRST_t3_op_freq)
+PQRST_t3_dsd_prop <- to_proportions(PQRST_t3_dsd_freq)
+PQRST_t3_aod_prop <- to_proportions(PQRST_t3_aod_freq)
+PQRST_t3_ar_prop  <- to_proportions(PQRST_t3_ar_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+    Proportion = as.numeric(padded))} 
+
+df_t3_op_prop  <- prop_to_df(PQRST_t3_op_prop,  "op")
+df_t3_dsd_prop <- prop_to_df(PQRST_t3_dsd_prop, "dsd")
+df_t3_aod_prop <- prop_to_df(PQRST_t3_aod_prop, "aod")
+df_t3_ar_prop  <- prop_to_df(PQRST_t3_ar_prop,  "ar")
+
+df_t3_prop <- bind_rows(df_t3_op_prop, df_t3_dsd_prop, df_t3_aod_prop, df_t3_ar_prop)
+
+
+
+```
+
+```{r}
+#| label: ‘Parent behaviour data visualisation’
+#| echo: false
+#| output: true
+
+## Parent behaviour - t1
+# Plot proportional stacked bar chart
+p1_parent_behaviour <- ggplot(df_t1_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Parenting Behaviour",
+    y = "Proportion",
+    fill = "Response Level",
+    title = "T1: within 6 weeks") +
+  scale_x_discrete(
+    labels = c(
+      op = "Overprotectiveness",
+      dsd = "Danger/Safety Conversations",
+      aod = "Avoiding Trauma Discussion",
+      ar = "Avoiding Reminders"
+    )
+  ) +
+  scale_fill_manual(
+    values = c("0" = "#d73027", "1" = "#fc8d59", "2" = "#fee090", "3" = "#91bfdb"),
+    labels = c("0" = "Not at all", "1" = "A little", "2" = "Some", "3" = "A lot")) +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+p2_parent_behaviour <- ggplot(df_t2_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Parenting Behaviour",
+    y = "Proportion at T2",
+    fill = "Response Level",
+    title = "T2: after 3 months"
+  ) + ylab(NULL) +
+  scale_x_discrete(
+    labels = c(
+      op = "Overprotectiveness",
+      dsd = "Danger/Safety Conversations",
+      aod = "Avoiding Trauma Discussion",
+      ar = "Avoiding Reminders"
+    )
+  ) +
+  scale_fill_manual(
+    values = c(
+      "Not at all" = "#d73027",
+      "A little"   = "#fc8d59",
+      "Some"       = "#fee090",
+      "A lot"      = "#91bfdb"
+    )
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+p3_parent_behaviour <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Parenting Behaviour",
+    y = "Proportion at T3",
+    fill = "Response Level",
+    title = "T3: after 6 months") +
+  ylab(NULL) +
+  scale_x_discrete(
+    labels = c(
+      op = "Overprotectiveness",
+      dsd = "Danger/Safety Conversations",
+      aod = "Avoiding Trauma Discussion",
+      ar = "Avoiding Reminders")) +
+  scale_fill_manual(
+    values = c(
+      "Not at all" = "#d73027",
+      "A little"   = "#fc8d59",
+      "Some"       = "#fee090",
+      "A lot"      = "#91bfdb")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+grid.arrange(p1_parent_behaviour, p2_parent_behaviour, p3_parent_behaviour, ncol = 3)
+
+```
+
+```{r}
+#| label: ‘creating data set for spaghetti plot’
+#| echo: false
+#| output: false
+
+spaghetti_plot_dataset <- dyad_all_clean %>%
+  mutate(
+    # T1
+    t1_childbehaviours_mean = rowMeans(select(., matches("c1_cpbq_a_q(1|2|3|5)|c1_cpbq_b_q(1|2|3|5|9|10|11)")), na.rm = TRUE),
+    t1_childbeliefs_mean = rowMeans(select(., matches("c1_cptci_q(6|14|19|23|24|1|5|10|18|25)")), na.rm = TRUE),
+    t1_parentbehaviours_mean = rowMeans(select(., matches("p1_pqrst_bq(3|4|5|10|11|15|20|22|23|24|26|34)")), na.rm = TRUE),
+    t1_parentbeliefs_mean = rowMeans(select(., matches("p1_pqrst_aq(2|4|6|9|14|17|22|26|27|29|31|33|34|35|36|37|41|42)")), na.rm = TRUE),
+    t2_childbehaviours_mean = rowMeans(select(., matches("c2_cpbq_a_q(1|2|3|5)|c2_cpbq_b_q(1|2|3|5|9|10|11)")), na.rm = TRUE),
+    t2_childbeliefs_mean = rowMeans(select(., matches("c2_cptci_q(6|14|19|23|24|1|5|10|18|25)")), na.rm = TRUE),
+    t2_parentbehaviours_mean = rowMeans(select(., matches("p2_pqrst_bq(3|4|5|10|11|15|20|22|23|24|26|34)")), na.rm = TRUE),
+    t2_parentbeliefs_mean = rowMeans(select(., matches("p2_pqrst_aq(2|4|6|9|14|17|22|26|27|29|31|33|34|35|36|37|41|42)")), na.rm = TRUE),
+    t3_childbehaviours_mean = rowMeans(select(., matches("c3_cpbq_a_q(1|2|3|5)|c3_cpbq_b_q(1|2|3|5|9|10|11)")), na.rm = TRUE),
+    t3_childbeliefs_mean = rowMeans(select(., matches("c3_cptci_q(6|14|19|23|24|1|5|10|18|25)")), na.rm = TRUE),
+    t3_parentbehaviours_mean = rowMeans(select(., matches("p3_pqrst_bq(3|4|5|10|11|15|20|22|23|24|26|34)")), na.rm = TRUE),
+    t3_parentbeliefs_mean = rowMeans(select(., matches("p3_pqrst_aq(2|4|6|9|14|17|22|26|27|29|31|33|34|35|36|37|41|42)")), na.rm = TRUE)
+  ) %>%
+  # Select only dyad_ID and the new mean columns
+  select(dyad_ID, ends_with("_mean")) %>%
+  # Convert NaN to NA
+  mutate(across(everything(), ~ ifelse(is.nan(.), NA, .)))
+
+```
+
+
+
+## Parent's behaviour in response to trauma over time
+
+
+
+```{r}
+#| label: ‘parent behaviour's spaghetti plot’
+#| echo: false
+#| output: true
+
+# Pivot to long format and remove missing values
+spaghetti_data <- spaghetti_plot_dataset %>%
+  select(dyad_ID, starts_with("t1_parentbehaviours_mean"),
+         starts_with("t2_parentbehaviours_mean"),
+         starts_with("t3_parentbehaviours_mean")) %>%
+  pivot_longer(
+    cols = -dyad_ID,
+    names_to = "timepoint",
+    values_to = "parentbehaviours_mean"
+  ) %>%
+  mutate(timepoint = case_when(
+    str_detect(timepoint, "t1") ~ "T1",
+    str_detect(timepoint, "t2") ~ "T2",
+    str_detect(timepoint, "t3") ~ "T3"
+  )) %>%
+  filter(!is.na(parentbehaviours_mean) & !is.nan(parentbehaviours_mean))
+
+# Spaghetti plot
+ggplot(spaghetti_data, aes(x = timepoint, y = parentbehaviours_mean, col = factor(dyad_ID))) +
+  geom_smooth(aes(group = dyad_ID), method = "lm", se = FALSE, alpha = 0.05, linewidth = 0.5) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, colour = "black", linewidth = 1) +
+  labs(
+    x = "Time Point",
+    y = "Mean Parent Behaviours",
+    col = "Dyad ID"
+  ) +
+  guides(col = guide_legend(nrow = 3)) +
+  theme(legend.position = "none")
+```
+
+
+
+## Parent's beliefs in response to trauma over time
+
+
+
+```{r}
+#| label: ‘Parent beliefs data visualisation set up’
+#| echo: false
+#| output: false
+
+### Parenting beliefs T1
+# Permanent change/symptoms as threatening
+PQRST_t1_pc_freq <- PQRST_t1_freq[c("p1_pqrst_aq27", "p1_pqrst_aq25", "p1_pqrst_aq8", "p1_pqrst_aq5", "p1_pqrst_aq12", "p1_pqrst_aq17", "p1_pqrst_aq9", "p1_pqrst_aq18")]
+
+PQRST_t1_pc_freq <- lapply(PQRST_t1_pc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_pc_freq <- Reduce(`+`, PQRST_t1_pc_freq)
+print(PQRST_t1_pc_freq)
+
+# family change and dynamic
+PQRST_t1_fc_freq <- PQRST_t1_freq[c("p1_pqrst_aq1", "p1_pqrst_aq29", "p1_pqrst_aq10", "p1_pqrst_aq38", "p1_pqrst_aq28")]
+
+PQRST_t1_fc_freq <- lapply(PQRST_t1_fc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_fc_freq <- Reduce(`+`, PQRST_t1_fc_freq)
+print(PQRST_t1_fc_freq)
+
+# vulnerability and threat
+PQRST_t1_vt_freq <- PQRST_t1_freq[c("p1_pqrst_aq23", "p1_pqrst_aq13", "p1_pqrst_aq19", "p1_pqrst_aq21", "p1_pqrst_aq39")]
+
+PQRST_t1_vt_freq <- lapply(PQRST_t1_vt_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_vt_freq <- Reduce(`+`, PQRST_t1_vt_freq)
+print(PQRST_t1_vt_freq)
+
+# other people's reactions
+PQRST_t1_opr_freq <- PQRST_t1_freq[c("p1_pqrst_aq44", "p1_pqrst_aq16", "p1_pqrst_aq34", "p1_pqrst_aq33", "p1_pqrst_aq4")]
+
+PQRST_t1_opr_freq <- lapply(PQRST_t1_opr_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_opr_freq <- Reduce(`+`, PQRST_t1_opr_freq)
+print(PQRST_t1_opr_freq)
+
+# Inflated responsibility for ensuring safety
+PQRST_t1_ir_freq <- PQRST_t1_freq[c("p1_pqrst_aq31", "p1_pqrst_aq2", "p1_pqrst_aq35", "p1_pqrst_aq30", "p1_pqrst_aq24")]
+
+PQRST_t1_ir_freq <- lapply(PQRST_t1_ir_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_ir_freq <- Reduce(`+`, PQRST_t1_ir_freq)
+print(PQRST_t1_ir_freq)
+
+# rumination
+PQRST_t1_r_freq <- PQRST_t1_freq[c("p1_pqrst_aq26", "p1_pqrst_aq14", "p1_pqrst_aq43", "p1_pqrst_aq42", "p1_pqrst_aq20", "p1_pqrst_aq3")]
+
+PQRST_t1_r_freq <- lapply(PQRST_t1_r_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_r_freq <- Reduce(`+`, PQRST_t1_r_freq)
+print(PQRST_t1_r_freq)
+
+# self-blame
+PQRST_t1_sb_freq <- PQRST_t1_freq[c("p1_pqrst_aq7", "p1_pqrst_aq32", "p1_pqrst_aq22", "p1_pqrst_aq11", "p1_pqrst_aq6")]
+
+PQRST_t1_sb_freq <- lapply(PQRST_t1_sb_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_sb_freq <- Reduce(`+`, PQRST_t1_sb_freq)
+print(PQRST_t1_sb_freq)
+
+# parental tolerance and emotion
+PQRST_t1_pte_freq <- PQRST_t1_freq[c("p1_pqrst_aq40", "p1_pqrst_aq15", "p1_pqrst_aq41", "p1_pqrst_aq36", "p1_pqrst_aq37")]
+
+PQRST_t1_pte_freq <- lapply(PQRST_t1_pte_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t1_pte_freq <- Reduce(`+`, PQRST_t1_pte_freq)
+print(PQRST_t1_pte_freq)
+
+## converting to proportions
+PQRST_t1_pc_prop  <- to_proportions(PQRST_t1_pc_freq)
+PQRST_t1_fc_prop  <- to_proportions(PQRST_t1_fc_freq)
+PQRST_t1_vt_prop  <- to_proportions(PQRST_t1_vt_freq)
+PQRST_t1_opr_prop  <- to_proportions(PQRST_t1_opr_freq)
+PQRST_t1_ir_prop  <- to_proportions(PQRST_t1_ir_freq)
+PQRST_t1_r_prop  <- to_proportions(PQRST_t1_r_freq)
+PQRST_t1_sb_prop  <- to_proportions(PQRST_t1_sb_freq)
+PQRST_t1_pte_prop  <- to_proportions(PQRST_t1_pte_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+    Proportion = as.numeric(padded))} 
+
+df_t1_pc_prop  <- prop_to_df(PQRST_t1_pc_prop,  "pc")
+df_t1_fc_prop  <- prop_to_df(PQRST_t1_fc_prop,  "fc")
+df_t1_vt_prop  <- prop_to_df(PQRST_t1_vt_prop,  "vt")
+df_t1_opr_prop <- prop_to_df(PQRST_t1_opr_prop, "opr")
+df_t1_ir_prop  <- prop_to_df(PQRST_t1_ir_prop,  "ir")
+df_t1_r_prop   <- prop_to_df(PQRST_t1_r_prop,   "r")
+df_t1_sb_prop  <- prop_to_df(PQRST_t1_sb_prop,  "sb")
+df_t1_pte_prop <- prop_to_df(PQRST_t1_pte_prop, "pte")
+
+
+df_t1_prop1 <- bind_rows(
+  df_t1_pc_prop,
+  df_t1_fc_prop,
+  df_t1_vt_prop,
+  df_t1_opr_prop,
+  df_t1_ir_prop,
+  df_t1_r_prop,
+  df_t1_sb_prop,
+  df_t1_pte_prop)
+
+### Parenting beliefs T2
+# Permanent change/symptoms as threatening
+PQRST_t2_pc_freq <- PQRST_t2_freq[c("p2_pqrst_aq27", "p2_pqrst_aq25", "p2_pqrst_aq8", "p2_pqrst_aq5", "p2_pqrst_aq12", "p2_pqrst_aq17", "p2_pqrst_aq9", "p2_pqrst_aq18")]
+ PQRST_t2_pc_freq <- lapply(PQRST_t2_pc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_pc_freq <- Reduce(`+`, PQRST_t2_pc_freq)
+print(PQRST_t2_pc_freq)
+ 
+# family change and dynamic
+PQRST_t2_fc_freq <- PQRST_t2_freq[c("p2_pqrst_aq1", "p2_pqrst_aq29", "p2_pqrst_aq10", "p2_pqrst_aq38", "p2_pqrst_aq28")]
+ 
+PQRST_t2_fc_freq <- lapply(PQRST_t2_fc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_fc_freq <- Reduce(`+`, PQRST_t2_fc_freq)
+print(PQRST_t2_fc_freq)
+ 
+# vulnerability and threat
+PQRST_t2_vt_freq <- PQRST_t2_freq[c("p2_pqrst_aq23", "p2_pqrst_aq13", "p2_pqrst_aq19", "p2_pqrst_aq21", "p2_pqrst_aq39")]
+ 
+PQRST_t2_vt_freq <- lapply(PQRST_t2_vt_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_vt_freq <- Reduce(`+`, PQRST_t2_vt_freq)
+print(PQRST_t2_vt_freq)
+ 
+# other people's reactions
+PQRST_t2_opr_freq <- PQRST_t2_freq[c("p2_pqrst_aq44", "p2_pqrst_aq16", "p2_pqrst_aq34", "p2_pqrst_aq33", "p2_pqrst_aq4")]
+ 
+PQRST_t2_opr_freq <- lapply(PQRST_t2_opr_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_opr_freq <- Reduce(`+`, PQRST_t2_opr_freq)
+print(PQRST_t2_opr_freq)
+ 
+# Inflated responsibility for ensuring safety
+PQRST_t2_ir_freq <- PQRST_t2_freq[c("p2_pqrst_aq31", "p2_pqrst_aq2", "p2_pqrst_aq35", "p2_pqrst_aq30", "p2_pqrst_aq24")]
+ 
+PQRST_t2_ir_freq <- lapply(PQRST_t2_ir_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_ir_freq <- Reduce(`+`, PQRST_t2_ir_freq)
+print(PQRST_t2_ir_freq)
+ 
+# rumination
+PQRST_t2_r_freq <- PQRST_t2_freq[c("p2_pqrst_aq26", "p2_pqrst_aq14", "p2_pqrst_aq43", "p2_pqrst_aq42", "p2_pqrst_aq20", "p2_pqrst_aq3")]
+ 
+PQRST_t2_r_freq <- lapply(PQRST_t2_r_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_r_freq <- Reduce(`+`, PQRST_t2_r_freq)
+print(PQRST_t2_r_freq)
+ 
+# self-blame
+PQRST_t2_sb_freq <- PQRST_t2_freq[c("p2_pqrst_aq7", "p2_pqrst_aq32", "p2_pqrst_aq22", "p2_pqrst_aq11", "p2_pqrst_aq6")]
+ 
+PQRST_t2_sb_freq <- lapply(PQRST_t2_sb_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_sb_freq <- Reduce(`+`, PQRST_t2_sb_freq)
+print(PQRST_t2_sb_freq)
+ 
+# parental tolerance and emotion
+PQRST_t2_pte_freq <- PQRST_t2_freq[c("p2_pqrst_aq40", "p2_pqrst_aq15", "p2_pqrst_aq41", "p2_pqrst_aq36", "p2_pqrst_aq37")]
+ 
+PQRST_t2_pte_freq <- lapply(PQRST_t2_pte_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+ 
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+ 
+PQRST_t2_pte_freq <- Reduce(`+`, PQRST_t2_pte_freq)
+print(PQRST_t2_pte_freq)
+ 
+## converting to proportions
+PQRST_t2_pc_prop  <- to_proportions(PQRST_t2_pc_freq)
+PQRST_t2_fc_prop  <- to_proportions(PQRST_t2_fc_freq)
+PQRST_t2_vt_prop  <- to_proportions(PQRST_t2_vt_freq)
+PQRST_t2_opr_prop  <- to_proportions(PQRST_t2_opr_freq)
+PQRST_t2_ir_prop  <- to_proportions(PQRST_t2_ir_freq)
+PQRST_t2_r_prop  <- to_proportions(PQRST_t2_r_freq)
+PQRST_t2_sb_prop  <- to_proportions(PQRST_t2_sb_freq)
+PQRST_t2_pte_prop  <- to_proportions(PQRST_t2_pte_freq)
+ 
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+ 
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+ 
+  data.frame(
+	Group = group_name,
+	FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+	Proportion = as.numeric(padded))}
+ 
+df_t2_pc_prop  <- prop_to_df(PQRST_t2_pc_prop,  "pc")
+df_t2_fc_prop  <- prop_to_df(PQRST_t2_fc_prop,  "fc")
+df_t2_vt_prop  <- prop_to_df(PQRST_t2_vt_prop,  "vt")
+df_t2_opr_prop <- prop_to_df(PQRST_t2_opr_prop, "opr")
+df_t2_ir_prop  <- prop_to_df(PQRST_t2_ir_prop,  "ir")
+df_t2_r_prop   <- prop_to_df(PQRST_t2_r_prop,   "r")
+df_t2_sb_prop  <- prop_to_df(PQRST_t2_sb_prop,  "sb")
+df_t2_pte_prop <- prop_to_df(PQRST_t2_pte_prop, "pte")
+ 
+ 
+df_t2_prop2 <- bind_rows(
+  df_t2_pc_prop,
+  df_t2_fc_prop,
+  df_t2_vt_prop,
+  df_t2_opr_prop,
+  df_t2_ir_prop,
+  df_t2_r_prop,
+  df_t2_sb_prop,
+  df_t2_pte_prop)
+
+
+### Parent beliefs at T3
+# Permanent change/symptoms as threatening
+PQRST_t3_pc_freq <- PQRST_t3_freq[c("p3_pqrst_aq27", "p3_pqrst_aq25", "p3_pqrst_aq8", "p3_pqrst_aq5", "p3_pqrst_aq12", "p3_pqrst_aq17", "p3_pqrst_aq9", "p3_pqrst_aq18")]
+
+PQRST_t3_pc_freq <- lapply(PQRST_t3_pc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_pc_freq <- Reduce(`+`, PQRST_t3_pc_freq)
+print(PQRST_t3_pc_freq)
+
+# family change and dynamic
+PQRST_t3_fc_freq <- PQRST_t3_freq[c("p3_pqrst_aq1", "p3_pqrst_aq29", "p3_pqrst_aq10", "p3_pqrst_aq38", "p3_pqrst_aq28")]
+
+PQRST_t3_fc_freq <- lapply(PQRST_t3_fc_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_fc_freq <- Reduce(`+`, PQRST_t3_fc_freq)
+print(PQRST_t3_fc_freq)
+
+# vulnerability and threat
+PQRST_t3_vt_freq <- PQRST_t3_freq[c("p3_pqrst_aq23", "p3_pqrst_aq13", "p3_pqrst_aq19", "p3_pqrst_aq21", "p3_pqrst_aq39")]
+
+PQRST_t3_vt_freq <- lapply(PQRST_t3_vt_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_vt_freq <- Reduce(`+`, PQRST_t3_vt_freq)
+print(PQRST_t3_vt_freq)
+
+# other people's reactions
+PQRST_t3_opr_freq <- PQRST_t3_freq[c("p3_pqrst_aq44", "p3_pqrst_aq16", "p3_pqrst_aq34", "p3_pqrst_aq33", "p3_pqrst_aq4")]
+
+PQRST_t3_opr_freq <- lapply(PQRST_t3_opr_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_opr_freq <- Reduce(`+`, PQRST_t3_opr_freq)
+print(PQRST_t3_opr_freq)
+
+# Inflated responsibility for ensuring safety
+PQRST_t3_ir_freq <- PQRST_t3_freq[c("p3_pqrst_aq31", "p3_pqrst_aq2", "p3_pqrst_aq35", "p3_pqrst_aq30", "p3_pqrst_aq24")]
+
+PQRST_t3_ir_freq <- lapply(PQRST_t3_ir_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_ir_freq <- Reduce(`+`, PQRST_t3_ir_freq)
+print(PQRST_t3_ir_freq)
+
+# rumination
+PQRST_t3_r_freq <- PQRST_t3_freq[c("p3_pqrst_aq26", "p3_pqrst_aq14", "p3_pqrst_aq43", "p3_pqrst_aq42", "p3_pqrst_aq20", "p3_pqrst_aq3")]
+
+PQRST_t3_r_freq <- lapply(PQRST_t3_r_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_r_freq <- Reduce(`+`, PQRST_t3_r_freq)
+print(PQRST_t3_r_freq)
+
+# self-blame
+PQRST_t3_sb_freq <- PQRST_t3_freq[c("p3_pqrst_aq7", "p3_pqrst_aq32", "p3_pqrst_aq22", "p3_pqrst_aq11", "p3_pqrst_aq6")]
+
+PQRST_t3_sb_freq <- lapply(PQRST_t3_sb_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_sb_freq <- Reduce(`+`, PQRST_t3_sb_freq)
+print(PQRST_t3_sb_freq)
+
+# parental tolerance and emotion
+PQRST_t3_pte_freq <- PQRST_t3_freq[c("p3_pqrst_aq40", "p3_pqrst_aq15", "p3_pqrst_aq41", "p3_pqrst_aq36", "p3_pqrst_aq37")]
+
+PQRST_t3_pte_freq <- lapply(PQRST_t3_pte_freq, function(tbl) {
+  if (is.null(tbl)) return(setNames(rep(0, 4), expected_levels))
+  
+  tbl_full <- setNames(rep(0, 4), expected_levels)
+  tbl_full[names(tbl)] <- tbl
+  return(tbl_full)})
+
+PQRST_t3_pte_freq <- Reduce(`+`, PQRST_t3_pte_freq)
+print(PQRST_t3_pte_freq)
+
+## converting to proportions
+PQRST_t3_pc_prop  <- to_proportions(PQRST_t3_pc_freq)
+PQRST_t3_fc_prop  <- to_proportions(PQRST_t3_fc_freq)
+PQRST_t3_vt_prop  <- to_proportions(PQRST_t3_vt_freq)
+PQRST_t3_opr_prop  <- to_proportions(PQRST_t3_opr_freq)
+PQRST_t3_ir_prop  <- to_proportions(PQRST_t3_ir_freq)
+PQRST_t3_r_prop  <- to_proportions(PQRST_t3_r_freq)
+PQRST_t3_sb_prop  <- to_proportions(PQRST_t3_sb_freq)
+PQRST_t3_pte_prop  <- to_proportions(PQRST_t3_pte_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Not at all", "A little", "Some", "A lot")),
+    Proportion = as.numeric(padded))} 
+
+df_t3_pc_prop  <- prop_to_df(PQRST_t3_pc_prop,  "pc")
+df_t3_fc_prop  <- prop_to_df(PQRST_t3_fc_prop,  "fc")
+df_t3_vt_prop  <- prop_to_df(PQRST_t3_vt_prop,  "vt")
+df_t3_opr_prop <- prop_to_df(PQRST_t3_opr_prop, "opr")
+df_t3_ir_prop  <- prop_to_df(PQRST_t3_ir_prop,  "ir")
+df_t3_r_prop   <- prop_to_df(PQRST_t3_r_prop,   "r")
+df_t3_sb_prop  <- prop_to_df(PQRST_t3_sb_prop,  "sb")
+df_t3_pte_prop <- prop_to_df(PQRST_t3_pte_prop, "pte")
+
+
+df_t3_prop3 <- bind_rows(
+  df_t3_pc_prop,
+  df_t3_fc_prop,
+  df_t3_vt_prop,
+  df_t3_opr_prop,
+  df_t3_ir_prop,
+  df_t3_r_prop,
+  df_t3_sb_prop,
+  df_t3_pte_prop)
+
+
+```
+
+```{r}
+#| label: ‘Parent belief data visualisation’
+#| echo: false
+#| output: true
+p1_parent_beliefs <- ggplot(df_t1_prop1, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Parenting Beliefs",
+    y = "Proportion at T1",
+    fill = "Response Level",
+    title = "T1: within 6 weeks") +
+  scale_x_discrete(
+    labels = c(
+      pc  = "Permanent change",
+      fc  = "Family change and damage",
+      vt  = "Vulnerability and threat",
+      opr = "Other people's reactions",
+      ir  = "Inflated responsibility for ensuring safety",
+      r   = "Rumination",
+      sb  = "Self-blame",
+      pte = "Parental tolerance of emotion")) +
+  scale_fill_manual(
+    values = c(
+      "Not at all" = "#d73027",
+      "A little"   = "#fc8d59",
+      "Some"       = "#fee090",
+      "A lot"      = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none",axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+p2_parent_beliefs <- ggplot(df_t2_prop2, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+	x = "Parenting Beliefs",
+	y = "Proportion at T2",
+	fill = "Response Level",
+	title = "T2: after 3 months") +
+  ylab(NULL) +
+  scale_x_discrete(
+	labels = c(
+  	pc  = "Permanent change",
+  	fc  = "Family change and damage",
+  	vt  = "Vulnerability and threat",
+  	opr = "Other people's reactions",
+  	ir  = "Inflated responsibility for ensuring safety",
+  	r   = "Rumination",
+  	sb  = "Self-blame",
+  	pte = "Parental tolerance of emotion")) +
+  scale_fill_manual(
+	values = c(
+  	"Not at all" = "#d73027",
+  	"A little"   = "#fc8d59",
+      "Some"   	= "#fee090",
+  	"A lot"  	= "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none",	axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+p3_parent_beliefs <- ggplot(df_t3_prop3, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs( x = "Parenting Beliefs",
+    y = "Proportion at T3",
+    fill = "Response Level",
+    title = "T3: after 6 months") +
+  ylab(NULL) +
+  scale_x_discrete(
+    labels = c(
+      pc  = "Permanent change",
+      fc  = "Family change and damage",
+      vt  = "Vulnerability and threat",
+      opr = "Other people's reactions",
+      ir  = "Inflated responsibility for ensuring safety",
+      r   = "Rumination",
+      sb  = "Self-blame",
+      pte = "Parental tolerance of emotion")) +
+  scale_fill_manual(
+    values = c(
+      "Not at all" = "#d73027",
+      "A little"   = "#fc8d59",
+      "Some"       = "#fee090",
+      "A lot"      = "#91bfdb")) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+grid.arrange(p1_parent_beliefs, p2_parent_beliefs, p3_parent_beliefs, ncol = 3)
+
+```
+
+
+
+## Parent's beliefs in response to trauma over time
+
+
+
+```{r}
+#| label: ‘parent belief's spaghetti plot’
+#| echo: false
+#| output: true
+
+
+# Pivot to long format and remove missing values
+spaghetti_data <- spaghetti_plot_dataset %>%
+  select(dyad_ID, starts_with("t1_parentbeliefs_mean"),
+         starts_with("t2_parentbeliefs_mean"),
+         starts_with("t3_parentbeliefs_mean")) %>%
+  pivot_longer(
+    cols = -dyad_ID,
+    names_to = "timepoint",
+    values_to = "parentbeliefs_mean"
+  ) %>%
+  mutate(timepoint = case_when(
+    str_detect(timepoint, "t1") ~ "T1",
+    str_detect(timepoint, "t2") ~ "T2",
+    str_detect(timepoint, "t3") ~ "T3"
+  )) %>%
+  filter(!is.na(parentbeliefs_mean) & !is.nan(parentbeliefs_mean))
+
+# Spaghetti plot for Parent Beliefs
+ggplot(spaghetti_data, aes(x = timepoint, y = parentbeliefs_mean, col = factor(dyad_ID))) +
+  geom_smooth(aes(group = dyad_ID), method = "lm", se = FALSE, alpha = 0.05, linewidth = 0.5) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, colour = "black", linewidth = 1) +
+  labs(
+    x = "Time Point",
+    y = "Mean Parent Beliefs",
+    col = "Dyad ID"
+  ) +
+  guides(col = guide_legend(nrow = 3)) +
+  theme(legend.position = "none")
+```
+
+
+
+## Child's beliefs in response to trauma over time
+
+
+
+```{r}
+#| label: ‘Child beliefs data visualisation set up’
+#| echo: false
+#| output: false
+
+### Child beliefs T1
+CPTCI_t1_freq <- lapply(CPTCI_t1[ , !(names(CPTCI_t1) %in% c("ID", "Date")) ], table)
+CPTCI_t1_freq
+
+# “Disturbing and permanent change” component 
+CPTCI_t1_dpc_freq <- CPTCI_t1_freq[c("c1_cptci_q4", "c1_cptci_q6", "c1_cptci_q8", "c1_cptci_q13", "c1_cptci_q14", "c1_cptci_q16", "c1_cptci_q17", "c1_cptci_q19", "c1_cptci_q20", "c1_cptci_q21", "c1_cptci_q22", "c1_cptci_q23", "c1_cptci_q24")]
+CPTCI_t1_dpc_freq <- Reduce(`+`, CPTCI_t1_dpc_freq)
+print(CPTCI_t1_dpc_freq)
+
+# “Feeble person in a scary world” component 
+CPTCI_t1_fpw_freq <- CPTCI_t1_freq[c("c1_cptci_q1", "c1_cptci_q2", "c1_cptci_q3", "c1_cptci_q5", "c1_cptci_q7", "c1_cptci_q9", "c1_cptci_q10", "c1_cptci_q11", "c1_cptci_q12", "c1_cptci_q15", "c1_cptci_q18", "c1_cptci_q25")]
+CPTCI_t1_fpw_freq <- Reduce(`+`, CPTCI_t1_fpw_freq)
+print(CPTCI_t1_fpw_freq)
+
+# Convert to proportions
+to_proportions <- function(tbl) {
+  tbl / sum(tbl)
+}
+CPTCI_t1_dpc_prop  <- to_proportions(CPTCI_t1_dpc_freq)
+CPTCI_t1_fpw_prop  <- to_proportions(CPTCI_t1_fpw_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(1:4)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Don't agree at all", "Don't agree a bit", "Agree a bit", "Agree a lot")),
+    Proportion = as.numeric(padded))}
+
+df_t1_dpc_prop  <- prop_to_df(CPTCI_t1_dpc_prop, "dpc")
+df_t1_fpw_prop  <- prop_to_df(CPTCI_t1_fpw_prop, "fpw")
+df_t2_prop <- bind_rows(df_t1_dpc_prop, df_t1_fpw_prop)
+
+### Child beliefs T2
+CPTCI_t2_freq <- lapply(CPTCI_t2[ , !(names(CPTCI_t2) %in% c("ID", "Date")) ], table)
+CPTCI_t2_freq
+
+# “Disturbing and permanent change” component 
+CPTCI_t2_dpc_freq <- CPTCI_t2_freq[c("c2_cptci_q4", "c2_cptci_q6", "c2_cptci_q8", "c2_cptci_q13", "c2_cptci_q14", "c2_cptci_q16", "c2_cptci_q17", "c2_cptci_q19", "c2_cptci_q20", "c2_cptci_q21", "c2_cptci_q22", "c2_cptci_q23", "c2_cptci_q24")]
+
+expected_levels3 <- as.character(1:4)
+CPTCI_t2_dpc_freq <- lapply(CPTCI_t2_dpc_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels3)), expected_levels3)
+  padded[names(x)] <- x
+  return(padded)})
+CPTCI_t2_dpc_freq <- Reduce(`+`, CPTCI_t2_dpc_freq)
+print(CPTCI_t2_dpc_freq)
+
+# “Feeble person in a scary world” component 
+CPTCI_t2_fpw_freq <- CPTCI_t2_freq[c("c2_cptci_q1", "c2_cptci_q2", "c2_cptci_q3", "c2_cptci_q5", "c2_cptci_q7", "c2_cptci_q9", "c2_cptci_q10", "c2_cptci_q11", "c2_cptci_q12", "c2_cptci_q15", "c2_cptci_q18", "c2_cptci_q25")]
+
+CPTCI_t2_fpw_freq <- lapply(CPTCI_t2_fpw_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels3)), expected_levels3)
+  padded[names(x)] <- x
+  return(padded)})
+CPTCI_t2_fpw_freq <- Reduce(`+`, CPTCI_t2_fpw_freq)
+print(CPTCI_t2_fpw_freq)
+
+# Convert to proportions
+to_proportions <- function(tbl) {
+  tbl / sum(tbl)
+}
+CPTCI_t2_dpc_prop  <- to_proportions(CPTCI_t2_dpc_freq)
+CPTCI_t2_fpw_prop  <- to_proportions(CPTCI_t2_fpw_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(1:4)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Don't agree at all", "Don't agree a bit", "Agree a bit", "Agree a lot")),
+    Proportion = as.numeric(padded))}
+
+df_t2_dpc_prop  <- prop_to_df(CPTCI_t2_dpc_prop, "dpc")
+df_t2_fpw_prop  <- prop_to_df(CPTCI_t2_fpw_prop, "fpw")
+df_t2_prop <- bind_rows(df_t2_dpc_prop, df_t2_fpw_prop)
+
+### Child beliefs T3
+CPTCI_t3_freq <- lapply(CPTCI_t3[ , !(names(CPTCI_t3) %in% c("ID", "Date")) ], table)
+CPTCI_t3_freq
+
+# “Disturbing and permanent change” component 
+CPTCI_t3_dpc_freq <- CPTCI_t3_freq[c("c3_cptci_q4", "c3_cptci_q6", "c3_cptci_q8", "c3_cptci_q13", "c3_cptci_q14", "c3_cptci_q16", "c3_cptci_q17", "c3_cptci_q19", "c3_cptci_q20", "c3_cptci_q21", "c3_cptci_q22", "c3_cptci_q23", "c3_cptci_q24")]
+
+expected_levels3 <- as.character(1:4)
+CPTCI_t3_dpc_freq <- lapply(CPTCI_t3_dpc_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels3)), expected_levels3)
+  padded[names(x)] <- x
+  return(padded)})
+CPTCI_t3_dpc_freq <- Reduce(`+`, CPTCI_t3_dpc_freq)
+print(CPTCI_t3_dpc_freq)
+
+# “Feeble person in a scary world” component 
+CPTCI_t3_fpw_freq <- CPTCI_t3_freq[c("c3_cptci_q1", "c3_cptci_q2", "c3_cptci_q3", "c3_cptci_q5", "c3_cptci_q7", "c3_cptci_q9", "c3_cptci_q10", "c3_cptci_q11", "c3_cptci_q12", "c3_cptci_q15", "c3_cptci_q18", "c3_cptci_q25")]
+
+CPTCI_t3_fpw_freq <- lapply(CPTCI_t3_fpw_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels3)), expected_levels3)
+  padded[names(x)] <- x
+  return(padded)})
+CPTCI_t3_fpw_freq <- Reduce(`+`, CPTCI_t3_fpw_freq)
+print(CPTCI_t3_fpw_freq)
+
+# Convert to proportions
+to_proportions <- function(tbl) {
+  tbl / sum(tbl)
+}
+CPTCI_t3_dpc_prop  <- to_proportions(CPTCI_t3_dpc_freq)
+CPTCI_t3_fpw_prop  <- to_proportions(CPTCI_t3_fpw_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(1:4)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Don't agree at all", "Don't agree a bit", "Agree a bit", "Agree a lot")),
+    Proportion = as.numeric(padded))}
+
+df_t3_dpc_prop  <- prop_to_df(CPTCI_t3_dpc_prop, "dpc")
+df_t3_fpw_prop  <- prop_to_df(CPTCI_t3_fpw_prop, "fpw")
+df_t3_prop <- bind_rows(df_t3_dpc_prop, df_t3_fpw_prop)
+
+
+```
+
+```{r}
+#| label: ‘Child belief data visualisation’
+#| echo: false
+#| output: true
+
+p1_child_beliefs <- ggplot(df_t2_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Child Beliefs",
+    y = "Proportion",
+    fill = "Response Level",
+    title = "T1: within 6 weeks") +
+  scale_x_discrete(
+    labels = c(
+      dpc = "Disturbing and permanent change",
+      fpw = "Feeble person in a scary world")) +
+  scale_fill_manual(
+    values = c(
+      "Don't agree at all" = "#d73027",
+      "Don't agree a bit"  = "#fc8d59",
+      "Agree a bit"        = "#fee090",
+      "Agree a lot"        = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+p2_child_beliefs <- ggplot(df_t2_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Child Beliefs",
+    fill = "Response Level",
+    title = "T2: after 3 months") +
+  ylab(NULL)+
+  scale_x_discrete(
+    labels = c(
+      dpc = "Disturbing and permanent change",
+      fpw = "Feeble person in a scary world")) +
+  scale_fill_manual(
+    values = c(
+      "Don't agree at all" = "#d73027",
+      "Don't agree a bit"  = "#fc8d59",
+      "Agree a bit"        = "#fee090",
+      "Agree a lot"        = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none",
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+p3_child_beliefs <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Child Beliefs",
+    fill = "Response Level",
+    title = "T3: after 6 months") +
+  ylab(NULL) +
+  scale_x_discrete(
+    labels = c(
+      dpc = "Disturbing and permanent change",
+      fpw = "Feeble person in a scary world")) +
+  scale_fill_manual(
+    values = c(
+      "Don't agree at all" = "#d73027",
+      "Don't agree a bit"  = "#fc8d59",
+      "Agree a bit"        = "#fee090",
+      "Agree a lot"        = "#91bfdb")) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+grid.arrange(p1_child_beliefs, p2_child_beliefs, p3_child_beliefs, ncol = 3)
+
+```
+
+
+
+## Child's beliefs in response to trauma over time
+
+
+
+```{r}
+#| label: ‘child belief's's spaghetti plot’
+#| echo: false
+
+# Pivot to long format and remove missing values for child beliefs
+spaghetti_data_childbeliefs <- spaghetti_plot_dataset %>%
+  select(dyad_ID, starts_with("t1_childbeliefs_mean"),
+         starts_with("t2_childbeliefs_mean"),
+         starts_with("t3_childbeliefs_mean")) %>%
+  pivot_longer(
+    cols = -dyad_ID,
+    names_to = "timepoint",
+    values_to = "childbeliefs_mean"
+  ) %>%
+  mutate(timepoint = case_when(
+    str_detect(timepoint, "t1") ~ "T1",
+    str_detect(timepoint, "t2") ~ "T2",
+    str_detect(timepoint, "t3") ~ "T3"
+  )) %>%
+  filter(!is.na(childbeliefs_mean) & !is.nan(childbeliefs_mean))
+
+# Spaghetti plot for Child Beliefs
+ggplot(spaghetti_data_childbeliefs, aes(x = timepoint, y = childbeliefs_mean, col = factor(dyad_ID))) +
+  geom_smooth(aes(group = dyad_ID), method = "lm", se = FALSE, alpha = 0.05, linewidth = 0.5) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, colour = "black", linewidth = 1) +
+  labs(
+    x = "Time Point",
+    y = "Mean Child Beliefs",
+    col = "Dyad ID"
+  ) +
+  guides(col = guide_legend(nrow = 3)) +
+  theme(legend.position = "none")
+```
+
+
+
+## Child's behaviours in response to trauma over time
+
+
+
+```{r}
+#| label: ‘Child behaviour data visualisation set up’
+#| echo: false
+#| output: false
+
+### Child behaviour T1
+CPBQ_t1_freq <- lapply(CPBQ_t1[ , !(names(CPBQ_t1) %in% c("ID", "Date")) ], table)
+CPBQ_t1_freq
+
+# Rumination
+CPBQ_t1_rum_list <- CPBQ_t1_freq[c("c1_cpbq_a_q1", "c1_cpbq_a_q2", "c1_cpbq_a_q3")]
+
+CPBQ_t1_rum_padded <- lapply(CPBQ_t1_rum_list, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+
+CPBQ_t1_rum_freq <- Reduce(`+`, CPBQ_t1_rum_padded)
+print(CPBQ_t1_rum_freq)
+
+# Guilt
+CPBQ_t1_g_freq <- CPBQ_t1_freq[c("c1_cpbq_a_q4", "c1_cpbq_a_q5")]
+
+CPBQ_t1_g_freq <- lapply(CPBQ_t1_g_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+CPBQ_t1_g_freq <- Reduce(`+`, CPBQ_t1_g_freq)
+print(CPBQ_t1_g_freq)
+
+# Dissociation
+CPBQ_t1_d_freq <- CPBQ_t1_freq[c("c1_cpbq_b_q1", "c1_cpbq_b_q2", "c1_cpbq_b_q3", "c1_cpbq_b_q4", "c1_cpbq_b_q5")]
+
+CPBQ_t1_d_freq <- lapply(CPBQ_t1_d_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+CPBQ_t1_d_freq <- Reduce(`+`, CPBQ_t1_d_freq)
+print(CPBQ_t1_d_freq)
+
+# Though suppression
+CPBQ_t1_ts_freq <- CPBQ_t1_freq[c("c1_cpbq_b_q6", "c1_cpbq_b_q7", "c1_cpbq_b_q8", "c1_cpbq_b_q9", "c1_cpbq_b_q10", "c1_cpbq_b_q11")]
+
+CPBQ_t1_ts_freq <- lapply(CPBQ_t1_ts_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+CPBQ_t1_ts_freq <- Reduce(`+`, CPBQ_t1_ts_freq)
+print(CPBQ_t1_ts_freq)
+
+
+# Convert to proportions
+to_proportions <- function(tbl) {
+  tbl / sum(tbl)
+}
+CPBQ_t1_rum_prop  <- to_proportions(CPBQ_t1_rum_freq)
+CPBQ_t1_g_prop  <- to_proportions(CPBQ_t1_g_freq)
+CPBQ_t1_d_prop  <- to_proportions(CPBQ_t1_d_freq)
+CPBQ_t1_ts_prop  <- to_proportions(CPBQ_t1_ts_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Disagree a lot", "Disagree a bit", "Agree a bit", "Agree a lot")),
+    Proportion = as.numeric(padded))}
+
+df_t1_rum_prop  <- prop_to_df(CPBQ_t1_rum_prop, "rum")
+df_t1_g_prop  <- prop_to_df(CPBQ_t1_g_prop, "g")
+df_t1_d_prop  <- prop_to_df(CPBQ_t1_d_prop, "d")
+df_t1_ts_prop  <- prop_to_df(CPBQ_t1_ts_prop, "ts")
+df_t1_prop <- bind_rows(df_t1_rum_prop, df_t1_g_prop, df_t1_d_prop, df_t1_ts_prop)
+
+
+### Child behaviour T2
+CPBQ_t2_freq <- lapply(CPBQ_t2[ , !(names(CPBQ_t2) %in% c("ID", "Date")) ], table)
+CPBQ_t2_freq
+ 
+# Rumination
+CPBQ_t2_rum_list <- CPBQ_t2_freq[c("c2_cpbq_a_q1", "c2_cpbq_a_q2", "c2_cpbq_a_q3")]
+ 
+CPBQ_t2_rum_padded <- lapply(CPBQ_t2_rum_list, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)
+})
+ 
+CPBQ_t2_rum_freq <- Reduce(`+`, CPBQ_t2_rum_padded)
+print(CPBQ_t2_rum_freq)
+ 
+# Guilt
+CPBQ_t2_g_freq <- CPBQ_t2_freq[c("c2_cpbq_a_q4", "c2_cpbq_a_q5")]
+ 
+CPBQ_t2_g_freq <- lapply(CPBQ_t2_g_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+CPBQ_t2_g_freq <- Reduce(`+`, CPBQ_t2_g_freq)
+print(CPBQ_t2_g_freq)
+ 
+# Dissociation
+CPBQ_t2_d_freq <- CPBQ_t2_freq[c("c2_cpbq_b_q1", "c2_cpbq_b_q2", "c2_cpbq_b_q3", "c2_cpbq_b_q4", "c2_cpbq_b_q5")]
+ 
+CPBQ_t2_d_freq <- lapply(CPBQ_t2_d_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+CPBQ_t2_d_freq <- Reduce(`+`, CPBQ_t2_d_freq)
+print(CPBQ_t2_d_freq)
+ 
+# Though suppression
+CPBQ_t2_ts_freq <- CPBQ_t2_freq[c("c2_cpbq_b_q6", "c2_cpbq_b_q7", "c2_cpbq_b_q8", "c2_cpbq_b_q9", "c2_cpbq_b_q10", "c2_cpbq_b_q11")]
+ 
+CPBQ_t2_ts_freq <- lapply(CPBQ_t2_ts_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+CPBQ_t2_ts_freq <- Reduce(`+`, CPBQ_t2_ts_freq)
+print(CPBQ_t2_ts_freq)
+ 
+ 
+# Convert to proportions
+to_proportions <- function(tbl) {
+  tbl / sum(tbl)
+}
+CPBQ_t2_rum_prop  <- to_proportions(CPBQ_t2_rum_freq)
+CPBQ_t2_g_prop  <- to_proportions(CPBQ_t2_g_freq)
+CPBQ_t2_d_prop  <- to_proportions(CPBQ_t2_d_freq)
+CPBQ_t2_ts_prop  <- to_proportions(CPBQ_t2_ts_freq)
+ 
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+ 
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+ 
+  data.frame(
+	Group = group_name,
+	FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Disagree a lot", "Disagree a bit", "Agree a bit", "Agree a lot")),
+	Proportion = as.numeric(padded))}
+ 
+df_t2_rum_prop  <- prop_to_df(CPBQ_t2_rum_prop, "rum")
+df_t2_g_prop  <- prop_to_df(CPBQ_t2_g_prop, "g")
+df_t2_d_prop  <- prop_to_df(CPBQ_t2_d_prop, "d")
+df_t2_ts_prop  <- prop_to_df(CPBQ_t2_ts_prop, "ts")
+df_t2_prop <- bind_rows(df_t2_rum_prop, df_t2_g_prop, df_t2_d_prop, df_t2_ts_prop)
+ 
+### Child behaviour T3
+CPBQ_t3_freq <- lapply(CPBQ_t3[ , !(names(CPBQ_t3) %in% c("ID", "Date")) ], table)
+CPBQ_t3_freq
+
+# Rumination
+CPBQ_t3_rum_list <- CPBQ_t3_freq[c("c3_cpbq_a_q1", "c3_cpbq_a_q2", "c3_cpbq_a_q3")]
+
+CPBQ_t3_rum_padded <- lapply(CPBQ_t3_rum_list, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)
+})
+
+CPBQ_t3_rum_freq <- Reduce(`+`, CPBQ_t3_rum_padded)
+print(CPBQ_t3_rum_freq)
+
+# Guilt
+CPBQ_t3_g_freq <- CPBQ_t3_freq[c("c3_cpbq_a_q4", "c3_cpbq_a_q5")]
+
+CPBQ_t3_g_freq <- lapply(CPBQ_t3_g_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+CPBQ_t3_g_freq <- Reduce(`+`, CPBQ_t3_g_freq)
+print(CPBQ_t3_g_freq)
+
+# Dissociation
+CPBQ_t3_d_freq <- CPBQ_t3_freq[c("c3_cpbq_b_q1", "c3_cpbq_b_q2", "c3_cpbq_b_q3", "c3_cpbq_b_q4", "c3_cpbq_b_q5")]
+
+CPBQ_t3_d_freq <- lapply(CPBQ_t3_d_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+CPBQ_t3_d_freq <- Reduce(`+`, CPBQ_t3_d_freq)
+print(CPBQ_t3_d_freq)
+
+# Though suppression
+CPBQ_t3_ts_freq <- CPBQ_t3_freq[c("c3_cpbq_b_q6", "c3_cpbq_b_q7", "c3_cpbq_b_q8", "c3_cpbq_b_q9", "c3_cpbq_b_q10", "c3_cpbq_b_q11")]
+
+CPBQ_t3_ts_freq <- lapply(CPBQ_t3_ts_freq, function(x) {
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  return(padded)})
+CPBQ_t3_ts_freq <- Reduce(`+`, CPBQ_t3_ts_freq)
+print(CPBQ_t3_ts_freq)
+
+
+# Convert to proportions
+to_proportions <- function(tbl) {
+  tbl / sum(tbl)
+}
+CPBQ_t3_rum_prop  <- to_proportions(CPBQ_t3_rum_freq)
+CPBQ_t3_g_prop  <- to_proportions(CPBQ_t3_g_freq)
+CPBQ_t3_d_prop  <- to_proportions(CPBQ_t3_d_freq)
+CPBQ_t3_ts_prop  <- to_proportions(CPBQ_t3_ts_freq)
+
+prop_to_df <- function(x, group_name) {
+  expected_levels <- as.character(0:3)
+  
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+  
+  data.frame(
+    Group = group_name,
+    FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Disagree a lot", "Disagree a bit", "Agree a bit", "Agree a lot")),
+    Proportion = as.numeric(padded))}
+
+df_t3_rum_prop  <- prop_to_df(CPBQ_t3_rum_prop, "rum")
+df_t3_g_prop  <- prop_to_df(CPBQ_t3_g_prop, "g")
+df_t3_d_prop  <- prop_to_df(CPBQ_t3_d_prop, "d")
+df_t3_ts_prop  <- prop_to_df(CPBQ_t3_ts_prop, "ts")
+df_t3_prop <- bind_rows(df_t3_rum_prop, df_t3_g_prop, df_t3_d_prop, df_t3_ts_prop)
+
+```
+
+```{r}
+#| label: ‘Child behaviour data visualisation’
+#| echo: false
+#| output: true
+
+p1_child_behaviour <- ggplot(df_t1_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +  geom_bar(stat = "identity") +
+  labs(
+    x = "Child Behaviours",
+    y = "Proportion",
+    fill = "Response Level",
+    title = "T1: within 6 weeks") +
+  scale_x_discrete(
+    labels = c(
+      rum = "Rumination",
+      g = "Guilt",
+      d = "Dissociation",
+      ts = "Thought suppression")) +
+  scale_fill_manual(
+    values = c(
+      "Disagree a lot" = "#d73027",
+      "Disagree a bit" = "#fc8d59",
+      "Agree a bit" = "#fee090",
+      "Agree a lot" = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none",axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+p2_child_behaviour <- ggplot(df_t2_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+	x = "Child Behaviours",
+	fill = "Response Level",
+	title = "T2: after 3 months") +
+  ylab(NULL) +
+  scale_x_discrete(
+	labels = c(
+  	rum = "Rumination",
+  	g = "Guilt",
+  	d = "Dissociation",
+  	ts = "Thought suppression")) +
+  scale_fill_manual(
+	values = c(
+  	"Disagree a lot" = "#d73027",
+  	"Disagree a bit" = "#fc8d59",
+  	"Agree a bit" = "#fee090",
+  	"Agree a lot" = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none",
+	axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+p3_child_behaviour <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +  geom_bar(stat = "identity") +
+  labs(
+    x = "Child Behaviours",
+    fill = "Response Level",
+    title = "T3: after 6 months") +
+  ylab(NULL) +
+  scale_x_discrete(
+    labels = c(
+      rum = "Rumination",
+      g = "Guilt",
+      d = "Dissociation",
+      ts = "Thought suppression")) +
+  scale_fill_manual(
+    values = c(
+      "Disagree a lot" = "#d73027",
+      "Disagree a bit" = "#fc8d59",
+      "Agree a bit" = "#fee090",
+      "Agree a lot" = "#91bfdb")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+grid.arrange(p1_child_behaviour, p2_child_behaviour, p3_child_behaviour, ncol = 3)
+
+```
+
+
+
+## Child's behaviours in response to trauma over time
+
+
+
+```{r}
+#| label: ‘child behaviour's spaghetti plot’
+#| echo: false
+
+# Pivot to long format and remove missing values
+spaghetti_data_child <- spaghetti_plot_dataset %>%
+  select(dyad_ID, starts_with("t1_childbehaviours_mean"),
+         starts_with("t2_childbehaviours_mean"),
+         starts_with("t3_childbehaviours_mean")) %>%
+  pivot_longer(
+    cols = -dyad_ID,
+    names_to = "timepoint",
+    values_to = "childbehaviours_mean"
+  ) %>%
+  mutate(timepoint = case_when(
+    str_detect(timepoint, "t1") ~ "T1",
+    str_detect(timepoint, "t2") ~ "T2",
+    str_detect(timepoint, "t3") ~ "T3"
+  )) %>%
+  filter(!is.na(childbehaviours_mean) & !is.nan(childbehaviours_mean))
+
+# Spaghetti plot for Child Behaviours
+ggplot(spaghetti_data_child, aes(x = timepoint, y = childbehaviours_mean, col = factor(dyad_ID))) +
+  geom_smooth(aes(group = dyad_ID), method = "lm", se = FALSE, alpha = 0.05, linewidth = 0.5) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, colour = "black", linewidth = 1) +
+  labs(
+    x = "Time Point",
+    y = "Mean Child Behaviours",
+    col = "Dyad ID"
+  ) +
+  guides(col = guide_legend(nrow = 3)) +
+  theme(legend.position = "none")
+```
+
+
+
+## Child hot vs. cold memory
+
+
+
+```{r}
+#| label: ‘Hot vs cold memory data visualisation set up’
+#| echo: false
+#| output: false
+
+
+## T1: HOT VS COLD MEMORY
+ACTMQ_t1_freq <- lapply(ACTMQ_t1[ , !(names(ACTMQ_t1) %in% c("ID", "Date")) ], table)
+ACTMQ_t1_freq
+
+# hot memory
+ACTMQ_t1_hot_freq <- ACTMQ_t1_freq[c("c1_actmq_q1", "c1_actmq_q2", "c1_actmq_q3", "c1_actmq_q4", "c1_actmq_q5", "c1_actmq_q7", "c1_actmq_q8", "c1_actmq_q10", "c1_actmq_q11", "c1_actmq_q18")]
+ACTMQ_t1_hot_freq <- Reduce(`+`, ACTMQ_t1_hot_freq)
+print(ACTMQ_t1_hot_freq)
+
+# cold memory
+ACTMQ_t1_cold_freq <- ACTMQ_t1_freq[c("c1_actmq_q6", "c1_actmq_q9", "c1_actmq_q12", "c1_actmq_q13", "c1_actmq_q14", "c1_actmq_q15", "c1_actmq_q16", "c1_actmq_q17")]
+
+reverse_items3 <- c("c1_actmq_q6")
+ACTMQ_t1_cold_freq[reverse_items] <- lapply(ACTMQ_t1_cold_freq[reverse_items3], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+ACTMQ_t1_cold_freq <- Reduce(`+`, ACTMQ_t1_cold_freq)
+print(ACTMQ_t1_cold_freq)
+
+# converts frequency table to proportions
+ACTMQ_t1_hot_prop  <- to_proportions(ACTMQ_t1_hot_freq)
+ACTMQ_t1_cold_prop <- to_proportions(ACTMQ_t1_cold_freq)
+
+
+
+
+
+
+
+
+
+
+
+
+
+prop_to_df5 <- function(x, group_name) {
+  expected_levels <- as.character(1:4)
+ 
+  # Pad missing levels with 0
+  padded <- setNames(rep(0, length(expected_levels)), expected_levels)
+  padded[names(x)] <- x
+ 
+  data.frame(
+	Group = group_name,
+	FreqPoint = factor(names(padded), levels = expected_levels,
+                       labels = c("Disagree a lot", "Disagree a bit", "Agree a bit", "Agree a lot")),
+	Proportion = as.numeric(padded))}
+ 
+df_t1_hot_prop  <- prop_to_df5(ACTMQ_t1_hot_prop,  "hot memory")
+df_t1_cold_prop <- prop_to_df5(ACTMQ_t1_cold_prop, "cold memory")
+
+df_t1_prop <- bind_rows(df_t1_hot_prop, df_t1_cold_prop)
+
+
+## T2: HOT VS COLD MEMORY
+ACTMQ_t2_freq <- lapply(ACTMQ_t2[ , !(names(ACTMQ_t2) %in% c("ID", "Date")) ], table)
+ACTMQ_t2_freq
+
+# hot memory
+ACTMQ_t2_hot_freq <- ACTMQ_t2_freq[c("c2_actmq_q1", "c2_actmq_q2", "c2_actmq_q3", "c2_actmq_q4", "c2_actmq_q5", "c2_actmq_q7", "c2_actmq_q8", "c2_actmq_q10", "c2_actmq_q11", "c2_actmq_q18")]
+ACTMQ_t2_hot_freq <- Reduce(`+`, ACTMQ_t2_hot_freq)
+print(ACTMQ_t2_hot_freq)
+
+# cold memory
+ACTMQ_t2_cold_freq <- ACTMQ_t2_freq[c("c2_actmq_q6", "c2_actmq_q9", "c2_actmq_q12", "c2_actmq_q13", "c2_actmq_q14", "c2_actmq_q15", "c2_actmq_q16", "c2_actmq_q17")]
+
+reverse_items3 <- c("c2_actmq_q6")
+ACTMQ_t2_cold_freq[reverse_items] <- lapply(ACTMQ_t2_cold_freq[reverse_items3], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+ACTMQ_t2_cold_freq <- Reduce(`+`, ACTMQ_t2_cold_freq)
+print(ACTMQ_t2_cold_freq)
+
+# converts frequency table to proportions
+ACTMQ_t2_hot_prop  <- to_proportions(ACTMQ_t2_hot_freq)
+ACTMQ_t2_cold_prop <- to_proportions(ACTMQ_t2_cold_freq)
+
+# Create data frames from each proportion table
+df_t2_hot_prop  <- prop_to_df5(ACTMQ_t2_hot_prop,  "hot memory")
+df_t2_cold_prop <- prop_to_df5(ACTMQ_t2_cold_prop, "cold memory")
+
+df_t2_prop <- bind_rows(df_t2_hot_prop, df_t2_cold_prop)
+
+
+## T3: HOT VS COLD MEMORY
+ACTMQ_t3_freq <- lapply(ACTMQ_t3[ , !(names(ACTMQ_t3) %in% c("ID", "Date")) ], table)
+ACTMQ_t3_freq
+
+# hot memory
+ACTMQ_t3_hot_freq <- ACTMQ_t3_freq[c("c3_actmq_q1", "c3_actmq_q2", "c3_actmq_q3", "c3_actmq_q4", "c3_actmq_q5", "c3_actmq_q7", "c3_actmq_q8", "c3_actmq_q10", "c3_actmq_q11", "c3_actmq_q18")]
+ACTMQ_t3_hot_freq <- Reduce(`+`, ACTMQ_t3_hot_freq)
+print(ACTMQ_t3_hot_freq)
+
+# cold memory
+ACTMQ_t3_cold_freq <- ACTMQ_t3_freq[c("c3_actmq_q6", "c3_actmq_q9", "c3_actmq_q12", "c3_actmq_q13", "c3_actmq_q14", "c3_actmq_q15", "c3_actmq_q16", "c3_actmq_q17")]
+
+reverse_items3 <- c("c3_actmq_q6")
+ACTMQ_t3_cold_freq[reverse_items] <- lapply(ACTMQ_t3_cold_freq[reverse_items3], \(x) {
+  names(x) <- as.character(3 - as.numeric(names(x))); x[order(as.numeric(names(x)))]
+})
+
+ACTMQ_t3_cold_freq <- Reduce(`+`, ACTMQ_t3_cold_freq)
+print(ACTMQ_t3_cold_freq)
+
+# converts frequency table to proportions
+ACTMQ_t3_hot_prop  <- to_proportions(ACTMQ_t3_hot_freq)
+ACTMQ_t3_cold_prop <- to_proportions(ACTMQ_t3_cold_freq)
+
+# Create data frames from each proportion table
+df_t3_hot_prop  <- prop_to_df5(ACTMQ_t3_hot_prop,  "hot memory")
+df_t3_cold_prop <- prop_to_df5(ACTMQ_t3_cold_prop, "cold memory")
+
+df_t3_prop <- bind_rows(df_t3_hot_prop, df_t3_cold_prop)
+```
+
+```{r}
+#| label: ‘Hot vs cold memory data visualisation’
+#| echo: false
+#| output: true
+
+
+p1_hot_cold <- ggplot(df_t1_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Memory type",
+    y = "Proportion",
+    fill = "Response Level",
+    title = "T1: within 6 weeks") +
+  scale_x_discrete(
+    labels = c(
+      hotmemory = "Hot memory",
+      coldmemory = "Cold memory")) +
+  scale_fill_manual(
+    values = c(
+      "Disagree a lot" = "#d73027",
+      "Disagree a bit"  = "#fc8d59",
+      "Agree a bit"        = "#fee090",
+      "Agree a lot"        = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+p2_hot_cold <- ggplot(df_t2_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Memory type",
+    y = "Proportion",
+    fill = "Response Level",
+    title = "T2: after 3 months") +
+  scale_x_discrete(
+    labels = c(
+      hotmemory = "Hot memory",
+      coldmemory = "Cold memory")) +
+  scale_fill_manual(
+    values = c(
+      "Disagree a lot" = "#d73027",
+      "Disagree a bit"  = "#fc8d59",
+      "Agree a bit"        = "#fee090",
+      "Agree a lot"        = "#91bfdb")) +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+p3_hot_cold <- ggplot(df_t3_prop, aes(x = Group, y = Proportion, fill = FreqPoint)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Memory type",
+    y = "Proportion",
+    fill = "Response Level",
+    title = "T3: after 6 months") +
+  scale_x_discrete(
+    labels = c(
+      hotmemory = "Hot memory",
+      coldmemory = "Cold memory")) +
+  scale_fill_manual(
+    values = c(
+      "Disagree a lot" = "#d73027",
+      "Disagree a bit"  = "#fc8d59",
+      "Agree a bit"        = "#fee090",
+      "Agree a lot"        = "#91bfdb")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 8))
+
+
+grid.arrange(p1_hot_cold, p2_hot_cold, p3_hot_cold, ncol = 3)
+
+```
+
+
+
+## Cross-Lagged Panel Model (CLPM)
+
+## Cross-Lagged Panel Model (CLPM)
+
+
+
+```{r}
+#| label: ‘create model’
+#| echo: false
+
+## create composite scores
+dyad_all_clean <- dyad_all_clean %>%
+  mutate(
+    hot_memory_t1 = rowMeans(select(., contains("actmq_q") & contains("c1_")), na.rm = TRUE),
+    cpbq_behaviours_t1 = rowMeans(select(., contains("cpbq") & contains("c1_")), na.rm = TRUE),
+    cptci_beliefs_t1 = rowMeans(select(., contains("cptci") & contains("c1_")), na.rm = TRUE),
+    pqrst_beliefs_t1 = rowMeans(select(., contains("pqrst_aq") & contains("p1_")), na.rm = TRUE),
+    pqrst_behaviours_t1 = rowMeans(select(., contains("pqrst_bq") & contains("p1_")), na.rm = TRUE),
+    
+    hot_memory_t2 = rowMeans(select(., contains("actmq_q") & contains("c2_")), na.rm = TRUE),
+    cpbq_behaviours_t2 = rowMeans(select(., contains("cpbq") & contains("c2_")), na.rm = TRUE),
+    cptci_beliefs_t2 = rowMeans(select(., contains("cptci") & contains("c2_")), na.rm = TRUE),
+    pqrst_beliefs_t2 = rowMeans(select(., contains("pqrst_aq") & contains("p2_")), na.rm = TRUE),
+    pqrst_behaviours_t2 = rowMeans(select(., contains("pqrst_bq") & contains("p2_")), na.rm = TRUE),
+    
+    hot_memory_t3 = rowMeans(select(., contains("actmq_q") & contains("c3_")), na.rm = TRUE),
+    cpbq_behaviours_t3 = rowMeans(select(., contains("cpbq") & contains("c3_")), na.rm = TRUE),
+    cptci_beliefs_t3 = rowMeans(select(., contains("cptci") & contains("c3_")), na.rm = TRUE),
+    pqrst_beliefs_t3 = rowMeans(select(., contains("pqrst_aq") & contains("p3_")), na.rm = TRUE),
+    pqrst_behaviours_t3 = rowMeans(select(., contains("pqrst_bq") & contains("p3_")), na.rm = TRUE))
+
+
+## specify the model
+mod_spec <- '
+## Create autoregressive paths
+# child hot memory
+hot_memory_t2 ~ hot_memory_t1
+hot_memory_t3 ~ hot_memory_t2 
+# child behaviour
+cpbq_behaviours_t2 ~ cpbq_behaviours_t1
+cpbq_behaviours_t3 ~ cpbq_behaviours_t2
+# child beliefs
+cptci_beliefs_t2 ~ cptci_beliefs_t1
+cptci_beliefs_t3 ~ cptci_beliefs_t2 
+# parent behaviour
+pqrst_behaviours_t2 ~ pqrst_behaviours_t1 
+pqrst_behaviours_t3 ~ pqrst_behaviours_t2
+# parent beliefs
+pqrst_beliefs_t2 ~ pqrst_beliefs_t1
+pqrst_beliefs_t3 ~ pqrst_beliefs_t2
+
+## Create cross-lagged direct paths
+# hot memory loaded on by child beliefs and child behaviour
+hot_memory_t2 ~ cpbq_behaviours_t1 + cptci_beliefs_t1
+hot_memory_t3 ~ cpbq_behaviours_t2 + cptci_beliefs_t2
+# child behaviour loaded on by child beliefs and parent behaviour 
+cpbq_behaviours_t2 ~ cptci_beliefs_t1 + pqrst_behaviours_t1
+cpbq_behaviours_t3 ~ cptci_beliefs_t2 + pqrst_behaviours_t2
+# child beliefs loaded on by parent behaviour and parent beliefs
+cptci_beliefs_t2 ~ pqrst_behaviours_t1 + pqrst_beliefs_t1
+cptci_beliefs_t3 ~ pqrst_behaviours_t2 + pqrst_beliefs_t2
+'
+
+```
+
+```{r}
+#| label: ‘run model’
+# run the model
+mod <- lavaan::sem(mod_spec, data = dyad_all_clean, missing = "ML")
+# summarise the model
+lavaan::summary(mod, fit.measures = TRUE, standardized = TRUE)
+
+```
+
+
+
+## Cross-Lagged Panel Model (CLPM)
+
+
+
+```{r}
+#| label: ‘hypotheses tested’
+#| echo: false
+#| output: true
+# Get parameter estimates
+params <- parameterEstimates(mod, standardized = TRUE)
+# Helper function to get formatted estimate and p-value
+get_estimate <- function(lhs, rhs) {
+  row <- params %>%
+    filter(lhs == !!lhs, rhs == !!rhs, op == "~") # regression paths
+  if (nrow(row) == 0) return("N/A")
+  est <- round(row$est, 3)
+  pval <- row$pvalue
+  pval_str <- ifelse(pval < 0.001, "< 0.001", paste0("= ", round(pval, 3)))
+  return(paste0(est, " (p ", pval_str, ")"))}
+
+
+# Create the table
+hypothesis_table <- tibble(
+  Hypothesis = c("H1: Child beliefs → Hot memory",
+                 "H2: Child behaviour → Hot memory",
+                 "H3: Child beliefs → Child behaviour → Hot memory",
+                 "H4: Parental beliefs → Child beliefs",
+                 "H5: Parental beliefs → Parental behaviour → Child beliefs"),
+  `Estimate (t1 to t2)` = c(get_estimate("hot_memory_t2", "cptci_beliefs_t1"),
+                           get_estimate("hot_memory_t2", "cpbq_behaviours_t1"),
+                           get_estimate("cpbq_behaviours_t2", "cptci_beliefs_t1"),
+                           get_estimate("cptci_beliefs_t2", "pqrst_beliefs_t1"),
+                           get_estimate("cptci_beliefs_t2","pqrst_behaviours_t1")),
+  `Estimate (t2 to t3)` = c(get_estimate("hot_memory_t3", "cptci_beliefs_t2"),
+                           get_estimate("hot_memory_t3", "cpbq_behaviours_t2"),
+                           get_estimate("cpbq_behaviours_t3", "cptci_beliefs_t2"),
+                            get_estimate("cptci_beliefs_t3", "pqrst_beliefs_t2"),
+                           get_estimate("cptci_beliefs_t3","pqrst_behaviours_t2")))
+
+print(hypothesis_table)
+```
+
+
+
+## Cross-Lagged Panel Model (CLPM)
+
+
+
+```{r}
+#| label: ‘clpm visualise results’
+#| echo: false
+#| output: true
+
+library(lavaanPlot)
+
+lvplot <- lavaanPlot(model = mod,
+           coef = TRUE,        # show coefficients
+           stand = TRUE,       # use standardized estimates
+           stars = "regress",  # add significance stars to regressions
+           graph_options = list(rankdir = "LR")) # left-to-right layout
+lvplot
+```
+
