@@ -1975,11 +1975,15 @@ grid.arrange(p1_hot_cold, p2_hot_cold, p3_hot_cold, ncol = 3)
 
 ## Cross-Lagged Panel Model (CLPM)
 
-A Cross-Lagged Panel Model (CLPM) is a type of statistical model used to understand how different variables influence each other over time.
+A Cross-Lagged Panel Model (CLPM) is a type of statistical model used to understand how different variables influence each other over time. In CLPM, both autoregressive and cross-lagged paths are modelled together
 
-Autoregressive paths: how a variable predicts itself over time (e.g. beliefs at T1 → beliefs at T2)
+## Cross-Lagged Panel Model (CLPM)
 
-Cross-lagged paths: how one variable predicts a different variable over time (e.g. beliefs at T1 → memory at T2, or memory at T1 → beliefs at T2)
+A Cross-Lagged Panel Model (CLPM) is a type of statistical model used to understand how different variables influence each other over time. In CLPM, both autoregressive and cross-lagged paths are modelled together
+
+**Autoregressive paths:** how a variable predicts itself over time (e.g. beliefs at T1 → beliefs at T2)
+
+**Cross-lagged paths:** how one variable predicts a different variable over time (e.g. beliefs at T1 → memory at T2, or memory at T1 → beliefs at T2)
 
 ## Cross-Lagged Panel Model (CLPM)
 
