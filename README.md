@@ -48,4 +48,4 @@ To view [more information]{.underline} on hot and cold memory, please [**click h
 
 Please [**click here**](https://github.com/LDAP-2025/chloe-amina/blob/main/01.Code/LDAP_Project_T3.qmd) to run all project scripts
 
-Please [**click here**](https://github.com/LDAP-2025/chloe-amina/tree/main/02.Figures>) to view the figures
+Please [**click here**](https://github.com/LDAP-2025/chloe-amina/tree/main/02.Figures%3E) to view the figures
